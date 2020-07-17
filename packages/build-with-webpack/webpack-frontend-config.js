@@ -3,6 +3,8 @@ const fs = require('fs');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const InlineChunkHtmlPlugin = require('react-dev-utils/InlineChunkHtmlPlugin');
 const { default: WatchExternalFilesPlugin } = require('webpack-watch-files-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { default: HTMLInlineCSSWebpackPlugin } = require('html-inline-css-webpack-plugin');
 
 const commonConfig = require('./webpack-common-config');
 
@@ -14,6 +16,10 @@ module.exports = function (config) {
     ...commonConfig,
     target: 'web',
     plugins: [
+      new MiniCssExtractPlugin({
+        filename: '[name].css',
+        chunkFilename: '[id].css',
+      }),
       new HtmlWebpackPlugin({
         inject: true,
         template: path.resolve(__dirname, './frontend-template.html'),
@@ -27,6 +33,7 @@ module.exports = function (config) {
       }),
       new InlineChunkHtmlPlugin(HtmlWebpackPlugin, [/.+/]),
       new WatchExternalFilesPlugin({ files: [helpFile, formFile] }),
+      new HTMLInlineCSSWebpackPlugin(),
     ],
     entry: {
       app: `./src/${config.name}-frontend.ts`,
@@ -36,5 +43,8 @@ module.exports = function (config) {
       path: path.resolve(process.env.PWD, './build'),
     },
     watch: config.watch,
+    externals: {
+      jquery: 'jQuery',
+    },
   };
 };

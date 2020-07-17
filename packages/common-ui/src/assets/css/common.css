@@ -1,0 +1,9 @@
+.select2-container--dark-adminlte .select2-selection--single {
+  background-color: transparent;
+  border: 1px solid #2D3239;
+}
+
+.select2-container--dark-adminlte .select2-selection--single .select2-selection__rendered {
+  background-color: transparent;
+  line-height: 37px;
+}

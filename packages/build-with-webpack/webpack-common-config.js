@@ -23,6 +23,22 @@ module.exports = {
         exclude: /(node_modules)/,
         loader: 'babel-loader',
       },
+      {
+        // look for .css or .scss files
+        test: /\.(css|scss)$/,
+        use: [
+          {
+            loader: 'style-loader',
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: true,
+              importLoaders: 2,
+            },
+          },
+        ],
+      },
     ],
   },
 };

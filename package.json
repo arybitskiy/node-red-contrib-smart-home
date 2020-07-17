@@ -1,0 +1,55 @@
+{
+  "name": "@sh/root",
+  "version": "0.0.1",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=12.18.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.10.5",
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "@babel/plugin-proposal-object-rest-spread": "^7.10.4",
+    "@babel/plugin-transform-runtime": "^7.10.5",
+    "@babel/preset-env": "^7.10.4",
+    "@babel/preset-react": "^7.10.4",
+    "@babel/preset-typescript": "^7.10.4",
+    "@types/jest": "^26.0.4",
+    "@types/node-red": "^0.20.1",
+    "@typescript-eslint/eslint-plugin": "^3.6.1",
+    "@typescript-eslint/parser": "^3.6.1",
+    "babel-loader": "^8.1.0",
+    "babel-plugin-lodash": "^3.3.4",
+    "babel-plugin-styled-components": "^1.10.7",
+    "cli": "^1.0.1",
+    "concurrently": "^5.2.0",
+    "eslint": "^7.4.0",
+    "html-webpack-plugin": "^4.3.0",
+    "jest": "^26.1.0",
+    "lerna": "^3.22.1",
+    "lodash": "^4.17.19",
+    "node-red": "^1.1.2",
+    "node-red-node-test-helper": "^0.2.5",
+    "nodemon": "^2.0.4",
+    "prettier": "^2.0.5",
+    "react-dev-utils": "^10.2.1",
+    "rimraf": "^3.0.2",
+    "should": "^13.2.3",
+    "styled-components": "^5.1.1",
+    "ts-jest": "^26.1.2",
+    "ts-loader": "^8.0.1",
+    "typescript": "^3.9.6",
+    "webpack": "^4.43.0",
+    "webpack-watch-files-plugin": "^1.0.3"
+  },
+  "scripts": {
+    "tsc": "lerna --no-bail run --parallel tsc",
+    "lint": "lerna --no-bail run --parallel lint",
+    "test": "lerna --no-bail run --parallel test",
+    "build": "lerna --no-bail run --parallel build",
+    "clean": "lerna --no-bail run --parallel clean",
+    "start": "lerna --no-bail run --parallel start"
+  }
+}

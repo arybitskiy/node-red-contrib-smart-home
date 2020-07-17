@@ -1,0 +1,8 @@
+{
+  "name": "@sh/types",
+  "version": "0.0.1",
+  "private": true,
+  "engines": {
+    "node": ">=12.18.0"
+  }
+}

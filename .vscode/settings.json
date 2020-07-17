@@ -1,0 +1,15 @@
+{
+  "prettier.configPath": ".prettierrcjson",
+  "prettier.packageManager": "yarn",
+  "eslint.codeAction.showDocumentation": {
+
+
+    "enable": true
+  },
+  "eslint.workingDirectories": [
+      {
+          "directory": "./packages/node",
+          "changeProcessCWD": true
+      }
+  ]
+}

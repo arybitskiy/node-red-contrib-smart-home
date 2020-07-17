@@ -1,0 +1,10 @@
+{
+  "singleQuote": true,
+  "trailingComma": "es5",
+  "bracketSpacing": true,
+  "printWidth": 120,
+  "parser": "typescript",
+  "endOfLine": "lf",
+  "proseWrap": "always",
+  "arrowParens": "avoid"
+}

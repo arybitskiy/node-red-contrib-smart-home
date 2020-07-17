@@ -1,0 +1,15 @@
+{
+  "extends": "../../default.tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "./src/",
+    "paths": {}
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "babel.config.js"
+  ]
+}

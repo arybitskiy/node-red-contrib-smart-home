@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "noEmit": true,
+    "jsx": "react",
+    "strict": true,
+    "allowJs": true,
+    "target": "ES2019",
+    "downlevelIteration": true,
+    "sourceMap": true,
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "noImplicitAny": false,
+    "esModuleInterop": true,
+    "lib": ["esnext", "dom"],
+    "strictNullChecks": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true
+  },
+  "files": ["packages/types/src/index.d.ts"]
+}

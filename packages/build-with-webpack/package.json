@@ -1,0 +1,9 @@
+{
+  "name": "@sh/build-with-webpack",
+  "version": "0.0.1",
+  "private": true,
+  "engines": {
+    "node": ">=12.18.0"
+  },
+  "bin": "./index.js"
+}

@@ -1,0 +1,18 @@
+import * as NodeRed from 'node-red';
+
+interface {{startCase name}}Backend extends NodeRed.Node {}
+
+interface {{startCase name}}BackendProps extends NodeRed.NodeProperties {}
+
+export default (RED: NodeRed.Red) => {
+  function {{startCase name}}Constructor(this: {{startCase name}}Backend, props: {{startCase name}}BackendProps) {
+    RED.nodes.createNode(this, props);
+
+    this.on('input', (msg, send, done) => {
+      send(msg);
+      done();
+    });
+  }
+
+  RED.nodes.registerType('{{name}}', {{startCase name}}Constructor);
+};

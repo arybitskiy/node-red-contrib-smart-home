@@ -33,6 +33,7 @@
     "node-red": "^1.1.2",
     "node-red-node-test-helper": "^0.2.5",
     "nodemon": "^2.0.4",
+    "plop": "^2.7.1",
     "prettier": "^2.0.5",
     "react-dev-utils": "^10.2.1",
     "rimraf": "^3.0.2",
@@ -50,6 +51,7 @@
     "test": "lerna --no-bail run --parallel test",
     "build": "lerna --no-bail run --parallel build",
     "clean": "lerna --no-bail run --parallel clean",
-    "start": "lerna --no-bail run --parallel start"
+    "start": "lerna --no-bail run --parallel start",
+    "plop:node-red-package": "plop node-red-package"
   }
 }

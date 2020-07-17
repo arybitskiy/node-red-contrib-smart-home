@@ -1,8 +1,8 @@
 import helper from 'node-red-node-test-helper';
 
-import NodeBackend from '../node-backend';
+import {{startCase name}}Backend from '../{{name}}-backend';
 
-describe('node-backend', () => {
+describe('{{name}}-backend', () => {
   afterEach(function () {
     helper.unload();
   });
@@ -13,10 +13,10 @@ describe('node-backend', () => {
       payload: 'payload',
     };
     const flow = [
-      { id: 'n1', type: 'node', name: 'test name', wires: [['n2']] },
+      { id: 'n1', type: '{{name}}', name: 'test name', wires: [['n2']] },
       { id: 'n2', type: 'helper' },
     ];
-    helper.load(NodeBackend, flow, function () {
+    helper.load({{startCase name}}Backend, flow, function () {
       const n2 = helper.getNode('n2');
       const n1 = helper.getNode('n1');
       n2.on('input', function (msg) {

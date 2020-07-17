@@ -106,3 +106,5 @@ dist
 # Packages
 build/
 lerna-debug.log
+
+.vscode

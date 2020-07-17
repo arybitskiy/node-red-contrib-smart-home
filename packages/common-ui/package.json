@@ -1,5 +1,5 @@
 {
-  "name": "@sh/node",
+  "name": "@sh/common-ui",
   "version": "0.0.1",
   "private": true,
   "engines": {
@@ -7,17 +7,17 @@
   },
   "node-red": {
     "nodes": {
-      "node": "build/node.js"
+      "node": "build/common-ui.js"
     }
   },
   "scripts": {
-    "build:backend": "yarn build-with-webpack -t backend -n node",
-    "build:frontend": "yarn build-with-webpack -t frontend -n node",
+    "build:backend": "yarn build-with-webpack -t backend -n common-ui",
+    "build:frontend": "yarn build-with-webpack -t frontend -n common-ui",
     "build": "concurrently \"yarn build:backend\" \"yarn build:frontend\"",
     "clean": "rimraf build coverage",
     "lint": "eslint src --ext .ts,.tsx,.js --color",
-    "start:backend": "yarn build-with-webpack -t backend -n node -w",
-    "start:frontend": "yarn build-with-webpack -t frontend -n node -w",
+    "start:backend": "yarn build-with-webpack -t backend -n common-ui -w",
+    "start:frontend": "yarn build-with-webpack -t frontend -n common-ui -w",
     "start": "concurrently \"yarn start:backend\" \"yarn start:frontend\"",
     "test": "jest --env=jsdom --coverage --colors",
     "tsc": "tsc -p ./tsconfig.json"

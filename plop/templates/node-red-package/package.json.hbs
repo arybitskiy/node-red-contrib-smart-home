@@ -1,0 +1,25 @@
+{
+  "name": "@sh/{{name}}",
+  "version": "0.0.1",
+  "private": true,
+  "engines": {
+    "node": ">=12.18.0"
+  },
+  "node-red": {
+    "nodes": {
+      "node": "build/{{name}}.js"
+    }
+  },
+  "scripts": {
+    "build:backend": "yarn build-with-webpack -t backend -n {{name}}",
+    "build:frontend": "yarn build-with-webpack -t frontend -n {{name}}",
+    "build": "concurrently \"yarn build:backend\" \"yarn build:frontend\"",
+    "clean": "rimraf build coverage",
+    "lint": "eslint src --ext .ts,.tsx,.js --color",
+    "start:backend": "yarn build-with-webpack -t backend -n {{name}} -w",
+    "start:frontend": "yarn build-with-webpack -t frontend -n {{name}} -w",
+    "start": "concurrently \"yarn start:backend\" \"yarn start:frontend\"",
+    "test": "jest --env=jsdom --coverage --colors",
+    "tsc": "tsc -p ./tsconfig.json"
+  }
+}

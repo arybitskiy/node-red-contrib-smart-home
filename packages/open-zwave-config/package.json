@@ -1,0 +1,34 @@
+{
+  "name": "@sh/open-zwave-config",
+  "version": "0.0.1",
+  "private": true,
+  "engines": {
+    "node": ">=12.18.0"
+  },
+  "devDependencies": {
+    "@types/http-server": "^0.10.0",
+    "@types/progress": "^2.0.3",
+    "@types/xml2js": "^0.4.5",
+    "cxsd": "^0.1.1",
+    "http-server": "^0.12.3",
+    "node-line-reader": "^0.0.3",
+    "open-zwave": "git+https://github.com/OpenZWave/open-zwave.git",
+    "progress": "^2.0.3",
+    "xml2js": "^0.4.23"
+  },
+  "scripts": {
+    "cxsd": "cxsd -t ./src/generated",
+    "plop:typed-config": "plop typed-config",
+    "build:backend": "yarn build-with-webpack -t backend -n open-zwave-config",
+    "build:frontend": "yarn build-with-webpack -t frontend -n open-zwave-config",
+    "build": "concurrently \"yarn build:backend\" \"yarn build:frontend\"",
+    "clean": "rimraf build coverage",
+    "lint": "eslint src --ext .ts,.tsx,.js --color",
+    "start:backend": "yarn build-with-webpack -t backend -n open-zwave-config -w",
+    "start:frontend": "yarn build-with-webpack -t frontend -n open-zwave-config -w",
+    "start": "concurrently \"yarn start:backend\" \"yarn start:frontend\"",
+    "test": "jest --env=jsdom --coverage --colors",
+    "tsc": "tsc -p ./tsconfig.json",
+    "generate": "babel-node ./src/generator  --extensions \".ts\"; yarn prettier --write ./src/generated"
+  }
+}

@@ -1,0 +1,196 @@
+import type { document } from "../../github.com/OpenZWave/device_configuration";
+
+const config: Partial<document> = {
+  Product: {
+    Revision: 2,
+    CommandClass: [
+      {
+        id: "67",
+        Instance: [{ index: "1" }],
+        Value: [
+          {
+            genre: "user",
+            index: "1",
+            instance: "1",
+            label: "Heating",
+            max: "0",
+            min: "0",
+            read_only: "false",
+            type: "decimal",
+            units: "C",
+            value: "0.0",
+            verify_changes: "false",
+            write_only: "false",
+          },
+          {
+            genre: "user",
+            index: "2",
+            instance: "1",
+            label: "Cooling",
+            max: "0",
+            min: "0",
+            read_only: "false",
+            type: "decimal",
+            units: "C",
+            value: "0.0",
+            verify_changes: "false",
+            write_only: "false",
+          },
+          {
+            genre: "user",
+            index: "3",
+            instance: "1",
+            label: "Unused",
+            max: "0",
+            min: "0",
+            read_only: "false",
+            type: "decimal",
+            units: "C",
+            value: "0.0",
+            verify_changes: "false",
+            write_only: "false",
+          },
+        ],
+        Compatibility: [{ OverridePrecision: [2], Base: [0] }],
+      },
+      {
+        id: "112",
+        Value: [
+          {
+            genre: "config",
+            index: "1",
+            label: "Temperature Threshold",
+            max: "100",
+            min: "1",
+            type: "short",
+            value: "5",
+            Help:
+              "\n                Temperature Report threshold (1=0.1C)\n            ",
+          },
+          {
+            genre: "config",
+            index: "2",
+            label: "Setpoint resolution",
+            max: "100",
+            min: "1",
+            type: "short",
+            value: "5",
+            Help:
+              "\n                Set-point display resolution (1=0.1C)\n            ",
+          },
+          {
+            genre: "config",
+            index: "3",
+            label: "Min/Override Setpoint",
+            max: "40",
+            min: "0",
+            type: "short",
+            value: "12",
+            Help:
+              "\n                Min Set-point and override limit\n            ",
+          },
+          {
+            genre: "config",
+            index: "4",
+            label: "Max/Override Setpoint",
+            max: "40",
+            min: "0",
+            type: "short",
+            value: "28",
+            Help:
+              "\n                Max Set-point and override limit\n            ",
+          },
+          {
+            genre: "config",
+            index: "6",
+            label: "Setpoint control function",
+            size: "1",
+            type: "list",
+            value: "1",
+            Help: "\n                Setpoint control function\n            ",
+            Item: [
+              { label: "Disabled", value: "0" },
+              { label: "Enabled", value: "1" },
+            ],
+          },
+          {
+            genre: "config",
+            index: "7",
+            label: "Temporarily override scheduler",
+            size: "1",
+            type: "list",
+            value: "1",
+            Help:
+              "\n                Temporarily override scheduler\n            ",
+            Item: [
+              { label: "Disabled", value: "0" },
+              { label: "Enabled", value: "1" },
+            ],
+          },
+          {
+            genre: "config",
+            index: "8",
+            label: "Setpoint type",
+            size: "1",
+            type: "list",
+            value: "1",
+            Help:
+              "\n                Setpoint type in thermostat setpoint_reports\n            ",
+            Item: [
+              { label: "Heating", value: "1" },
+              { label: "Cooling", value: "2" },
+              { label: "Auto Changeover", value: "10" },
+            ],
+          },
+          {
+            genre: "config",
+            index: "9",
+            label: "Led on time",
+            max: "5",
+            min: "1",
+            type: "byte",
+            value: "1",
+            Help: "\n                Led on time (1=100ms)\n            ",
+          },
+          {
+            genre: "config",
+            index: "5",
+            label: "Led Flash Period",
+            max: "65535",
+            min: "0",
+            type: "short",
+            value: "1",
+            Help:
+              "\n                Led Flash Period (0 to 65535 seconds)\n            ",
+          },
+          {
+            genre: "config",
+            index: "10",
+            label: "Number of flash",
+            max: "255",
+            min: "0",
+            type: "byte",
+            value: "5",
+            Help:
+              "\n                Number of led flashes (duration)\n            ",
+          },
+          {
+            genre: "config",
+            index: "11",
+            label: "Led Color",
+            size: "1",
+            type: "list",
+            value: "1",
+            Help: "\n                Led Color\n            ",
+            Item: [
+              { label: "Green", value: "1" },
+              { label: "Red", value: "2" },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+};
+
+export default config;

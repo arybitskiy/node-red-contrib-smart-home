@@ -1,0 +1,157 @@
+import type { document } from "../../github.com/OpenZWave/device_configuration";
+
+const config: Partial<document> = {
+  Product: {
+    Revision: 4,
+    CommandClass: [
+      { id: "32", Compatibility: [{ GetSupported: [false] }] },
+      {
+        id: "112",
+        Value: [
+          {
+            genre: "config",
+            index: "1",
+            label: "Pulse factor",
+            max: "1000000",
+            min: "10",
+            type: "int",
+            units: "",
+            value: "1000",
+            Help: "set the meter impulse or rotation factor x 10.",
+          },
+          {
+            genre: "config",
+            index: "2",
+            label: "Sensor type",
+            max: "2",
+            min: "1",
+            size: "1",
+            type: "list",
+            units: "",
+            value: "2",
+            Help: "Defines the meter type on which the Power Reader is placed",
+            Item: [
+              { label: "Magnetic contact meter", value: "1" },
+              { label: "Silver spot meter", value: "2" },
+            ],
+          },
+          {
+            genre: "config",
+            index: "3",
+            label: "IR Listen period",
+            max: "127",
+            min: "0",
+            type: "byte",
+            units: "",
+            value: "0",
+            Help:
+              "\n      \tAdditional time for feedback measurement.\n      \tShould always be 0.\n     ",
+          },
+          {
+            genre: "config",
+            index: "4",
+            label: "IR Pulse Width",
+            max: "127",
+            min: "0",
+            type: "byte",
+            units: "",
+            value: "50",
+            Help:
+              "\n      \tAdjusts transmit signal so received signal will in average be equal to this values. \n      \tAuto calibration might select another value than this.\n      ",
+          },
+          {
+            genre: "config",
+            index: "5",
+            label: "Poll / Wake up frequency",
+            max: "50",
+            min: "1",
+            type: "byte",
+            units: "seconds",
+            value: "20",
+            Help:
+              "\n      \tWake device up this many times per second. \n      \tThis value also controls number of measurements per second on mechanical meters.\n     ",
+          },
+          {
+            genre: "config",
+            index: "9",
+            label: "Pulse count",
+            max: "2147483647",
+            min: "0",
+            size: "4",
+            type: "int",
+            units: "",
+            value: "0",
+            Help:
+              "In order for the Power Reader to report the proper total meter consumption the value for this registered has to be initialized with total_meter_consumption_stated_on_the_meter * impulse factor.",
+          },
+          {
+            genre: "config",
+            index: "10",
+            label: "Keep alive period",
+            max: "32767",
+            min: "1",
+            size: "2",
+            type: "short",
+            units: "second",
+            value: "5",
+            Help:
+              "set to the number of seconds that it will take the controlling node to send a response / request to the wake up notification",
+          },
+          {
+            genre: "config",
+            index: "11",
+            label: "Real-time mode",
+            max: "32767",
+            min: "0",
+            read_only: "true",
+            size: "2",
+            type: "short",
+            units: "",
+            value: "0",
+            Help:
+              "Set this to enter real-time mode from remote. Contains seconds * poll frequency before going back to sleep. If you press the button once this value will be set.",
+          },
+          {
+            genre: "config",
+            index: "12",
+            label: "serial number",
+            read_only: "true",
+            size: "4",
+            type: "int",
+            value: "0",
+            Help: "The serial numbers written on the Power Reader are in HEX",
+          },
+          {
+            genre: "config",
+            index: "13",
+            label: "Debug",
+            max: "1",
+            min: "0",
+            size: "1",
+            type: "list",
+            units: "",
+            value: "1",
+            Help: "Debug Mode",
+            Item: [
+              { label: "Off", value: "0" },
+              { label: "LED blinks at pulse counting", value: "1" },
+            ],
+          },
+          {
+            genre: "config",
+            index: "15",
+            label: "Calibration status",
+            read_only: "true",
+            size: "4",
+            type: "int",
+            value: "0",
+            Help:
+              "The calibration progress is calculated as (value[1] - 65 + value[2] / value[3]) * 25\n\t\t\tThe calibration is finished successfully when value[0] = 2 and value[2] = value[3].\n\t\t\tThe calibration has failed if value[0] != 1 OR (value[0] = 2 AND value[2] != value[3])",
+          },
+        ],
+      },
+    ],
+  },
+};
+
+export default config;

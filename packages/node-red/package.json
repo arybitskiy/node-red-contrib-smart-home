@@ -4,7 +4,7 @@
     "version": "0.0.1",
     "private": true,
     "scripts": {
-        "node-red": "node-red ./",
+        "node-red": "node-red -u ./",
         "start": "nodemon --exec \"yarn node-red\""
     }
 }

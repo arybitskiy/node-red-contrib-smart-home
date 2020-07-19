@@ -3,3 +3,5 @@
 lib
 context
 static
+flows_mac.local.json
+.flows_mac.local.json.backup

@@ -12,6 +12,7 @@ module.exports = function (config) {
     output: {
       filename: `${config.name}.js`,
       path: path.resolve(process.env.PWD, './build'),
+      libraryExport: 'default',
       libraryTarget: 'commonjs2',
     },
     watch: config.watch,

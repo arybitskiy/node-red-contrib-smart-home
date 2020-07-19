@@ -1,8 +1,8 @@
 import helper from 'node-red-node-test-helper';
 
-import ZWaveDeviceInBackend from '../z-wave-device-in-backend';
+import NodeZwaveDeviceInBackend from '../node-zwave-device-in-backend';
 
-describe('z-wave-device-in-backend', () => {
+describe('node-zwave-device-in-backend', () => {
   afterEach(function () {
     helper.unload();
   });
@@ -13,10 +13,10 @@ describe('z-wave-device-in-backend', () => {
       payload: 'payload',
     };
     const flow = [
-      { id: 'n1', type: 'z-wave-device-in', name: 'test name', wires: [['n2']] },
+      { id: 'n1', type: 'node-zwave-device-in', name: 'test name', wires: [['n2']] },
       { id: 'n2', type: 'helper' },
     ];
-    helper.load(ZWaveDeviceInBackend, flow, function () {
+    helper.load(NodeZwaveDeviceInBackend, flow, function () {
       const n2 = helper.getNode('n2');
       const n1 = helper.getNode('n1');
       n2.on('input', function (msg) {

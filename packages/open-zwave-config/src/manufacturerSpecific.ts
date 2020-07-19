@@ -9,7 +9,7 @@ const generateObjectKey = (productConfig: string) => {
   return parts.join('');
 };
 
-interface ManufacturerSpecific {
+export interface ManufacturerSpecific {
   manufacturerId: number;
   manufacturerName: string;
   productId: number;

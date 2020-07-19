@@ -1,0 +1,29 @@
+{
+  "name": "@sh/node-zwave-device-in",
+  "version": "0.0.1",
+  "private": true,
+  "engines": {
+    "node": ">=12.18.0"
+  },
+  "node-red": {
+    "nodes": {
+      "node": "build/node-zwave-device-in.js"
+    }
+  },
+  "scripts": {
+    "build:backend": "yarn build-with-webpack -t backend -n node-zwave-device-in",
+    "build:frontend": "yarn build-with-webpack -t frontend -n node-zwave-device-in",
+    "build": "concurrently \"yarn build:backend\" \"yarn build:frontend\"",
+    "clean": "rimraf build coverage",
+    "lint": "eslint src --ext .ts,.tsx,.js --color",
+    "start:backend": "yarn build-with-webpack -t backend -n node-zwave-device-in -w",
+    "start:frontend": "yarn build-with-webpack -t frontend -n node-zwave-device-in -w",
+    "start": "concurrently \"yarn start:backend\" \"yarn start:frontend\"",
+    "test": "jest --env=jsdom --coverage --colors",
+    "tsc": "tsc -p ./tsconfig.json"
+  },
+  "dependencies": {
+    "@sh/open-zwave-config": "0.0.1",
+    "@sh/text-constants": "0.0.1"
+  }
+}

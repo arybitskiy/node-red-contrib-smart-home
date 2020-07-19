@@ -1,0 +1,9 @@
+{
+  "verbose": true,
+  "delay": "2500",
+  "watch": ["../*/build/**"],
+  "execMap": {
+    "rb": "ruby",
+    "pde": "processing --sketch={{pwd}} --run"
+  }
+}

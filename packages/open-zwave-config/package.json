@@ -19,16 +19,14 @@
   "scripts": {
     "cxsd": "cxsd -t ./src/generated",
     "plop:typed-config": "plop typed-config",
-    "build:backend": "yarn build-with-webpack -t backend -n open-zwave-config",
-    "build:frontend": "yarn build-with-webpack -t frontend -n open-zwave-config",
-    "build": "concurrently \"yarn build:backend\" \"yarn build:frontend\"",
     "clean": "rimraf build coverage",
     "lint": "eslint src --ext .ts,.tsx,.js --color",
-    "start:backend": "yarn build-with-webpack -t backend -n open-zwave-config -w",
-    "start:frontend": "yarn build-with-webpack -t frontend -n open-zwave-config -w",
-    "start": "concurrently \"yarn start:backend\" \"yarn start:frontend\"",
     "test": "jest --env=jsdom --coverage --colors",
     "tsc": "tsc -p ./tsconfig.json",
     "generate": "babel-node ./src/generator  --extensions \".ts\"; yarn prettier --write ./src/generated"
+  },
+  "main": "./src/index.ts",
+  "dependencies": {
+    "@sh/text-constants": "0.0.1"
   }
 }

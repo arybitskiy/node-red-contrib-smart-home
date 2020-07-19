@@ -1,9 +1,10 @@
 {
-    "name": "node-red-project",
+    "name": "@sh/node-red",
     "description": "A Node-RED Project",
     "version": "0.0.1",
     "private": true,
     "scripts": {
-        "start": "nodemon --delay 5 --watch ../*/build --exec yarn node-red -u ./"
+        "node-red": "node-red ./",
+        "start": "nodemon --exec \"yarn node-red\""
     }
 }

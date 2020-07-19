@@ -1,0 +1,20 @@
+{
+  "name": "@sh/text-constants",
+  "version": "0.0.1",
+  "private": true,
+  "engines": {
+    "node": ">=12.18.0"
+  },
+  "node-red": {
+    "nodes": {
+      "node": "build/text-constants.js"
+    }
+  },
+  "scripts": {
+    "clean": "rimraf build coverage",
+    "lint": "eslint src --ext .ts,.tsx,.js --color",
+    "test": "jest --env=jsdom --coverage --colors",
+    "tsc": "tsc -p ./tsconfig.json"
+  },
+  "main": "./src/index.ts"
+}

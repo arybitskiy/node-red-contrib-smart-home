@@ -16,16 +16,7 @@ const build = (config, name) => {
       if (werr || stats.hasErrors()) {
         console.log(
           chalk.cyan(
-            stats.toString({
-              hash: false,
-              timings: false,
-              modules: false,
-              chunks: false,
-              colors: true,
-              assets: false,
-              children: false,
-              entrypoints: false,
-            })
+            stats.toString('verbose')
           )
         );
 
@@ -36,10 +27,11 @@ const build = (config, name) => {
       process.stdout.write(
         `${stats.toString({
           colors: true,
-          modules: false,
-          children: false,
-          chunks: false,
-          chunkModules: false,
+          modules: true,
+          children: true,
+          chunks: true,
+          chunkModules: true,
+          verbose: true,
         })}\n\n`
       );
 

@@ -51,3 +51,5 @@ export const deviceMapper = (device: Partial<deviceConfig>) => {
     })),
   };
 };
+
+export type DeviceMapper = ReturnType<typeof deviceMapper>;

@@ -33,5 +33,15 @@ module.exports = {
     generateAdd('src/name-frontend.ts', 'src/{{name}}-frontend.ts'),
     generateAdd('src/name-help.html', 'src/{{name}}-help.html'),
     generateAdd('src/__tests__/name-backend.test.ts', 'src/__tests__/{{name}}-backend.test.ts'),
+    {
+      type: 'modify',
+      path: 'package.json',
+      transform: (fileContents, { name }) => {
+        const package = JSON.parse(fileContents);
+        package['node-red']['nodes'][name] = `packages/${name}/build/${name}.js`;
+        const packageJson = JSON.stringify(package, null, 4);
+        return packageJson;
+      },
+    },
   ],
 };

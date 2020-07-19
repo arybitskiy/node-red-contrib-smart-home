@@ -33,8 +33,8 @@ export const devices = memoize(() =>
 
 export const getDevicesList = memoize(() =>
   Object.values(devices()).reduce((acc, devicesObject) => {
-    mapValues(devicesObject, (device, key) => {
-      acc[key] = device;
+    mapValues(devicesObject, device => {
+      acc.push(device);
     });
 
     return acc;

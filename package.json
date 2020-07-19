@@ -1,6 +1,6 @@
 {
     "name": "node-red-contrib-smart-home",
-    "version": "0.0.22",
+    "version": "0.0.23",
     "license": "Apache-2.0",
     "workspaces": [
         "packages/*"
@@ -85,5 +85,6 @@
         "hooks": {
             "pre-push": "yarn tsc; yarn test; yarn lint"
         }
-    }
+    },
+    "private": true
 }

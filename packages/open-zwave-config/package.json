@@ -21,7 +21,7 @@
     "plop:typed-config": "plop typed-config",
     "clean": "rimraf build coverage",
     "lint": "eslint src --ext .ts,.tsx,.js --color",
-    "test": "jest --env=jsdom --coverage --colors",
+    "test-maybe": "jest --env=jsdom --coverage --colors",
     "tsc": "tsc -p ./tsconfig.json",
     "generate": "babel-node ./src/generator  --extensions \".ts\"; yarn prettier --write ./src/generated"
   },

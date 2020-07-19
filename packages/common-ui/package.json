@@ -19,7 +19,6 @@
     "start:backend": "yarn build-with-webpack -t backend -n common-ui -w",
     "start:frontend": "yarn build-with-webpack -t frontend -n common-ui -w",
     "start": "concurrently \"yarn start:backend\" \"yarn start:frontend\"",
-    "test": "jest --env=jsdom --coverage --colors",
     "tsc": "tsc -p ./tsconfig.json"
   }
 }

@@ -8,7 +8,6 @@
   "scripts": {
     "clean": "rimraf build coverage",
     "lint": "eslint src --ext .ts,.tsx,.js --color",
-    "test": "jest --env=jsdom --coverage --colors",
     "tsc": "tsc -p ./tsconfig.json"
   },
   "main": "./src/index.ts"

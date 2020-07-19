@@ -1,6 +1,6 @@
 import * as NodeRed from 'node-red';
 
-import { devicesDropdownOptions, getDeviceNameById } from '@sh/open-zwave-config';
+import { getDeviceNameById } from '@sh/open-zwave-config';
 
 interface NodeZwaveDeviceInBackend extends NodeRed.Node {}
 
@@ -12,7 +12,7 @@ interface NodeZwaveDeviceInBackendProps extends NodeRed.NodeProperties {
 export default (RED: NodeRed.Red) => {
   function NodeZwaveDeviceInConstructor(this: NodeZwaveDeviceInBackend, props: NodeZwaveDeviceInBackendProps) {
     RED.nodes.createNode(this, props);
-    const { name, device } = props;
+    const { device } = props;
 
     this.on('input', (msg, send, done) => {
       send({

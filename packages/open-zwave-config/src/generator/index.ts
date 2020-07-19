@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { createServer } from 'http-server';
 import path from 'path';
 import chalk from 'chalk';
@@ -54,21 +55,21 @@ const removeUnnecessaryTypes = (filePath: string) =>
   });
 
 const parseXSD = (fileName: string) =>
-  new Promise((resolve, reject) => {
+  new Promise((resolve, reject): void => {
     npm.commands['run-script'](['cxsd', `${baseURL}${fileName}`], err => {
       if (err) {
         error(err.toString());
         reject(err);
       } else {
         fs.renameSync(generatedDir('open-zwave.d.ts'), generatedDir(fileName.replace(/xsd$/, 'ts')));
-        removeUnnecessaryTypes(generatedDir(fileName.replace(/xsd$/, 'ts')));
+        void removeUnnecessaryTypes(generatedDir(fileName.replace(/xsd$/, 'ts')));
         success(`Parsed ${fileName}`);
         resolve();
       }
     });
   });
 
-const parseXML = (fileName, type, prevDir = 1, prependDir = '') =>
+const parseXML = (fileName: string, type: string, prevDir = 1, prependDir = '') =>
   new Promise((resolve, reject) => {
     npm.commands['run-script'](
       [

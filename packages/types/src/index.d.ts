@@ -24,3 +24,7 @@ interface Nodes {
 declare var RED: {
   nodes: Nodes;
 };
+
+interface JQuery {
+  select2(config: { [key: string]: any }): JQuery;
+}

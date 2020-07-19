@@ -1,6 +1,6 @@
 {
     "name": "node-red-contrib-smart-home",
-    "version": "0.0.10",
+    "version": "0.0.13",
     "license": "Apache-2.0",
     "workspaces": [
         "packages/*"
@@ -71,12 +71,17 @@
         "plop:node-red-package": "plop node-red-package",
         "prepublish": "node publish.js -t pre",
         "publish": "node publish.js -t post",
-        "bump-version": "yarn version --patch"
+        "bump-version": "yarn version --patch --no-git-tag-version"
     },
     "node-red": {
         "nodes": {
             "common-ui": "packages/common-ui/build/common-ui.js",
             "node-zwave-device-in": "packages/node-zwave-device-in/build/node-zwave-device-in.js"
+        }
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "yarn bump-version; git add ."
         }
     }
 }

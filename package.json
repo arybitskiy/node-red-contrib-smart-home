@@ -81,7 +81,7 @@
     },
     "husky": {
         "hooks": {
-            "pre-commit": "yarn bump-version; git add ."
+            "pre-push": "yarn bump-version"
         }
     }
 }

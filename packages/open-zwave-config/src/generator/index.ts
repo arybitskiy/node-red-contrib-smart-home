@@ -68,13 +68,13 @@ const parseXSD = (fileName: string) =>
     });
   });
 
-const parseXML = (fileName, type, prevDir = 1) =>
+const parseXML = (fileName, type, prevDir = 1, prependDir = '') =>
   new Promise((resolve, reject) => {
     npm.commands['run-script'](
       [
         'plop:typed-config',
         path.resolve(configDir, fileName),
-        fileName,
+        `${prependDir}${fileName}`,
         `${repeat('../', prevDir)}github.com/OpenZWave/${type}`,
       ],
       err => {
@@ -144,7 +144,7 @@ npm.load(async err => {
         });
         await Promise.all(
           files.map(async fileName => {
-            await parseXML(fileName, 'device_configuration', 2);
+            await parseXML(fileName, 'device_configuration', 3, 'devices/');
             bar.tick(1);
           })
         );

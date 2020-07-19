@@ -1,0 +1,177 @@
+import type { document } from "../../../github.com/OpenZWave/device_configuration";
+
+const config: Partial<document> = {
+  Product: {
+    Revision: 3,
+    CommandClass: [
+      {
+        id: "112",
+        Value: [
+          {
+            genre: "config",
+            index: "1",
+            label: "Dimming/Brightening Step Level",
+            max: "99",
+            min: "0",
+            size: "1",
+            type: "byte",
+            units: "%",
+            value: "3",
+            Help:
+              "Each step of the dimming process will increase or decrease the brightness by this percentage. Increasing this will make the transition time slower. 0 is instant.",
+          },
+          {
+            genre: "config",
+            index: "2",
+            label: "Minimum Dimming Level",
+            max: "99",
+            min: "1",
+            size: "1",
+            type: "byte",
+            units: "%",
+            value: "1",
+            Help:
+              "This is the minimum value to which the switch will dim. Useful for CFL or LED lights that otherwise won't come on or come on but flicker/buzz.",
+          },
+          {
+            genre: "config",
+            index: "3",
+            label: "LED Indicator Control",
+            max: "255",
+            min: "0",
+            size: "1",
+            type: "list",
+            units: "",
+            value: "0",
+            Help:
+              "Choose if you want the LED indicator to turn on when switch is on or off or disable completely.",
+            Item: [
+              { label: "LED on when switch is off", value: "0" },
+              { label: "LED on when switch is on", value: "1" },
+              { label: "LED is disabled", value: "2" },
+              { label: "LED is always on", value: "3" },
+            ],
+          },
+          {
+            genre: "config",
+            index: "4",
+            label: "Orientation",
+            max: "255",
+            min: "0",
+            size: "1",
+            type: "list",
+            units: "",
+            value: "0",
+            Help: "Controls the on/off orientation of the rocker switch",
+            Item: [
+              { label: "Normal", value: "0" },
+              { label: "Inverted", value: "1" },
+            ],
+          },
+          {
+            genre: "config",
+            index: "5",
+            label: "Automatically turn switch off after interval",
+            max: "32767",
+            min: "0",
+            size: "2",
+            type: "short",
+            units: "seconds",
+            value: "0",
+            Help:
+              "Automatically turn the switch off after this many seconds. 0 is disabled, or up to 32767 seconds",
+          },
+          {
+            genre: "config",
+            index: "6",
+            label: "Association Group 3 Behavior",
+            max: "255",
+            min: "0",
+            size: "1",
+            type: "list",
+            units: "",
+            value: "0",
+            Help: "Change how devices respond when associated in group 3",
+            Item: [
+              { label: "Dim up/down", value: "0" },
+              { label: "Keep in sync", value: "1" },
+            ],
+          },
+          {
+            genre: "config",
+            index: "7",
+            label: "Association Group 3 Configuration",
+            max: "255",
+            min: "0",
+            size: "1",
+            type: "list",
+            units: "",
+            value: "1",
+            Help: "Send association group 3 commands on these types of actions",
+            Item: [
+              { label: "none", value: "0" },
+              { label: "local", value: "1" },
+              { label: "3way", value: "2" },
+              { label: "3way & local", value: "3" },
+              { label: "z-wave hub", value: "4" },
+              { label: "z-wave hub & local", value: "5" },
+              { label: "z-wave hub & 3-way", value: "6" },
+              { label: "z-wave hub & local & 3way", value: "7" },
+              { label: "timer", value: "8" },
+              { label: "timer & local", value: "9" },
+              { label: "timer & 3-way", value: "10" },
+              { label: "timer & 3-way & local", value: "11" },
+              { label: "timer & z-wave hub", value: "12" },
+              { label: "timer & z-wave hub & local", value: "13" },
+              { label: "timer & z-wave hub & 3-way", value: "14" },
+              { label: "all", value: "15" },
+            ],
+          },
+          {
+            genre: "config",
+            index: "8",
+            label: "Default value when turned on at switch",
+            max: "99",
+            min: "0",
+            size: "1",
+            type: "byte",
+            value: "0",
+            Help:
+              'Default brightness when switch is turned on locally.  0 is previous. Firmware 1.02+"',
+          },
+          {
+            genre: "config",
+            index: "9",
+            label: "Default value when turned on via zwave",
+            max: "99",
+            min: "0",
+            size: "1",
+            type: "byte",
+            value: "0",
+            Help:
+              'Default brightness when switch is turned on via zwave.  0 is previous.  Firmware 1.02+"',
+          },
+        ],
+      },
+      {
+        id: "133",
+        Associations: [
+          {
+            num_groups: "3",
+            Group: [
+              { index: "1", label: "Lifeline", max_associations: "5" },
+              { index: "2", label: "Basic_Set", max_associations: "5" },
+              {
+                index: "3",
+                label: "Switch_Multilevel_Set",
+                max_associations: "5",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+};
+
+export default config;

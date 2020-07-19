@@ -1,6 +1,6 @@
 {
     "name": "node-red-contrib-smart-home",
-    "version": "0.0.18",
+    "version": "0.0.19",
     "license": "Apache-2.0",
     "workspaces": [
         "packages/*"
@@ -82,7 +82,7 @@
     },
     "husky": {
         "hooks": {
-            "pre-push": "yarn bump-version"
+            "pre-push": "yarn tsc; yarn test; yarn lint"
         }
     }
 }

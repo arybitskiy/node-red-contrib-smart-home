@@ -1,6 +1,6 @@
 {
     "name": "node-red-contrib-smart-home",
-    "version": "0.0.16",
+    "version": "0.0.17",
     "license": "Apache-2.0",
     "workspaces": [
         "packages/*"
@@ -71,7 +71,8 @@
         "plop:node-red-package": "plop node-red-package",
         "prepublish": "node publish.js -t pre",
         "publish": "node publish.js -t post",
-        "bump-version": "yarn version --patch"
+        "bump-version": "yarn version --patch",
+        "push": "yarn bump-version && git push"
     },
     "node-red": {
         "nodes": {

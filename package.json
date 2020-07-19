@@ -6,7 +6,7 @@
     "packages/*"
   ],
   "engines": {
-    "node": ">=12.18.0"
+    "node": ">=12.17.0"
   },
   "devDependencies": {
     "@babel/core": "^7.10.5",

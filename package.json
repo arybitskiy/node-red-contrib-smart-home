@@ -70,7 +70,7 @@
         "plop:node-red-package": "plop node-red-package",
         "prepublish": "node publish.js -t pre",
         "publish": "node publish.js -t post",
-        "commit": "git commit; yarn version --patch"
+        "precommit": "yarn version --patch"
     },
     "node-red": {
         "nodes": {

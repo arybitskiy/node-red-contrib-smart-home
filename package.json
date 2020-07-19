@@ -73,7 +73,7 @@
         "publish": "node publish.js -t post",
         "bump-version": "yarn version --patch",
         "push": "yarn bump-version && git push",
-        "deploy": "git add .; git commit; yarn bump-version; npm publish"
+        "deploy": "git add .; git commit; yarn bump-version; git push; npm publish"
     },
     "node-red": {
         "nodes": {

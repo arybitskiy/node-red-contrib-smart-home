@@ -12,7 +12,7 @@
   },
   "scripts": {
     "lint": "eslint src --ext .ts,.tsx,.js --color",
-    "test": "jest --env=jsdom --coverage --colors",
+    "test-maybe": "jest --env=jsdom --coverage --colors",
     "tsc": "tsc -p ./tsconfig.json",
     "prettify": "yarn prettier --write ./src/"
   },

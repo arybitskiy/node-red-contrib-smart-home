@@ -1,23 +1,34 @@
-import { devicesDropdownOptions, getDeviceNameById } from '@sh/open-zwave-config';
-import { SELECT_DEVICE } from '@sh/text-constants';
+import { ConfigNodeZwavePickDeviceFrontendProps } from "@sh/config-node-zwave-pick-device";
 
-RED.nodes.registerType('node-zwave-device-in', {
-  category: 'category',
-  color: '#E9967A',
+interface NodeZwaveDeviceInConfig {
+  name: string;
+  device: string;
+}
+
+RED.nodes.registerType<NodeZwaveDeviceInConfig>("node-zwave-device-in", {
+  category: "category",
+  color: "#E9967A",
   defaults: {
-    name: { value: '' },
-    device: { value: '' },
+    name: { value: "" },
+    device: {
+      value: "",
+      type: "config-node-zwave-pick-device",
+      required: true,
+    },
   },
   inputs: 1,
-  outputs: 1,
-  icon: 'icon',
+  outputs: 0,
+  icon: "icon",
   label: function () {
-    return this.name || (this.device ? getDeviceNameById(this.device) : SELECT_DEVICE);
+    const device = RED.nodes.node<ConfigNodeZwavePickDeviceFrontendProps>(
+      this.device
+    );
+
+    return this.name || device.label();
   },
   oneditprepare: function () {
-    console.log(this.device);
-    $('#node-input-device')
-      .select2({ theme: 'dark-adminlte', data: devicesDropdownOptions(true) })
+    $("#node-input-device")
+      .select2({ theme: "dark-adminlte" })
       .val(this.device);
   },
 });

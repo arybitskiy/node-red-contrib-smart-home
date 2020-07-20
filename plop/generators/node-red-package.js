@@ -28,6 +28,8 @@ module.exports = {
     generateAdd('tsconfig.json'),
 
     /* SRC */
+    generateAdd('src/index.ts', 'src/index.ts'),
+    generateAdd('src/types.ts', 'src/types.ts'),
     generateAdd('src/name-backend.ts', 'src/{{name}}-backend.ts'),
     generateAdd('src/name-form.html', 'src/{{name}}-form.html'),
     generateAdd('src/name-frontend.ts', 'src/{{name}}-frontend.ts'),

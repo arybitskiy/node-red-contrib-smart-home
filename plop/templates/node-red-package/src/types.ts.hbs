@@ -1,0 +1,11 @@
+import type * as NodeRed from 'node-red';
+
+interface {{startCase name}}BaseProps {
+  name: string;
+}
+
+export interface {{startCase name}}Backend extends NodeRed.Node {}
+
+export interface {{startCase name}}BackendProps extends {{startCase name}}BaseProps, NodeRed.NodeProperties {}
+
+export interface {{startCase name}}FrontendProps extends {{startCase name}}BaseProps {}

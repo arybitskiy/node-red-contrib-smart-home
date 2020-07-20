@@ -1,8 +1,6 @@
 import * as NodeRed from 'node-red';
 
-interface {{startCase name}}Backend extends NodeRed.Node {}
-
-interface {{startCase name}}BackendProps extends NodeRed.NodeProperties {}
+import type { {{startCase name}}Backend, {{startCase name}}BackendProps } from './types';
 
 export default (RED: NodeRed.Red) => {
   function {{startCase name}}Constructor(this: {{startCase name}}Backend, props: {{startCase name}}BackendProps) {

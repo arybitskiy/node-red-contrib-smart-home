@@ -20,10 +20,13 @@
     "start:frontend": "yarn build-with-webpack -t frontend -n node-zwave-device-in -w",
     "start": "concurrently \"yarn start:backend\" \"yarn start:frontend\"",
     "test-maybe": "jest --env=jsdom --coverage --colors",
-    "tsc": "tsc -p ./tsconfig.json"
+    "tsc": "tsc -p ./tsconfig.json",
+    "prettify": "yarn prettier --write ./src/"
   },
   "dependencies": {
     "@sh/open-zwave-config": "0.0.1",
-    "@sh/text-constants": "0.0.1"
+    "@sh/text-constants": "0.0.1",
+    "@sh/config-node-zwave-pick-device": "0.0.1",
+    "@sh/common-utils": "0.0.1"
   }
 }

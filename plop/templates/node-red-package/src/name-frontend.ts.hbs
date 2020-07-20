@@ -1,4 +1,6 @@
-RED.nodes.registerType('{{name}}', {
+import { {{startCase name}}FrontendProps } from './types';
+
+RED.nodes.registerType<{{startCase name}}FrontendProps>('{{name}}', {
   category: 'category',
   color: '#E9967A',
   defaults: {

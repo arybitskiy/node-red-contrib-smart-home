@@ -1,25 +1,31 @@
 import * as NodeRed from 'node-red';
 
-import { getDeviceNameById } from '@sh/open-zwave-config';
+import { parsePayloadAsJSON, detectOpenZWaveEvent, OpenZWaveEventType } from '@sh/common-utils';
 
-interface NodeZwaveDeviceInBackend extends NodeRed.Node {}
-
-interface NodeZwaveDeviceInBackendProps extends NodeRed.NodeProperties {
-  name: string;
-  device: string;
-}
+import type { NodeZwaveDeviceInBackend, NodeZwaveDeviceInBackendProps, OpenZWaveValueChangedPayload } from './types';
 
 export default (RED: NodeRed.Red) => {
   function NodeZwaveDeviceInConstructor(this: NodeZwaveDeviceInBackend, props: NodeZwaveDeviceInBackendProps) {
     RED.nodes.createNode(this, props);
     const { device } = props;
 
-    this.on('input', (msg, send, done) => {
-      send({
-        ...msg,
-        payload: getDeviceNameById(device),
-      });
-      done();
+    this.device = RED.nodes.getNode(device) as any;
+
+    this.on('input', (msg, _, done) => {
+      const zWaveEventType = detectOpenZWaveEvent(msg.topic);
+      if (zWaveEventType === OpenZWaveEventType.VALUE_CHANGED) {
+        const {
+          data: [, , { node_id: nodeId, class_id: commandClassId, instance: instanceId, index: valueId, value }],
+        } = parsePayloadAsJSON<OpenZWaveValueChangedPayload>(msg.payload);
+        if (this.device && this.device.getNodeId() === nodeId) {
+          this.device
+            .setValue(commandClassId, instanceId, valueId, value)
+            .then(done)
+            .catch((e: Error) => {
+              this.error(e.toString());
+            });
+        }
+      }
     });
   }
 

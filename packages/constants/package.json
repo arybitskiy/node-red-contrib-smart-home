@@ -1,0 +1,19 @@
+{
+  "name": "@sh/constants",
+  "version": "0.0.1",
+  "private": true,
+  "engines": {
+    "node": ">=12.17.0"
+  },
+  "node-red": {
+    "nodes": {
+      "node": "build/constants.js"
+    }
+  },
+  "scripts": {
+    "lint": "eslint src --ext .ts,.tsx,.js --color",
+    "tsc": "tsc -p ./tsconfig.json",
+    "prettify": "yarn prettier --write ./src/"
+  },
+  "main": "./src/index.ts"
+}

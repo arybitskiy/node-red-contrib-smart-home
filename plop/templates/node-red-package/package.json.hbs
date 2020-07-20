@@ -20,6 +20,8 @@
     "start:frontend": "yarn build-with-webpack -t frontend -n {{name}} -w",
     "start": "concurrently \"yarn start:backend\" \"yarn start:frontend\"",
     "test": "jest --env=jsdom --coverage --colors",
-    "tsc": "tsc -p ./tsconfig.json"
-  }
+    "tsc": "tsc -p ./tsconfig.json",
+    "prettify": "yarn prettier --write ./src/"
+  },
+  "main": "./src/index.ts"
 }

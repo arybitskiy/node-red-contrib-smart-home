@@ -1,0 +1,20 @@
+{
+  "name": "@sh/common-utils",
+  "version": "0.0.1",
+  "private": true,
+  "engines": {
+    "node": ">=12.17.0"
+  },
+  "node-red": {
+    "nodes": {
+      "node": "build/common-utils.js"
+    }
+  },
+  "scripts": {
+    "lint": "eslint src --ext .ts,.tsx,.js --color",
+    "test": "jest --env=jsdom --coverage --colors",
+    "tsc": "tsc -p ./tsconfig.json",
+    "prettify": "yarn prettier --write ./src/"
+  },
+  "main": "./src/index.ts"
+}

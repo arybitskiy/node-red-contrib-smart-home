@@ -68,23 +68,26 @@
         "build": "lerna --no-bail run --parallel build",
         "clean": "lerna --no-bail run --parallel clean",
         "start": "lerna --no-bail run --parallel start",
-        "plop:node-red-package": "plop node-red-package",
+        "plop:node-red-package": "plop node-red-package; yarn",
         "prepublish": "node publish.js -t pre",
         "publish": "node publish.js -t post",
         "bump-version": "yarn version --patch",
         "push": "yarn bump-version && git push",
-        "deploy": "git add . && git commit && yarn bump-version && git push && npm publish"
+        "deploy": "git add . && git commit && yarn bump-version && git push && npm publish",
+        "prettify": "lerna --no-bail run --parallel prettify"
     },
     "node-red": {
         "nodes": {
             "common-ui": "packages/common-ui/build/common-ui.js",
-            "node-zwave-device-in": "packages/node-zwave-device-in/build/node-zwave-device-in.js"
+            "node-zwave-device-in": "packages/node-zwave-device-in/build/node-zwave-device-in.js",
+            "config-node-zwave-pick-device": "packages/config-node-zwave-pick-device/build/config-node-zwave-pick-device.js",
+            "constants": "packages/constants/build/constants.js",
+            "common-utils": "packages/common-utils/build/common-utils.js"
         }
     },
     "husky": {
         "hooks": {
             "pre-push": "yarn tsc; yarn test; yarn lint"
         }
-    },
-    "private": true
+    }
 }

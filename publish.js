@@ -6,7 +6,7 @@ const packageJSONFilePath = path.resolve(__dirname, './package.json');
 
 const readFile = () => JSON.parse(fs.readFileSync(packageJSONFilePath));
 
-const writeFile = contents => fs.writeFileSync(packageJSONFilePath, JSON.stringify(contents, null, 4));
+const writeFile = contents => fs.writeFileSync(packageJSONFilePath, JSON.stringify(contents, null, 4) + '\n');
 
 const config = cli.parse({
   type: ['t', 'Before/after publish (pre|post)', ['pre', 'post'], null],

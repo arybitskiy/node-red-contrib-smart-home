@@ -12,6 +12,7 @@ const valueSelectConfig = {
   multiple: true,
   placeholder: SELECT_VALUE,
   width: '100%',
+  closeOnSelect: false,
 };
 
 // Dirty hack

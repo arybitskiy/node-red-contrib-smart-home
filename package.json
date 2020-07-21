@@ -88,5 +88,6 @@
         "hooks": {
             "pre-push": "yarn tsc; yarn test; yarn lint"
         }
-    }
+    },
+    "private": true
 }

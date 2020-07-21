@@ -7,14 +7,22 @@ import type { NodeZwaveDeviceOutFrontendProps } from './types';
 
 const emptyData = [];
 
+const valueSelectConfig = {
+  theme: 'dark-adminlte',
+  multiple: true,
+  placeholder: SELECT_VALUE,
+  width: '100%',
+};
+
 // Dirty hack
 const restartSelect = (select: any, data: any) => {
-  select.select2('destroy').html('').select2({
-    theme: 'dark-adminlte',
-    data,
-    multiple: true,
-    placeholder: SELECT_VALUE,
-  });
+  select
+    .select2('destroy')
+    .html('')
+    .select2({
+      data,
+      ...valueSelectConfig,
+    });
 };
 
 RED.nodes.registerType<NodeZwaveDeviceOutFrontendProps>('node-zwave-device-out', {
@@ -43,10 +51,8 @@ RED.nodes.registerType<NodeZwaveDeviceOutFrontendProps>('node-zwave-device-out',
   },
   oneditprepare: function () {
     const valueInput = $('#node-input-value').select2({
-      theme: 'dark-adminlte',
       data: emptyData,
-      multiple: true,
-      placeholder: SELECT_VALUE,
+      ...valueSelectConfig,
     });
 
     const deviceInput = $('#node-input-device')
@@ -55,9 +61,10 @@ RED.nodes.registerType<NodeZwaveDeviceOutFrontendProps>('node-zwave-device-out',
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       .on('change', async () => {
         const device = deviceInput.val();
+
         restartSelect(valueInput, emptyData);
         if (typeof device === 'string' && new RegExp('^[a-z0-9]+\\.[a-z0-9]+$').exec(device)) {
-          const data = await $.getJSON(READ_CONTEXT_ENDPOINT, { node_id: this.device });
+          const data = await $.getJSON(READ_CONTEXT_ENDPOINT, { node_id: this.device || device });
           restartSelect(valueInput, getDeviceOptions(data, false));
           valueInput.val(this.value).trigger('change');
         }

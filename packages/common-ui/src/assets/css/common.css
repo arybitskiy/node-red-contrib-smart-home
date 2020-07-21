@@ -7,3 +7,7 @@
   background-color: transparent;
   line-height: 37px;
 }
+
+.select2-container--dark-adminlte .select2-selection--multiple .select2-selection__rendered li {
+  color: #555;
+}

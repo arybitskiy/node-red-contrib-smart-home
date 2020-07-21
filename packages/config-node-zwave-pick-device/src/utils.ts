@@ -16,7 +16,6 @@ export const readNodeContext = (node: ConfigNodeZwavePickDeviceBackend): Promise
 
 export const writeNodeContext = (node: ConfigNodeZwavePickDeviceBackend, context: NodeContext): Promise<void> =>
   new Promise((resolve, reject) => {
-    console.log('context: ', context);
     node.context().set(CONTEXT, context, NODE_RED_FILE_STORAGE, (err: Error) => {
       if (err) {
         reject(err);

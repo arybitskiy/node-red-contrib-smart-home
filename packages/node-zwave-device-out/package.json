@@ -1,0 +1,33 @@
+{
+  "name": "@sh/node-zwave-device-out",
+  "version": "0.0.1",
+  "private": true,
+  "engines": {
+    "node": ">=12.17.0"
+  },
+  "node-red": {
+    "nodes": {
+      "node": "build/node-zwave-device-out.js"
+    }
+  },
+  "scripts": {
+    "build:backend": "yarn build-with-webpack -t backend -n node-zwave-device-out",
+    "build:frontend": "yarn build-with-webpack -t frontend -n node-zwave-device-out",
+    "build": "concurrently \"yarn build:backend\" \"yarn build:frontend\"",
+    "clean": "rimraf build coverage",
+    "lint": "eslint src --ext .ts,.tsx,.js --color",
+    "start:backend": "yarn build-with-webpack -t backend -n node-zwave-device-out -w",
+    "start:frontend": "yarn build-with-webpack -t frontend -n node-zwave-device-out -w",
+    "start": "concurrently \"yarn start:backend\" \"yarn start:frontend\"",
+    "test": "jest --env=jsdom --coverage --colors",
+    "tsc": "tsc -p ./tsconfig.json",
+    "prettify": "yarn prettier --write ./src/"
+  },
+  "main": "./src/index.ts",
+  "dependencies": {
+    "@sh/open-zwave-config": "0.0.1",
+    "@sh/text-constants": "0.0.1",
+    "@sh/config-node-zwave-pick-device": "0.0.1",
+    "@sh/common-utils": "0.0.1"
+  }
+}

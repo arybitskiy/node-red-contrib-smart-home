@@ -1,7 +1,10 @@
 import { NODE_RED_FILE_STORAGE } from '@sh/constants';
 
-import { CONTEXT } from './constants';
+import { CONTEXT, VALUES } from './constants';
 import { ConfigNodeZwavePickDeviceBackend, NodeContext, NodeValue, NodeContextCommandClass } from './types';
+
+export const getValueKey = (commandClassId: number, instanceId: number, valueId: number) =>
+  `${VALUES}-${commandClassId}-${instanceId}-${valueId}`;
 
 export const readNodeContext = (node: ConfigNodeZwavePickDeviceBackend): Promise<NodeContext> =>
   new Promise(resolve => {

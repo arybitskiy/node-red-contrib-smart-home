@@ -21,16 +21,27 @@ type NodeClassProps = {
   icon?: string;
 };
 
+interface NodeExternalProps {
+  id: string;
+}
+
 type NodeClassMethods<NodeConfig> = {
-  label: (this: NodeClassProps & NodeClassMethods<NodeConfig> & NodeClassConfig<NodeConfig>, ...args: any) => string;
-  oneditprepare?: (this: NodeClassProps & NodeClassMethods<NodeConfig> & NodeClassConfig<NodeConfig>) => void;
+  label: (
+    this: NodeClassProps & NodeExternalProps & NodeClassMethods<NodeConfig> & NodeClassConfig<NodeConfig>,
+    ...args: any
+  ) => string;
+  oneditprepare?: (
+    this: NodeClassProps & NodeExternalProps & NodeClassMethods<NodeConfig> & NodeClassConfig<NodeConfig>
+  ) => void;
 };
 
 type NodeClass<NodeConfig> = NodeClassProps & NodeClassMethods<NodeConfig> & Partial<NodeClassConfig<NodeConfig>>;
 
 interface Nodes {
   registerType: <NodeConfig>(typeName: string, typeClass: NodeClass<NodeConfig>) => void;
-  node: <NodeConfig>(nodeId: string) => NodeClassProps & NodeClassMethods<NodeConfig> & NodeClassConfig<NodeConfig>;
+  node: <NodeConfig>(
+    nodeId: string
+  ) => (NodeClassProps & NodeExternalProps & NodeClassMethods<NodeConfig> & NodeClassConfig<NodeConfig>) | null;
 }
 
 interface Red {
@@ -41,5 +52,6 @@ declare var RED: Red;
 
 interface JQuery {
   select2(config: { [key: string]: any }): JQuery;
+  select2(command: string, params: any): JQuery;
   typedInput(config: { [key: string]: any }): JQuery;
 }

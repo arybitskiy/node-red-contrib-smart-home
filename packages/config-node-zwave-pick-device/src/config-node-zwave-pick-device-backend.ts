@@ -2,6 +2,7 @@ import * as NodeRed from 'node-red';
 
 import type { ConfigNodeZwavePickDeviceBackend, ConfigNodeZwavePickDeviceBackendProps } from './types';
 import { readNodeContext, writeNodeContext, setValue } from './utils';
+import api from './api';
 
 export default (RED: NodeRed.Red) => {
   function ConfigNodeZwavePickDeviceConstructor(
@@ -26,4 +27,6 @@ export default (RED: NodeRed.Red) => {
   }
 
   RED.nodes.registerType('config-node-zwave-pick-device', ConfigNodeZwavePickDeviceConstructor);
+
+  api(RED);
 };

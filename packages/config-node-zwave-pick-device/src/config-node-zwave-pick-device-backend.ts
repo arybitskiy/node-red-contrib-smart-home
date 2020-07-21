@@ -17,6 +17,7 @@ export default (RED: NodeRed.Red) => {
     this.device = device;
 
     this.setValue = async (commandClassId, instanceId, valueId, value) => {
+      console.log('commandClassId, instanceId, valueId, value: ', commandClassId, instanceId, valueId, value);
       const context = await readNodeContext(this);
       await writeNodeContext(this, setValue(context, commandClassId, instanceId, valueId, value));
     };

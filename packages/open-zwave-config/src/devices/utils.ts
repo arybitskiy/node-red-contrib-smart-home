@@ -1,2 +1,1 @@
-export const getDeviceName = ({ manufacturerName, productName }: { manufacturerName: string; productName: string }) =>
-  `${manufacturerName}: ${productName}`;
+export const getDeviceName = ({ productName }: { productName: string }) => `${productName}`;

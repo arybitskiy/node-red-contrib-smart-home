@@ -6,6 +6,7 @@ import { SELECT_VALUE } from '@sh/text-constants';
 
 import { LocalizationConfig } from './generated';
 import { getLabel } from './utils';
+import type { Option, DropdownOptions } from './types';
 
 export const localization = memoize(() => {
   if (!LocalizationConfig?.Localization?.CommandClass) {
@@ -30,20 +31,28 @@ export const localization = memoize(() => {
 export const getDeviceOptions = (context: NodeContext, addEmpty = false) =>
   context.commandClasses.reduce(
     (acc, { id: commandClassId, values }) => {
+      const options = [] as Option[];
+
       values.forEach(({ instanceId, valueId }) => {
         const key = getValueKey(commandClassId, instanceId, valueId);
+
         const label =
           localization()
             .commandClasses.find(({ id }) => id === commandClassId)
             ?.values?.find(({ id }) => id === valueId)?.label || key;
 
-        acc.push({
+        options.push({
           id: key,
           text: label,
         });
       });
 
+      acc.push({
+        text: `CommandClass ${commandClassId}`,
+        children: options,
+      });
+
       return acc;
     },
-    [...(addEmpty ? [{ id: '', text: SELECT_VALUE }] : [])] as { id: string; text: string }[]
+    [...(addEmpty ? [{ id: '', text: SELECT_VALUE }] : [])] as DropdownOptions
   );

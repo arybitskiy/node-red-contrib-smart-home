@@ -19,7 +19,7 @@
     "start:backend": "yarn build-with-webpack -t backend -n node-zwave-device-out -w",
     "start:frontend": "yarn build-with-webpack -t frontend -n node-zwave-device-out -w",
     "start": "concurrently \"yarn start:backend\" \"yarn start:frontend\"",
-    "test": "jest --env=jsdom --coverage --colors",
+    "test-maybe": "jest --env=jsdom --coverage --colors",
     "tsc": "tsc -p ./tsconfig.json",
     "prettify": "yarn prettier --write ./src/"
   },

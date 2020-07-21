@@ -6,9 +6,22 @@ export default (RED: NodeRed.Red) => {
   function NodeZwaveDeviceOutConstructor(this: NodeZwaveDeviceOutBackend, props: NodeZwaveDeviceOutBackendProps) {
     RED.nodes.createNode(this, props);
 
-    this.on('input', (msg, send, done) => {
-      send(msg);
-      done();
+    const { device, values } = props;
+
+    this.device = RED.nodes.getNode(device) as any;
+
+    const valueChangeListener = msg => {
+      this.send(msg);
+    };
+
+    values.forEach(valueEvent => {
+      this.device?.on(valueEvent, valueChangeListener);
+    });
+
+    this.on('close', () => {
+      values.forEach(valueEvent => {
+        this.device?.off(valueEvent, valueChangeListener);
+      });
     });
   }
 

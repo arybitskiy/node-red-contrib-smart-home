@@ -38,7 +38,7 @@ RED.nodes.registerType<NodeZwaveDeviceOutFrontendProps>('node-zwave-device-out',
       type: 'config-node-zwave-pick-device',
       required: true,
     },
-    value: {
+    values: {
       value: [],
     },
   },
@@ -51,7 +51,7 @@ RED.nodes.registerType<NodeZwaveDeviceOutFrontendProps>('node-zwave-device-out',
     return this.name || (device ? device.label() : 'node-zwave-device-out');
   },
   oneditprepare: function () {
-    const valueInput = $('#node-input-value').select2({
+    const valueInput = $('#node-input-values').select2({
       data: emptyData,
       ...valueSelectConfig,
     });
@@ -67,7 +67,7 @@ RED.nodes.registerType<NodeZwaveDeviceOutFrontendProps>('node-zwave-device-out',
         if (typeof device === 'string' && new RegExp('^[a-z0-9]+\\.[a-z0-9]+$').exec(device)) {
           const data = await $.getJSON(READ_CONTEXT_ENDPOINT, { node_id: this.device || device });
           restartSelect(valueInput, getDeviceOptions(data, false));
-          valueInput.val(this.value).trigger('change');
+          valueInput.val(this.values).trigger('change');
         }
       });
   },

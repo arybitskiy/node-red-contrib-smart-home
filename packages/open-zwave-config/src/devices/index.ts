@@ -8,6 +8,7 @@ import type { ManufacturerSpecific } from '../manufacturerSpecific';
 import { deviceMapper } from './deviceMapper';
 import type { DeviceMapper } from './deviceMapper';
 import { getDeviceName } from './utils';
+import { OptGroup, DropdownOptions } from '../types';
 
 const deviceInfo = manufacturerSpecific();
 
@@ -52,10 +53,33 @@ export const getDevicesObject = memoize(
 
 export const devicesDropdownOptions = memoize((addEmpty = false) => [
   ...(addEmpty ? [{ id: '', text: SELECT_DEVICE }] : []),
-  ...getDevicesList().map(device => ({
-    id: device.key,
-    text: getDeviceName(device),
-  })),
+  ...getDevicesList().reduce((acc, device) => {
+    const option = {
+      id: device.key,
+      text: getDeviceName(device),
+    };
+
+    const optgroup = (acc.find(({ text }) => text === device.manufacturerName) || {
+      text: device.manufacturerName,
+      children: [],
+    }) as OptGroup;
+
+    optgroup.children.push(option);
+
+    if(acc.find(({ text }) => text === device.manufacturerName)) {
+      acc.map(optgr => {
+        if (optgroup.text === optgr.text) {
+          return optgroup;
+        }
+  
+        return optgr;
+      });
+    } else {
+      acc.push(optgroup);
+    }
+
+    return acc;
+  }, [] as DropdownOptions),
 ]);
 
 export const getDeviceNameById = (deviceId: string) => {

@@ -6,25 +6,33 @@ interface ConfigNodeZwavePickDeviceBaseProps {
   device: string;
 }
 
+export type NodeValue = string | number | boolean;
+
 export interface ConfigNodeZwavePickDeviceBackend extends NodeRed.Node {
   name: string;
   node_id: number;
   device: string;
 
-  setValue: (
-    commandClassId: number,
-    instanceId: number,
-    valueId: number,
-    value: string | number | boolean
-  ) => Promise<void>;
+  addValue: (commandClassId: number, instanceId: number, valueId: number, value: NodeValue) => Promise<void>;
 
-  getValue: (
-    commandClassId: number,
-    instanceId: number,
-    valueId: number
-  ) => Promise<string | number | boolean | undefined>;
+  setValue: (commandClassId: number, instanceId: number, valueId: number, value: NodeValue) => Promise<void>;
 
   getNodeId: () => number;
+}
+
+interface NodeContextValue {
+  instanceId: number;
+  valueId: number;
+  value: NodeValue;
+}
+
+export interface NodeContextCommandClass {
+  id: number;
+  values: NodeContextValue[];
+}
+
+export interface NodeContext {
+  commandClasses: NodeContextCommandClass[];
 }
 
 export interface ConfigNodeZwavePickDeviceBackendProps

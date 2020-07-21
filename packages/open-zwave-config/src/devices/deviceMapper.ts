@@ -32,7 +32,7 @@ export const deviceMapper = (device: Partial<deviceConfig>) => {
         }) => ({
           genre: genre as DeviceValueGenre,
           index: parseInt(index, 10),
-          instance: parseInt(instance || '0', 10),
+          instance: parseInt(instance || '1', 10),
           min: typeof min === 'undefined' ? min : parseInt(min, 10),
           max: typeof max === 'undefined' ? max : parseInt(max, 10),
           readOnly: typeof read_only === 'undefined' ? false : read_only === 'true',

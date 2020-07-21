@@ -5,8 +5,8 @@ import { ConfigNodeZwavePickDeviceBackend, NodeContext, NodeValue, NodeContextCo
 
 export const readNodeContext = (node: ConfigNodeZwavePickDeviceBackend): Promise<NodeContext> =>
   new Promise(resolve => {
-    node.context().get(CONTEXT, NODE_RED_FILE_STORAGE, (err: Error, context: NodeContext) => {
-      if (err) {
+    node.context().get(CONTEXT, NODE_RED_FILE_STORAGE, (err: Error, context: NodeContext | undefined) => {
+      if (err || typeof context === 'undefined') {
         resolve({ commandClasses: [] });
       } else {
         resolve(context);

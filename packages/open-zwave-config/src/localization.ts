@@ -36,19 +36,23 @@ export const getDeviceOptions = (context: NodeContext, addEmpty = false) =>
       values.forEach(({ instanceId, valueId }) => {
         const key = getValueKey(commandClassId, instanceId, valueId);
 
-        const label =
+        const optionLabel =
           localization()
             .commandClasses.find(({ id }) => id === commandClassId)
             ?.values?.find(({ id }) => id === valueId)?.label || key;
 
         options.push({
           id: key,
-          text: label,
+          text: optionLabel,
         });
       });
 
+      const optgroupLabel =
+        localization().commandClasses.find(({ id }) => id === commandClassId)?.label ||
+        `CommandClass ${commandClassId}`;
+
       acc.push({
-        text: `CommandClass ${commandClassId}`,
+        text: optgroupLabel,
         children: options,
       });
 

@@ -18,6 +18,7 @@ export default (RED: NodeRed.Red) => {
           data: [, , { node_id: nodeId, class_id: commandClassId, instance: instanceId, index: valueId, value }],
         } = parsePayloadAsJSON<OpenZWaveValueChangedPayload>(msg.payload);
         if (this.device && this.device.getNodeId() === nodeId) {
+          console.log(msg.payload);
           this.device
             .setValue(commandClassId, instanceId, valueId, value)
             .then(done)

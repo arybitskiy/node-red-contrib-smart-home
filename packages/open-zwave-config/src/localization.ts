@@ -28,18 +28,38 @@ export const localization = memoize(() => {
   };
 });
 
+export const getValueOptionFromLocalization = (
+  commandClassId: number,
+  valueId: number,
+  index: number,
+  optionValue: string
+) => {
+  const option = localization()
+    .commandClasses.find(({ id }) => id === commandClassId)
+    ?.values?.find(({ id }) => id === valueId)
+    ?.options?.find(({ label }) => label === optionValue);
+
+  if (option) {
+    return {
+      id: option.id,
+      index,
+      value: optionValue,
+    };
+  }
+};
+
 export const getDeviceOptions = (context: NodeContext, addEmpty = false) =>
   context.commandClasses.reduce(
     (acc, { id: commandClassId, values }) => {
       const options = [] as Option[];
 
-      values.forEach(({ instanceId, valueId }) => {
-        const key = getValueKey(commandClassId, instanceId, valueId);
+      values.forEach(value => {
+        const key = getValueKey(commandClassId, value);
 
         const optionLabel =
           localization()
             .commandClasses.find(({ id }) => id === commandClassId)
-            ?.values?.find(({ id }) => id === valueId)?.label || key;
+            ?.values?.find(({ id }) => id === value.id)?.label || key;
 
         options.push({
           id: key,

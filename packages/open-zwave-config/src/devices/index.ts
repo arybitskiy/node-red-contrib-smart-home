@@ -51,6 +51,28 @@ export const getDevicesObject = memoize(
     }, {}) as { [key: string]: Device }
 );
 
+export const getValueOptionFromManufacturerSpecific = (
+  device: string,
+  commandClassId: number,
+  valueId: number,
+  index: number,
+  optionValue: string
+) => {
+  // prettier-ignore
+  const option = getDevicesObject()[device]
+    .commandClasses.find(({ id }) => id === commandClassId)
+    ?.values?.find(({ index }) => index === valueId)
+    ?.items?.find(({ label }) => label === optionValue);
+
+  if (option) {
+    return {
+      id: parseInt(option.value, 10),
+      index,
+      value: option.label,
+    };
+  }
+};
+
 export const devicesDropdownOptions = memoize((addEmpty = false) => [
   ...(addEmpty ? [{ id: '', text: SELECT_DEVICE }] : []),
   ...getDevicesList().reduce((acc, device) => {
@@ -66,12 +88,12 @@ export const devicesDropdownOptions = memoize((addEmpty = false) => [
 
     optgroup.children.push(option);
 
-    if(acc.find(({ text }) => text === device.manufacturerName)) {
+    if (acc.find(({ text }) => text === device.manufacturerName)) {
       acc.map(optgr => {
         if (optgroup.text === optgr.text) {
           return optgroup;
         }
-  
+
         return optgr;
       });
     } else {

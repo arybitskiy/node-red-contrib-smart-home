@@ -1,5 +1,7 @@
 import type * as NodeRed from 'node-red';
 
+import type { DeviceConfigurationType } from '@sh/open-zwave-config';
+
 interface ConfigNodeZwavePickDeviceBaseProps {
   name: string;
   node_id: string;
@@ -13,17 +15,31 @@ export interface ConfigNodeZwavePickDeviceBackend extends NodeRed.Node {
   node_id: number;
   device: string;
 
-  addValue: (commandClassId: number, instanceId: number, valueId: number, value: NodeValue) => Promise<void>;
-
-  setValue: (commandClassId: number, instanceId: number, valueId: number, value: NodeValue) => Promise<void>;
+  setValue: (commandClassId: number, value: NodeContextValue) => Promise<void>;
 
   getNodeId: () => number;
 }
 
-interface NodeContextValue {
+export interface NodeContextValueOption {
+  id: number;
+  index: number;
+  value: string;
+}
+
+export interface NodeContextValue {
+  id: number;
   instanceId: number;
-  valueId: number;
-  value: NodeValue;
+  value?: NodeValue;
+  type: DeviceConfigurationType['Value']['type'];
+  genre: DeviceConfigurationType['Value']['genre'];
+  units?: string;
+  help?: string;
+  isReadOnly: boolean;
+  isWriteOnly: boolean;
+  min: number;
+  max: number;
+  isPolled: boolean;
+  options?: NodeContextValueOption[];
 }
 
 export interface NodeContextCommandClass {

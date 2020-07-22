@@ -3,6 +3,7 @@ import * as NodeRed from 'node-red';
 import { parsePayloadAsJSON, detectOpenZWaveEvent, OpenZWaveEventType } from '@sh/common-utils';
 
 import type { NodeZwaveDeviceInBackend, NodeZwaveDeviceInBackendProps, OpenZWaveValueChangedPayload } from './types';
+import { convertValueForContext } from './utils';
 
 export default (RED: NodeRed.Red) => {
   function NodeZwaveDeviceInConstructor(this: NodeZwaveDeviceInBackend, props: NodeZwaveDeviceInBackendProps) {
@@ -15,12 +16,12 @@ export default (RED: NodeRed.Red) => {
       const zWaveEventType = detectOpenZWaveEvent(msg.topic);
       if (zWaveEventType === OpenZWaveEventType.VALUE_CHANGED || zWaveEventType === OpenZWaveEventType.VALUE_ADDED) {
         const {
-          data: [, , { node_id: nodeId, class_id: commandClassId, instance: instanceId, index: valueId, value }],
+          data: [, , value],
         } = parsePayloadAsJSON<OpenZWaveValueChangedPayload>(msg.payload);
-        if (this.device && this.device.getNodeId() === nodeId) {
-          console.log(msg.payload);
+
+        if (this.device && this.device.getNodeId() === value.node_id) {
           this.device
-            .setValue(commandClassId, instanceId, valueId, value)
+            .setValue(value.class_id, convertValueForContext(this.device.device, value))
             .then(done)
             .catch((e: Error) => {
               this.error(e.toString());

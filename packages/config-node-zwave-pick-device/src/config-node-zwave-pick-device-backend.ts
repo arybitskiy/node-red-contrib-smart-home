@@ -17,12 +17,11 @@ export default (RED: NodeRed.Red) => {
     this.node_id = parseInt(node_id, 10);
     this.device = device;
 
-    this.setValue = async (commandClassId, instanceId, valueId, value) => {
-      console.log('commandClassId, instanceId, valueId, value: ', commandClassId, instanceId, valueId, value);
+    this.setValue = async (commandClassId, value) => {
       const context = await readNodeContext(this);
-      await writeNodeContext(this, setValue(context, commandClassId, instanceId, valueId, value));
+      await writeNodeContext(this, setValue(context, commandClassId, value));
 
-      const valueEvent = getValueKey(commandClassId, instanceId, valueId);
+      const valueEvent = getValueKey(commandClassId, value);
 
       this.emit(valueEvent, {
         topic: valueEvent,

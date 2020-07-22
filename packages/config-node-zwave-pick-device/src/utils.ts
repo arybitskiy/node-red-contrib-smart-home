@@ -1,10 +1,10 @@
 import { NODE_RED_FILE_STORAGE } from '@sh/constants';
 
 import { CONTEXT, VALUES } from './constants';
-import { ConfigNodeZwavePickDeviceBackend, NodeContext, NodeValue, NodeContextCommandClass } from './types';
+import { ConfigNodeZwavePickDeviceBackend, NodeContext, NodeContextCommandClass, NodeContextValue } from './types';
 
-export const getValueKey = (commandClassId: number, instanceId: number, valueId: number) =>
-  `${VALUES}-${commandClassId}-${instanceId}-${valueId}`;
+export const getValueKey = (commandClassId: number, value: NodeContextValue) =>
+  `${VALUES}-${commandClassId}-${value.instanceId}-${value.id}`;
 
 export const readNodeContext = (node: ConfigNodeZwavePickDeviceBackend): Promise<NodeContext> =>
   new Promise(resolve => {
@@ -31,9 +31,7 @@ export const writeNodeContext = (node: ConfigNodeZwavePickDeviceBackend, context
 export const setValue = (
   { commandClasses, ...rest }: NodeContext,
   commandClassId: number,
-  instanceId: number,
-  valueId: number,
-  value: NodeValue
+  value: NodeContextValue
 ): NodeContext => ({
   commandClasses: (commandClasses.find(({ id }) => id === commandClassId)
     ? commandClasses
@@ -47,21 +45,15 @@ export const setValue = (
 
     return {
       id,
-      values: (values.find(({ instanceId: instId, valueId: valId }) => instId === instanceId && valId === valueId)
+      values: (values.find(({ instanceId: instId, id: valId }) => instId === value.instanceId && valId === value.id)
         ? values
-        : [{ instanceId, valueId, value }, ...values]
+        : [value, ...values]
       ).map(val => {
-        const { instanceId: instId, valueId: valId, ...rest } = val;
-        if (instId !== instanceId || valId !== valueId) {
+        if (val.instanceId !== value.instanceId || val.id !== value.id) {
           return val;
         }
 
-        return {
-          ...rest,
-          instanceId,
-          valueId,
-          value,
-        };
+        return value;
       }),
       ...rest,
     };

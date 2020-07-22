@@ -37,11 +37,18 @@ export default (RED: NodeRed.Red) => {
     };
 
     this.sendValue = async (commandClassId, instanceId, valueId, value) => {
+      console.log('value: ', value);
       const context = await readNodeContext(this);
 
       const currentValue = getCurrentValue(context, commandClassId, instanceId, valueId);
+      console.log('currentValue: ', currentValue);
       const hasChanged = currentValue?.value !== value;
+      console.log('hasChanged: ', hasChanged);
 
+      console.log(
+        'getSetValueTopic(this.getNodeId(), commandClassId, instanceId, valueId): ',
+        getSetValueTopic(this.getNodeId(), commandClassId, instanceId, valueId)
+      );
       if (hasChanged) {
         this.send({
           topic: getSetValueTopic(this.getNodeId(), commandClassId, instanceId, valueId),

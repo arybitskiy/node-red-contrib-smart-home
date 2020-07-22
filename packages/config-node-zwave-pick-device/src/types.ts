@@ -6,6 +6,7 @@ interface ConfigNodeZwavePickDeviceBaseProps {
   name: string;
   node_id: string;
   device: string;
+  location: string;
 }
 
 export type NodeValue = string | number | boolean;

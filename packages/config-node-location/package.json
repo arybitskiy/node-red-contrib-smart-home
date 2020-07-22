@@ -1,0 +1,27 @@
+{
+  "name": "@sh/config-node-location",
+  "version": "0.0.1",
+  "private": true,
+  "engines": {
+    "node": ">=12.17.0"
+  },
+  "node-red": {
+    "nodes": {
+      "node": "build/config-node-location.js"
+    }
+  },
+  "scripts": {
+    "build:backend": "yarn build-with-webpack -t backend -n config-node-location",
+    "build:frontend": "yarn build-with-webpack -t frontend -n config-node-location",
+    "build": "concurrently \"yarn build:backend\" \"yarn build:frontend\"",
+    "clean": "rimraf build coverage",
+    "lint": "eslint src --ext .ts,.tsx,.js --color",
+    "start:backend": "yarn build-with-webpack -t backend -n config-node-location -w",
+    "start:frontend": "yarn build-with-webpack -t frontend -n config-node-location -w",
+    "start": "concurrently \"yarn start:backend\" \"yarn start:frontend\"",
+    "test-maybe": "jest --env=jsdom --coverage --colors",
+    "tsc": "tsc -p ./tsconfig.json",
+    "prettify": "yarn prettier --write ./src/"
+  },
+  "main": "./src/index.ts"
+}

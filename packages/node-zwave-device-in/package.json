@@ -23,10 +23,5 @@
     "tsc": "tsc -p ./tsconfig.json",
     "prettify": "yarn prettier --write ./src/"
   },
-  "dependencies": {
-    "@sh/open-zwave-config": "0.0.1",
-    "@sh/text-constants": "0.0.1",
-    "@sh/config-node-zwave-pick-device": "0.0.1",
-    "@sh/common-utils": "0.0.1"
-  }
+  "main": "./src/index.ts"
 }

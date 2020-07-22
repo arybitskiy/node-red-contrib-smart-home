@@ -79,15 +79,15 @@
     "node-red": {
         "nodes": {
             "common-ui": "packages/common-ui/build/common-ui.js",
-            "node-zwave-device-in": "packages/node-zwave-device-in/build/node-zwave-device-in.js",
+            "node-zwave-device-mqtt": "packages/node-zwave-device-mqtt/build/node-zwave-device-mqtt.js",
             "config-node-zwave-pick-device": "packages/config-node-zwave-pick-device/build/config-node-zwave-pick-device.js",
-            "node-zwave-device-out": "packages/node-zwave-device-out/build/node-zwave-device-out.js"
+            "node-zwave-device-out": "packages/node-zwave-device-out/build/node-zwave-device-out.js",
+            "node-zwave-device-in": "packages/node-zwave-device-in/build/node-zwave-device-in.js"
         }
     },
     "husky": {
         "hooks": {
             "pre-push": "yarn tsc; yarn test; yarn lint"
         }
-    },
-    "private": true
+    }
 }

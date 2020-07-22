@@ -1,10 +1,29 @@
 import { NODE_RED_FILE_STORAGE } from '@sh/constants';
 
-import { CONTEXT, VALUES } from './constants';
+import { CONTEXT, VALUES, MQTT_PREFIX } from './constants';
 import { ConfigNodeZwavePickDeviceBackend, NodeContext, NodeContextCommandClass, NodeContextValue } from './types';
 
 export const getValueKey = (commandClassId: number, value: NodeContextValue) =>
   `${VALUES}-${commandClassId}-${value.instanceId}-${value.id}`;
+
+const parseValueKeyRegexp = new RegExp(`'^${VALUES}-(\\d+)-(\\d+)-(\\d+)$'`);
+export const parseValueKey = (key: string) => {
+  const result = parseValueKeyRegexp.exec(key);
+  if (!result) {
+    throw new Error(`Wrong value key ${key}`);
+  }
+
+  const [, commandClassId, instanceId, valueId] = result;
+
+  return {
+    commandClassId: parseInt(commandClassId, 10),
+    instanceId: parseInt(instanceId, 10),
+    valueId: parseInt(valueId, 10),
+  };
+};
+
+export const getSetValueTopic = (nodeId: number, commandClassId: number, instanceId: number, valueId: number) =>
+  `${MQTT_PREFIX}/${nodeId}/${commandClassId}/${instanceId}/${valueId}/set`;
 
 export const readNodeContext = (node: ConfigNodeZwavePickDeviceBackend): Promise<NodeContext> =>
   new Promise(resolve => {

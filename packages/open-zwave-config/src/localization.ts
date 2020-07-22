@@ -3,10 +3,10 @@ import { memoize } from 'lodash';
 import type { NodeContext } from '@sh/config-node-zwave-pick-device';
 import { getValueKey } from '@sh/config-node-zwave-pick-device';
 import { SELECT_VALUE } from '@sh/text-constants';
+import type { Option, DropdownOptions } from '@sh/types';
 
 import { LocalizationConfig } from './generated';
 import { getLabel } from './utils';
-import type { Option, DropdownOptions } from './types';
 
 export const localization = memoize(() => {
   if (!LocalizationConfig?.Localization?.CommandClass) {

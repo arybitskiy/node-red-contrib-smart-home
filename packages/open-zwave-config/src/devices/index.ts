@@ -1,6 +1,7 @@
 import { memoize, mapValues } from 'lodash';
 
 import { SELECT_DEVICE } from '@sh/text-constants';
+import type { OptGroup, DropdownOptions } from '@sh/types';
 
 import deviceConfig from '../generated/config/devices';
 import { manufacturerSpecific } from '../manufacturerSpecific';
@@ -8,7 +9,6 @@ import type { ManufacturerSpecific } from '../manufacturerSpecific';
 import { deviceMapper } from './deviceMapper';
 import type { DeviceMapper } from './deviceMapper';
 import { getDeviceName } from './utils';
-import { OptGroup, DropdownOptions } from '../types';
 
 const deviceInfo = manufacturerSpecific();
 

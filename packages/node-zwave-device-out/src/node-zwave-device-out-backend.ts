@@ -11,7 +11,9 @@ export default (RED: NodeRed.Red) => {
     this.device = RED.nodes.getNode(device) as any;
 
     const valueChangeListener = msg => {
-      this.send(msg);
+      if (msg.hasChanged) {
+        this.send(msg);
+      }
     };
 
     values.forEach(valueEvent => {

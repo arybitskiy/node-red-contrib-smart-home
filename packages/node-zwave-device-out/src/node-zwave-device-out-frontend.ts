@@ -1,16 +1,13 @@
 import type { ConfigNodeZwavePickDeviceFrontendProps } from '@sh/config-node-zwave-pick-device';
 import { READ_CONTEXT_ENDPOINT } from '@sh/config-node-zwave-pick-device';
-import { SELECT_VALUE } from '@sh/text-constants';
 import { getDeviceOptions } from '@sh/open-zwave-config';
+import { SELECT2_EMPTY_DATA, SELECT2_DEFAULT_CONFIG } from '@sh/constants';
 
 import type { NodeZwaveDeviceOutFrontendProps } from './types';
 
-const emptyData = [];
-
 const valueSelectConfig = {
-  theme: 'dark-adminlte',
+  ...SELECT2_DEFAULT_CONFIG,
   multiple: true,
-  placeholder: SELECT_VALUE,
   width: '100%',
   closeOnSelect: false,
 };
@@ -52,7 +49,7 @@ RED.nodes.registerType<NodeZwaveDeviceOutFrontendProps>('node-zwave-device-out',
   },
   oneditprepare: function () {
     const valueInput = $('#node-input-values').select2({
-      data: emptyData,
+      data: SELECT2_EMPTY_DATA,
       ...valueSelectConfig,
     });
 
@@ -63,7 +60,7 @@ RED.nodes.registerType<NodeZwaveDeviceOutFrontendProps>('node-zwave-device-out',
       .on('change', async () => {
         const device = deviceInput.val();
 
-        restartSelect(valueInput, emptyData);
+        restartSelect(valueInput, SELECT2_EMPTY_DATA);
         if (typeof device === 'string' && new RegExp('^[a-z0-9]+\\.[a-z0-9]+$').exec(device)) {
           const data = await $.getJSON(READ_CONTEXT_ENDPOINT, { node_id: this.device || device });
           restartSelect(valueInput, getDeviceOptions(data, { skipWriteOnly: true }));

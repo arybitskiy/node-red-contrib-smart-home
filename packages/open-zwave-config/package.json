@@ -27,6 +27,7 @@
   },
   "main": "./src/index.ts",
   "dependencies": {
-    "@sh/text-constants": "0.0.1"
+    "@sh/text-constants": "0.0.1",
+    "@sh/types": "0.0.1"
   }
 }

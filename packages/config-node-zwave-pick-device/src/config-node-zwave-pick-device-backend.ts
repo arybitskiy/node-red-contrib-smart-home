@@ -1,7 +1,7 @@
 import * as NodeRed from 'node-red';
 
 import type { ConfigNodeZwavePickDeviceBackend, ConfigNodeZwavePickDeviceBackendProps } from './types';
-import { readNodeContext, writeNodeContext, setValue, getValueKey, getCurrentValue } from './utils';
+import { readNodeContext, writeNodeContext, setValue, getValueKey, getCurrentValue, getSetValueTopic } from './utils';
 import api from './api';
 
 export default (RED: NodeRed.Red) => {
@@ -34,6 +34,20 @@ export default (RED: NodeRed.Red) => {
         payload: value,
         hasChanged,
       });
+    };
+
+    this.sendValue = async (commandClassId, instanceId, valueId, value) => {
+      const context = await readNodeContext(this);
+
+      const currentValue = getCurrentValue(context, commandClassId, instanceId, valueId);
+      const hasChanged = currentValue?.value !== value;
+
+      if (hasChanged) {
+        this.send({
+          topic: getSetValueTopic(this.getNodeId(), commandClassId, instanceId, valueId),
+          payload: value,
+        });
+      }
     };
 
     this.getNodeId = () => this.node_id;

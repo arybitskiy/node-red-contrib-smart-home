@@ -14,6 +14,8 @@ export default (RED: NodeRed.Red) => {
 
     const { name, node_id, device } = props;
 
+    const sendingValues = {} as { [key: string]: any };
+
     this.name = name;
     this.node_id = parseInt(node_id, 10);
     this.device = device;
@@ -22,16 +24,22 @@ export default (RED: NodeRed.Red) => {
       const context = await readNodeContext(this);
 
       const currentValue = getCurrentValue(context, commandClassId, value.instanceId, value.id);
+
+      if (!currentValue) {
+        return;
+      }
+
+      const valueKey = getValueKey(commandClassId, value);
+      delete sendingValues[valueKey];
+
       const hasChanged = currentValue?.value !== value.value;
 
       if (hasChanged) {
         void writeNodeContext(this, setValue(context, commandClassId, value));
       }
 
-      const valueEvent = getValueKey(commandClassId, value);
-
-      this.emit(valueEvent, {
-        topic: valueEvent,
+      this.emit(valueKey, {
+        topic: valueKey,
         payload: value,
         hasChanged,
       });
@@ -46,9 +54,12 @@ export default (RED: NodeRed.Red) => {
         return;
       }
 
-      const hasChanged = currentValue?.value !== value;
+      const valueKey = getValueKey(commandClassId, currentValue);
+
+      const hasChanged = currentValue?.value !== value && sendingValues[valueKey] !== value;
 
       if (hasChanged) {
+        sendingValues[valueKey] = value;
         this.emit(VALUES_SET_EVENT, {
           topic: getSetValueTopic(this.getNodeId(), commandClassId, instanceId, valueId),
           payload: value,

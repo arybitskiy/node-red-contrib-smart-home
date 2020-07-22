@@ -68,14 +68,13 @@ export const getDeviceOptions = (
 
         const key = getValueKey(commandClassId, value);
 
-        const optionLabel =
-          localization()
-            .commandClasses.find(({ id }) => id === commandClassId)
-            ?.values?.find(({ id }) => id === value.id)?.label || key;
+        const optionLabel = localization()
+          .commandClasses.find(({ id }) => id === commandClassId)
+          ?.values?.find(({ id }) => id === value.id)?.label;
 
         options.push({
           id: key,
-          text: optionLabel,
+          text: optionLabel ? `${optionLabel} [${value.instanceId}]` : key,
         });
       });
 
@@ -83,10 +82,12 @@ export const getDeviceOptions = (
         localization().commandClasses.find(({ id }) => id === commandClassId)?.label ||
         `CommandClass ${commandClassId}`;
 
-      acc.push({
-        text: optgroupLabel,
-        children: options,
-      });
+      if (options.length) {
+        acc.push({
+          text: optgroupLabel,
+          children: options,
+        });
+      }
 
       return acc;
     },

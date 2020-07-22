@@ -1,6 +1,6 @@
 import { NODE_RED_FILE_STORAGE } from '@sh/constants';
 
-import { CONTEXT, VALUES, MQTT_PREFIX } from './constants';
+import { CONTEXT, VALUES, MQTT_PREFIX, NODE_PREFIX } from './constants';
 import { ConfigNodeZwavePickDeviceBackend, NodeContext, NodeContextCommandClass, NodeContextValue } from './types';
 
 export const getValueKey = (commandClassId: number, value: NodeContextValue) =>
@@ -23,7 +23,7 @@ export const parseValueKey = (key: string) => {
 };
 
 export const getSetValueTopic = (nodeId: number, commandClassId: number, instanceId: number, valueId: number) =>
-  `${MQTT_PREFIX}/${nodeId}/${commandClassId}/${instanceId}/${valueId}/set`;
+  `${MQTT_PREFIX}/${NODE_PREFIX}${nodeId}/${commandClassId}/${instanceId}/${valueId}/set`;
 
 export const readNodeContext = (node: ConfigNodeZwavePickDeviceBackend): Promise<NodeContext> =>
   new Promise(resolve => {

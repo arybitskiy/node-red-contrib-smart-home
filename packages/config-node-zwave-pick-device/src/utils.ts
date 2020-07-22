@@ -60,3 +60,13 @@ export const setValue = (
   }),
   ...rest,
 });
+
+export const getCurrentValue = (
+  { commandClasses }: NodeContext,
+  commandClassId: number,
+  instanceId: number,
+  valueId: number
+) =>
+  commandClasses
+    ?.find(({ id }) => id === commandClassId)
+    ?.values?.find(({ instanceId: instId, id }) => instId === instanceId && id === valueId);

@@ -66,7 +66,7 @@ RED.nodes.registerType<NodeZwaveDeviceOutFrontendProps>('node-zwave-device-out',
         restartSelect(valueInput, emptyData);
         if (typeof device === 'string' && new RegExp('^[a-z0-9]+\\.[a-z0-9]+$').exec(device)) {
           const data = await $.getJSON(READ_CONTEXT_ENDPOINT, { node_id: this.device || device });
-          restartSelect(valueInput, getDeviceOptions(data, false));
+          restartSelect(valueInput, getDeviceOptions(data, { skipWriteOnly: true }));
           valueInput.val(this.values).trigger('change');
         }
       });

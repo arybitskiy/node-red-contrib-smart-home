@@ -48,12 +48,24 @@ export const getValueOptionFromLocalization = (
   }
 };
 
-export const getDeviceOptions = (context: NodeContext, addEmpty = false) =>
+interface GetDeviceOptionsParams {
+  addEmpty?: boolean;
+  skipReadOnly?: boolean;
+  skipWriteOnly?: boolean;
+}
+export const getDeviceOptions = (
+  context: NodeContext,
+  { addEmpty = false, skipReadOnly = false, skipWriteOnly = false }: GetDeviceOptionsParams = {}
+) =>
   context.commandClasses.reduce(
     (acc, { id: commandClassId, values }) => {
       const options = [] as Option[];
 
       values.forEach(value => {
+        if ((skipReadOnly && value.isReadOnly) || (skipWriteOnly && value.isWriteOnly)) {
+          return;
+        }
+
         const key = getValueKey(commandClassId, value);
 
         const optionLabel =

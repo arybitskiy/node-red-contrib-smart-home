@@ -6,7 +6,7 @@ import { ConfigNodeZwavePickDeviceBackend, NodeContext, NodeContextCommandClass,
 export const getValueKey = (commandClassId: number, value: NodeContextValue) =>
   `${VALUES}-${commandClassId}-${value.instanceId}-${value.id}`;
 
-const parseValueKeyRegexp = new RegExp(`'^${VALUES}-(\\d+)-(\\d+)-(\\d+)$'`);
+const parseValueKeyRegexp = new RegExp(`^${VALUES}-(\\d+)-(\\d+)-(\\d+)$`);
 export const parseValueKey = (key: string) => {
   const result = parseValueKeyRegexp.exec(key);
   if (!result) {

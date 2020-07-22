@@ -3,6 +3,7 @@ import * as NodeRed from 'node-red';
 import type { ConfigNodeZwavePickDeviceBackend, ConfigNodeZwavePickDeviceBackendProps } from './types';
 import { readNodeContext, writeNodeContext, setValue, getValueKey, getCurrentValue, getSetValueTopic } from './utils';
 import api from './api';
+import { VALUES_SET_EVENT } from './constants';
 
 export default (RED: NodeRed.Red) => {
   function ConfigNodeZwavePickDeviceConstructor(
@@ -37,20 +38,18 @@ export default (RED: NodeRed.Red) => {
     };
 
     this.sendValue = async (commandClassId, instanceId, valueId, value) => {
-      console.log('value: ', value);
       const context = await readNodeContext(this);
 
       const currentValue = getCurrentValue(context, commandClassId, instanceId, valueId);
-      console.log('currentValue: ', currentValue);
-      const hasChanged = currentValue?.value !== value;
-      console.log('hasChanged: ', hasChanged);
 
-      console.log(
-        'getSetValueTopic(this.getNodeId(), commandClassId, instanceId, valueId): ',
-        getSetValueTopic(this.getNodeId(), commandClassId, instanceId, valueId)
-      );
+      if (!currentValue) {
+        return;
+      }
+
+      const hasChanged = currentValue?.value !== value;
+
       if (hasChanged) {
-        this.send({
+        this.emit(VALUES_SET_EVENT, {
           topic: getSetValueTopic(this.getNodeId(), commandClassId, instanceId, valueId),
           payload: value,
         });

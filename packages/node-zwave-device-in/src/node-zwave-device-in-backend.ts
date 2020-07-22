@@ -13,8 +13,7 @@ export default (RED: NodeRed.Red) => {
 
     this.device = RED.nodes.getNode(device) as any;
 
-    this.on('input', async ({ payload }, send, done) => {
-      console.log('this.device: ', this.device);
+    this.on('input', async ({ payload }, _, done) => {
       if (this.device) {
         await this.device.sendValue(commandClassId, instanceId, valueId, payload);
       }

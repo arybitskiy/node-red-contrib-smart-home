@@ -1,16 +1,34 @@
 import * as NodeRed from 'node-red';
 
 import { parsePayloadAsJSON, detectOpenZWaveEvent, OpenZWaveEventType } from '@sh/common-utils';
+import { VALUES_SET_EVENT } from '@sh/config-node-zwave-pick-device';
 
-import type { NodeZwaveDeviceInMqttBackend, NodeZwaveDeviceInMqttBackendProps, OpenZWaveValueChangedPayload } from './types';
+import type {
+  NodeZwaveDeviceInMqttBackend,
+  NodeZwaveDeviceInMqttBackendProps,
+  OpenZWaveValueChangedPayload,
+} from './types';
 import { convertValueForContext } from './utils';
 
 export default (RED: NodeRed.Red) => {
-  function NodeZwaveDeviceInMqttConstructor(this: NodeZwaveDeviceInMqttBackend, props: NodeZwaveDeviceInMqttBackendProps) {
+  function NodeZwaveDeviceInMqttConstructor(
+    this: NodeZwaveDeviceInMqttBackend,
+    props: NodeZwaveDeviceInMqttBackendProps
+  ) {
     RED.nodes.createNode(this, props);
     const { device } = props;
 
     this.device = RED.nodes.getNode(device) as any;
+
+    const valueChangeListener = msg => {
+      this.send(msg);
+    };
+
+    this.device?.on(VALUES_SET_EVENT, valueChangeListener);
+
+    this.on('close', () => {
+      this.device?.off(VALUES_SET_EVENT, valueChangeListener);
+    });
 
     this.on('input', (msg, _, done) => {
       const zWaveEventType = detectOpenZWaveEvent(msg.topic);

@@ -1,0 +1,3 @@
+[submodule "packages/react-planner"]
+	path = packages/react-planner
+	url = https://github.com/arybitskiy/react-planner.git

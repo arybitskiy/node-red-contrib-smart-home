@@ -76,7 +76,7 @@
         "publish": "node publish.js -t post",
         "bump-version": "yarn version --patch",
         "push": "yarn bump-version && git push",
-        "deploy": "git add . && git commit && yarn bump-version && git push && yarn build && npm publish",
+        "deploy": "git add . && git commit; yarn bump-version && git push && yarn build && npm publish",
         "prettify": "lerna --no-bail run --parallel prettify"
     },
     "node-red": {

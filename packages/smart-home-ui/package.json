@@ -10,12 +10,12 @@
     "build:frontend-maybe": "yarn build-with-webpack -t frontend -n smart-home-ui",
     "build-maybe": "concurrently \"yarn build:backend\" \"yarn build:frontend\"",
     "clean": "rimraf build coverage",
-    "lint": "eslint src --ext .ts,.tsx,.js --color",
+    "lint-maybe": "eslint src --ext .ts,.tsx,.js --color",
     "start:backend-maybe": "yarn build-with-webpack -t backend -n smart-home-ui -w",
     "start:frontend-maybe": "yarn build-with-webpack -t frontend -n smart-home-ui -w",
     "start-maybe": "concurrently \"yarn start:backend\" \"yarn start:frontend\"",
-    "test": "jest --env=jsdom --coverage --colors",
-    "tsc": "tsc -p ./tsconfig.json",
+    "test-maybe": "jest --env=jsdom --coverage --colors",
+    "tsc-maybe": "tsc -p ./tsconfig.json",
     "prettify": "yarn prettier --write ./src/"
   },
   "main": "./src/index.ts"

@@ -1,0 +1,47 @@
+{
+  "name": "@sh/node-planner",
+  "version": "0.0.1",
+  "private": true,
+  "engines": {
+    "node": ">=12.17.0"
+  },
+  "node-red": {
+    "nodes": {
+      "node": "build/node-planner.js"
+    }
+  },
+  "scripts": {
+    "build:backend": "yarn build-with-webpack -t backend -n node-planner",
+    "build:frontend": "yarn build-with-webpack -t frontend -n node-planner",
+    "build": "concurrently \"yarn build:backend\" \"yarn build:frontend\"",
+    "clean": "rimraf build coverage",
+    "lint": "eslint src --ext .ts,.tsx,.js --color",
+    "start:backend": "yarn build-with-webpack -t backend -n node-planner -w",
+    "start:frontend": "yarn build-with-webpack -t frontend -n node-planner -w",
+    "start": "concurrently \"yarn start:backend\" \"yarn start:frontend\"",
+    "test-maybe": "jest --env=jsdom --coverage --colors",
+    "tsc": "tsc -p ./tsconfig.json",
+    "prettify": "yarn prettier --write ./src/"
+  },
+  "main": "./src/index.ts",
+  "devDependencies": {
+    "@types/react": "^16.9.43",
+    "@types/react-dom": "^16.9.8",
+    "@types/react-modal": "^3.10.6",
+    "@types/react-redux": "^7.1.9",
+    "@types/styled-components": "^5.1.1",
+    "eslint-plugin-react": "^7.20.3",
+    "immutable": "^4.0.0-rc.12",
+    "react": "^16.13.1",
+    "react-container-dimensions": "^1.4.1",
+    "react-dom": "^16.13.1",
+    "react-modal": "^3.11.2",
+    "react-redux": "^7.2.0",
+    "redux": "^4.0.5",
+    "styled-components": "^5.1.1"
+  },
+  "dependencies": {
+    "node-red-contrib-uibuilder": "^2.0.8",
+    "react-planner": "2.0.6"
+  }
+}

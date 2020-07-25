@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-  mode: 'production',
+  mode: 'development',
   module: {
     rules: [
       {
@@ -41,9 +41,21 @@ module.exports = {
           },
         ],
       },
+      {
+        test: /\.(jpe?g|png|gif|mtl|obj)$/i,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              hash: 'sha512',
+              digest: 'hex',
+            },
+          },
+        ],
+      },
     ],
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
+    extensions: ['.tsx', '.ts', '.js', '.jsx'],
   },
 };

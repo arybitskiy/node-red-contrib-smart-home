@@ -1,3 +1,6 @@
 [submodule "packages/react-planner"]
 	path = packages/react-planner
 	url = https://github.com/arybitskiy/react-planner.git
+[submodule "hassio-addon-ingress-nginx-proxy"]
+	path = hassio-addon-ingress-nginx-proxy
+	url = https://github.com/arybitskiy/hassio-addon-ingress-nginx-proxy.git

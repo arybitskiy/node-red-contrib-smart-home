@@ -27,12 +27,14 @@
         "@typescript-eslint/parser": "^3.6.1",
         "babel-loader": "^8.1.0",
         "babel-node": "^0.0.1-security",
+        "babel-plugin-import-glob": "^2.0.0",
         "babel-plugin-lodash": "^3.3.4",
         "babel-plugin-styled-components": "^1.10.7",
         "cli": "^1.0.1",
         "concurrently": "^5.2.0",
         "css-loader": "^3.6.0",
         "eslint": "^7.4.0",
+        "file-loader": "^6.0.0",
         "glob": "^7.1.6",
         "html-inline-css-webpack-plugin": "^1.8.1",
         "html-webpack-plugin": "^4.3.0",
@@ -58,6 +60,7 @@
         "ts-jest": "^26.1.2",
         "ts-loader": "^8.0.1",
         "typescript": "^3.9.6",
+        "url-loader": "^4.1.0",
         "webpack": "^4.43.0",
         "webpack-watch-files-plugin": "^1.0.3"
     },
@@ -69,7 +72,7 @@
         "clean": "lerna --no-bail run --parallel clean",
         "start": "lerna --no-bail run --parallel start",
         "plop:node-red-package": "plop node-red-package; yarn",
-        "prepublish": "node publish.js -t pre",
+        "prepublishOnly": "node publish.js -t pre",
         "publish": "node publish.js -t post",
         "bump-version": "yarn version --patch",
         "push": "yarn bump-version && git push",
@@ -83,12 +86,14 @@
             "config-node-zwave-pick-device": "packages/config-node-zwave-pick-device/build/config-node-zwave-pick-device.js",
             "node-zwave-device-out": "packages/node-zwave-device-out/build/node-zwave-device-out.js",
             "node-zwave-device-in": "packages/node-zwave-device-in/build/node-zwave-device-in.js",
-            "config-node-location": "packages/config-node-location/build/config-node-location.js"
+            "config-node-location": "packages/config-node-location/build/config-node-location.js",
+            "node-planner": "packages/node-planner/build/node-planner.js"
         }
     },
     "husky": {
         "hooks": {
             "pre-push": "yarn tsc; yarn test; yarn lint"
         }
-    }
+    },
+    "private": true
 }

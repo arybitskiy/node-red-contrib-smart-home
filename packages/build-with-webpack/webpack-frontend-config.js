@@ -36,7 +36,7 @@ module.exports = function (config) {
       new HTMLInlineCSSWebpackPlugin(),
     ],
     entry: {
-      app: `./src/${config.name}-frontend.ts`,
+      app: `./src/${config.name}-frontend`,
     },
     output: {
       filename: `${config.name}-frontend.js`,

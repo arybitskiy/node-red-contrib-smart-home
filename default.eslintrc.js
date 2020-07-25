@@ -5,6 +5,7 @@ module.exports = {
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
+    'plugin:react/recommended',
   ],
   parserOptions: {
     project: ['./tsconfig.json'],
@@ -26,4 +27,9 @@ module.exports = {
     '@typescript-eslint/no-misused-promises': 0,
   },
   ignorePatterns: ['.eslintrc.js', 'babel.config.js', 'jest.config.js', 'setupTests.ts'],
+  settings: {
+    react: {
+      version: 'detect',
+    },
+  },
 };

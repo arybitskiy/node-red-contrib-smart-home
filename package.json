@@ -30,6 +30,7 @@
         "babel-plugin-import-glob": "^2.0.0",
         "babel-plugin-lodash": "^3.3.4",
         "babel-plugin-styled-components": "^1.10.7",
+        "beeper": "^2.0.0",
         "cli": "^1.0.1",
         "concurrently": "^5.2.0",
         "css-loader": "^3.6.0",
@@ -79,7 +80,9 @@
         "push": "yarn bump-version && git push",
         "deploy": "git add . && git commit; yarn bump-version && git push && yarn build && npm publish",
         "prettify": "lerna --no-bail run --parallel prettify",
-        "build-test": "lerna --scope={@sh/node-planner} --no-bail run --parallel build"
+        "beep": "node beep.js",
+        "postpack": "yarn beep",
+        "prepack": "yarn beep"
     },
     "node-red": {
         "nodes": {

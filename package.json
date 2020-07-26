@@ -69,7 +69,7 @@
         "tsc": "lerna --no-bail run --parallel tsc",
         "lint": "lerna --no-bail run --parallel lint",
         "test": "lerna --no-bail run --parallel test",
-        "build": "lerna --no-bail run --parallel build",
+        "build": "lerna --no-bail run build",
         "clean": "lerna --no-bail run --parallel clean",
         "start": "lerna --no-bail run --parallel start",
         "plop:node-red-package": "plop node-red-package; yarn",
@@ -78,7 +78,8 @@
         "bump-version": "yarn version --patch",
         "push": "yarn bump-version && git push",
         "deploy": "git add . && git commit; yarn bump-version && git push && yarn build && npm publish",
-        "prettify": "lerna --no-bail run --parallel prettify"
+        "prettify": "lerna --no-bail run --parallel prettify",
+        "build-test": "lerna --scope={@sh/node-planner} --no-bail run --parallel build"
     },
     "node-red": {
         "nodes": {

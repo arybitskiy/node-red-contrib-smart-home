@@ -81,8 +81,7 @@
         "deploy": "git add . && git commit; yarn bump-version && git push && yarn build && npm publish",
         "prettify": "lerna --no-bail run --parallel prettify",
         "beep": "node beep.js",
-        "postpack": "yarn beep",
-        "prepack": "yarn beep"
+        "postpack": "yarn beep"
     },
     "node-red": {
         "nodes": {
@@ -99,6 +98,5 @@
         "hooks": {
             "pre-push": "yarn tsc; yarn test; yarn lint"
         }
-    },
-    "private": true
+    }
 }

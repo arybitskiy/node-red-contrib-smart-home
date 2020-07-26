@@ -5,11 +5,9 @@ import fs from 'fs';
 
 import type { NodePlannerBackend, NodePlannerBackendProps } from './types';
 
-const buildPath = (process.env.npm_package_node_red_nodes_node_planner as string).startsWith('packages')
+const buildPath = process.env.npm_package_node_red_nodes_node_planner
   ? path.resolve(
-      path.dirname(
-        path.resolve(process.env.INIT_CWD as string, process.env.npm_package_node_red_nodes_node_planner as string)
-      ),
+      path.dirname(path.resolve(process.env.INIT_CWD as string, process.env.npm_package_node_red_nodes_node_planner)),
       'ui'
     )
   : path.resolve('node_modules/node-red-contrib-smart-home/packages/node-planner/build/ui');

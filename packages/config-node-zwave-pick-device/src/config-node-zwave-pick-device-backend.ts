@@ -25,10 +25,6 @@ export default (RED: NodeRed.Red) => {
 
       const currentValue = getCurrentValue(context, commandClassId, value.instanceId, value.id);
 
-      if (!currentValue) {
-        return;
-      }
-
       const valueKey = getValueKey(commandClassId, value);
       delete sendingValues[valueKey];
 

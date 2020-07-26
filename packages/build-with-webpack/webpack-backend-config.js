@@ -3,8 +3,10 @@ const path = require('path');
 const commonConfig = require('./webpack-common-config');
 
 module.exports = function (config) {
+  const common = commonConfig(config);
+
   return {
-    ...commonConfig,
+    ...common,
     target: 'node',
     entry: {
       app: `./src/${config.name}-backend.ts`,
@@ -16,5 +18,8 @@ module.exports = function (config) {
       libraryTarget: 'commonjs2',
     },
     watch: config.watch,
+    externals: {
+      express: 'express',
+    },
   };
 };

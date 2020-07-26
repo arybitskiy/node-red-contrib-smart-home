@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { Planner } from './Planner';
+import { Planner } from './frontend/Planner';
 
 import { NodePlannerFrontendProps } from './types';
 
@@ -10,6 +10,7 @@ RED.nodes.registerType<NodePlannerFrontendProps>('node-planner', {
   color: '#E9967A',
   defaults: {
     name: { value: '' },
+    url: { value: 'planner' },
     planner: { value: '' },
   },
   inputs: 1,

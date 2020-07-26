@@ -2,6 +2,7 @@ import type * as NodeRed from 'node-red';
 
 interface NodePlannerBaseProps {
   name: string;
+  url: string;
   planner: string;
 }
 

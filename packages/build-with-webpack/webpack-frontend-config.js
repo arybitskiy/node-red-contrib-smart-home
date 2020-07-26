@@ -9,11 +9,46 @@ const { default: HTMLInlineCSSWebpackPlugin } = require('html-inline-css-webpack
 const commonConfig = require('./webpack-common-config');
 
 module.exports = function (config) {
+  const common = commonConfig(config);
   const helpFile = path.resolve(process.env.PWD, `./src/${config.name}-help.html`);
   const formFile = path.resolve(process.env.PWD, `./src/${config.name}-form.html`);
 
   return {
-    ...commonConfig,
+    ...common,
+    module: {
+      ...common.module,
+      rules: [
+        ...common.module.rules,
+        {
+          // look for .css or .scss files
+          test: /\.(css|scss)$/,
+          use: [
+            {
+              loader: 'style-loader',
+            },
+            {
+              loader: 'css-loader',
+              options: {
+                sourceMap: true,
+                importLoaders: 2,
+              },
+            },
+          ],
+        },
+        {
+          test: /\.(jpe?g|png|gif|mtl|obj)$/i,
+          use: [
+            {
+              loader: 'url-loader',
+              options: {
+                hash: 'sha512',
+                digest: 'hex',
+              },
+            },
+          ],
+        },
+      ],
+    },
     target: 'web',
     plugins: [
       new MiniCssExtractPlugin({

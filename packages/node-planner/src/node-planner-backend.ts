@@ -18,6 +18,7 @@ export default (RED: NodeRed.Red) => {
 
     const { url, planner } = props;
 
+    console.log(`Listening to /${url}`);
     RED.httpNode.get(`/${url}`, (req, res) => {
       const cache = { planner: JSON.parse(planner) };
       const html = fs.readFileSync(path.resolve(buildPath, 'index.html')).toString();
@@ -25,6 +26,7 @@ export default (RED: NodeRed.Red) => {
       res.send(injectedHtml);
     });
 
+    console.log(`Serving static from ${buildPath}`);
     RED.httpNode.use(`/${url}`, express.static(buildPath));
 
     this.on('input', (msg, send, done) => {

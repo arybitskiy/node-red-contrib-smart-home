@@ -72,19 +72,19 @@
         "webpack-watch-files-plugin": "^1.0.3"
     },
     "scripts": {
-        "tsc": "lerna --no-bail run --parallel tsc",
-        "lint": "lerna --no-bail run --parallel lint",
-        "test": "lerna --no-bail run --parallel test",
-        "build": "lerna --no-bail run build",
+        "tsc": "lerna run --parallel tsc",
+        "lint": "lerna run --parallel lint",
+        "test": "lerna run --parallel test",
+        "build": "lerna run build",
         "clean": "lerna --no-bail run --parallel clean",
-        "start": "lerna --no-bail run --parallel start",
+        "start": "lerna run --parallel start",
         "plop:node-red-package": "plop node-red-package; yarn",
         "prepublishOnly": "node publish.js -t pre",
         "publish": "node publish.js -t post",
         "bump-version": "yarn version --patch",
         "push": "yarn bump-version && git push",
         "deploy": "git add . && git commit; yarn bump-version && git push && yarn build && yarn beep && npm publish . --otp $(bw get totp npm)",
-        "prettify": "lerna --no-bail run --parallel prettify",
+        "prettify": "lerna run --parallel prettify",
         "beep": "node beep.js"
     },
     "node-red": {
@@ -102,5 +102,6 @@
         "hooks": {
             "pre-push": "yarn tsc; yarn test; yarn lint"
         }
-    }
+    },
+    "private": true
 }

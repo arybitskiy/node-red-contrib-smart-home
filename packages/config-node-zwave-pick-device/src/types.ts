@@ -26,6 +26,8 @@ export interface ConfigNodeZwavePickDeviceBackend extends NodeRed.Node {
   ) => Promise<void>;
 
   getNodeId: () => number;
+
+  getLabel: () => string;
 }
 
 export interface NodeContextValueOption {
@@ -64,3 +66,5 @@ export interface ConfigNodeZwavePickDeviceBackendProps
     NodeRed.NodeProperties {}
 
 export interface ConfigNodeZwavePickDeviceFrontendProps extends ConfigNodeZwavePickDeviceBaseProps {}
+
+export type ReadAllNodesResponse = { id: string; label: string }[];

@@ -1,5 +1,9 @@
 import * as NodeRed from 'node-red';
 
+import { ConfigNodeLocationBackend } from '@sh/config-node-location';
+import { SELECT_DEVICE } from '@sh/text-constants';
+import { getDeviceNameById } from '@sh/open-zwave-config';
+
 import type { ConfigNodeZwavePickDeviceBackend, ConfigNodeZwavePickDeviceBackendProps } from './types';
 import { readNodeContext, writeNodeContext, setValue, getValueKey, getCurrentValue, getSetValueTopic } from './utils';
 import api from './api';
@@ -12,13 +16,24 @@ export default (RED: NodeRed.Red) => {
   ) {
     RED.nodes.createNode(this, props);
 
-    const { name, node_id, device } = props;
+    const { name, node_id, device, location } = props;
 
     const sendingValues = {} as { [key: string]: any };
 
     this.name = name;
     this.node_id = parseInt(node_id, 10);
     this.device = device;
+
+    this.getLabel = () => {
+      const locationNode = RED.nodes.getNode(location) as ConfigNodeLocationBackend | null;
+
+      return (
+        name ||
+        `${node_id ? `${node_id}: ` : ''}${locationNode ? `${locationNode.getLabel()}: ` : ''}${
+          device ? getDeviceNameById(device) : SELECT_DEVICE
+        }`
+      );
+    };
 
     this.setValue = async (commandClassId, value) => {
       const context = await readNodeContext(this);

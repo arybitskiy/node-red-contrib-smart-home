@@ -32,6 +32,7 @@ export default (RED: NodeRed.Red) => {
 
     this.on('input', (msg, _, done) => {
       const zWaveEventType = detectOpenZWaveEvent(msg.topic);
+
       if (zWaveEventType === OpenZWaveEventType.VALUE_CHANGED || zWaveEventType === OpenZWaveEventType.VALUE_ADDED) {
         const {
           data: [, , value],

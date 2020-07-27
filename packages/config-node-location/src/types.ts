@@ -5,7 +5,9 @@ interface ConfigNodeLocationBaseProps {
   tags: string;
 }
 
-export interface ConfigNodeLocationBackend extends NodeRed.Node {}
+export interface ConfigNodeLocationBackend extends NodeRed.Node {
+  getLabel: () => string;
+}
 
 export interface ConfigNodeLocationBackendProps extends ConfigNodeLocationBaseProps, NodeRed.NodeProperties {}
 

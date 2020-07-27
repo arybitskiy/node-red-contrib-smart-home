@@ -6,6 +6,10 @@ export default (RED: NodeRed.Red) => {
   function ConfigNodeLocationConstructor(this: ConfigNodeLocationBackend, props: ConfigNodeLocationBackendProps) {
     RED.nodes.createNode(this, props);
 
+    const { name } = props;
+
+    this.getLabel = () => name;
+
     this.on('input', (msg, send, done) => {
       send(msg);
       done();

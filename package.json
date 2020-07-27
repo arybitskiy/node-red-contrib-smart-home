@@ -83,10 +83,9 @@
         "publish": "node publish.js -t post",
         "bump-version": "yarn version --patch",
         "push": "yarn bump-version && git push",
-        "deploy": "git add . && git commit; yarn bump-version && git push && yarn build && npm publish . --otp $(bw get totp npm)",
+        "deploy": "git add . && git commit; yarn bump-version && git push && yarn build && yarn beep && npm publish . --otp $(bw get totp npm)",
         "prettify": "lerna --no-bail run --parallel prettify",
-        "beep": "node beep.js",
-        "prepack": "yarn beep"
+        "beep": "node beep.js"
     },
     "node-red": {
         "nodes": {
@@ -103,6 +102,5 @@
         "hooks": {
             "pre-push": "yarn tsc; yarn test; yarn lint"
         }
-    },
-    "private": true
+    }
 }

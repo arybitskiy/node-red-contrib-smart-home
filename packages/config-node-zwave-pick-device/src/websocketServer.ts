@@ -43,7 +43,7 @@ export default (RED: NodeRed.Red) => {
   RED.server.on('upgrade', function upgrade(request, socket, head) {
     const pathname = url.parse(request.url).pathname;
 
-    if (pathname === WEBSOCKET_PATH) {
+    if (pathname?.endsWith(WEBSOCKET_PATH)) {
       console.log('New WebSocket Connection: ', WEBSOCKET_PATH);
       wsServer.handleUpgrade(request, socket, head, ws => {
         wsServer.emit('connection', ws, request);

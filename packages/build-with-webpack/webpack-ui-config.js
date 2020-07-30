@@ -16,7 +16,7 @@ module.exports = function (config) {
         ...common.module.rules,
         {
           // look for .css or .scss files
-          test: /\.(css|scss)$/,
+          test: /\.css$/,
           use: [
             {
               loader: 'style-loader',
@@ -29,6 +29,26 @@ module.exports = function (config) {
               },
             },
           ],
+        },
+        {
+          test: /\.s[ac]ss$/i,
+          use: [
+            // Creates `style` nodes from JS strings
+            'style-loader',
+            // Translates CSS into CommonJS
+            'css-loader',
+            // Compiles Sass to CSS
+            'sass-loader',
+          ],
+        },
+        {
+          test: /\.less$/,
+          loader: 'less-loader', // compiles Less to CSS
+          options: {
+            lessOptions: {
+              javascriptEnabled: true,
+            },
+          },
         },
         {
           test: /\.(jpe?g|png|gif|obj)$/i,

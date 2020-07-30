@@ -1,7 +1,16 @@
+import * as NodeRed from 'node-red';
+
 import { NODE_RED_FILE_STORAGE } from '@sh/constants';
 
-import { CONTEXT, VALUES, MQTT_PREFIX } from './constants';
-import { ConfigNodeZwavePickDeviceBackend, NodeContext, NodeContextCommandClass, NodeContextValue } from './types';
+import { CONTEXT, VALUES, MQTT_PREFIX, NODE_TYPE } from './constants';
+import {
+  ConfigNodeZwavePickDeviceBackend,
+  NodeContext,
+  NodeContextCommandClass,
+  NodeContextValue,
+  NodeKeyValues,
+  NodesKeyValues,
+} from './types';
 
 export const getValueKey = (commandClassId: number, value: NodeContextValue) =>
   `${VALUES}-${commandClassId}-${value.instanceId}-${value.id}`;
@@ -89,3 +98,32 @@ export const getCurrentValue = (
   commandClasses
     ?.find(({ id }) => id === commandClassId)
     ?.values?.find(({ instanceId: instId, id }) => instId === instanceId && id === valueId);
+
+export const getValues = ({ commandClasses }: NodeContext) =>
+  commandClasses.reduce((acc, commandClass) => {
+    commandClass.values.forEach(value => {
+      acc[getValueKey(commandClass.id, value)] = value.value;
+    });
+
+    return acc;
+  }, {} as NodeKeyValues);
+
+export const getNodesKeyValuesFromRED = async (RED: NodeRed.Red) => {
+  const nodes: ConfigNodeZwavePickDeviceBackend[] = [];
+  RED.nodes.eachNode(nodeObject => {
+    if (nodeObject.type === NODE_TYPE) {
+      const node = RED.nodes.getNode(nodeObject.id) as ConfigNodeZwavePickDeviceBackend | null;
+      if (node) {
+        nodes.push(node);
+      }
+    }
+  });
+
+  const nodesKeyValues: NodesKeyValues = {};
+  for (let i = 0; i < nodes.length; i++) {
+    const node = nodes[i];
+    nodesKeyValues[node.getNodeId()] = await node.getValues();
+  }
+
+  return nodesKeyValues;
+};

@@ -2,7 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './assets/css/index.css';
 
-import { Planner } from './Planner';
+import { App } from './App';
+import { StoreProvider } from './StoreProvider';
 
 const ROOT_NODE = document.getElementById('root');
-ReactDOM.render(<Planner />, ROOT_NODE);
+ReactDOM.render(
+  <StoreProvider>
+    <App />
+  </StoreProvider>,
+  ROOT_NODE
+);

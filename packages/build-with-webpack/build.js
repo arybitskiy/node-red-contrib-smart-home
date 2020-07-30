@@ -24,16 +24,16 @@ const build = (config, name) => {
         console.log(chalk.red('Build error. 😭'));
         return;
       }
-      process.stdout.write(
-        `${stats.toString({
-          colors: true,
-          modules: true,
-          children: true,
-          chunks: true,
-          chunkModules: true,
-          verbose: true,
-        })}\n\n`
-      );
+      // process.stdout.write(
+      //   `${stats.toString({
+      //     colors: true,
+      //     modules: true,
+      //     children: true,
+      //     chunks: true,
+      //     chunkModules: true,
+      //     verbose: true,
+      //   })}\n\n`
+      // );
 
       console.log(chalk.cyan('Build complete. 🎉\n'));
     });

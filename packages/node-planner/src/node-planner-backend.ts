@@ -3,6 +3,8 @@ import express from 'express';
 import path from 'path';
 import fs from 'fs';
 
+import { getNodesKeyValuesFromRED } from '@sh/config-node-zwave-pick-device';
+
 import type { NodePlannerBackend, NodePlannerBackendProps } from './types';
 
 const buildPath = process.env.npm_package_node_red_nodes_node_planner
@@ -19,9 +21,10 @@ export default (RED: NodeRed.Red) => {
     const { url, planner } = props;
 
     console.log(`Listening to /${url}`);
-    RED.httpNode.get(`/${url}`, (req, res) => {
-      const cache = { planner: JSON.parse(planner) };
+    RED.httpNode.get(`/${url}`, async (req, res) => {
       const html = fs.readFileSync(path.resolve(buildPath, 'index.html')).toString();
+
+      const cache = { planner: JSON.parse(planner), nodes: await getNodesKeyValuesFromRED(RED) };
       const injectedHtml = html.replace('%%json_cache%%', JSON.stringify(cache));
       res.send(injectedHtml);
     });

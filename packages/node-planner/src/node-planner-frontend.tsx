@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { Planner } from './frontend/Planner';
+import { App } from './frontend/App';
 
 import { NodePlannerFrontendProps } from './types';
 
@@ -21,6 +21,6 @@ RED.nodes.registerType<NodePlannerFrontendProps>('node-planner', {
   },
   oneditprepare: function () {
     const ROOT_NODE = document.getElementById('planner-react-app');
-    ReactDOM.render(<Planner />, ROOT_NODE);
+    ReactDOM.render(<App />, ROOT_NODE);
   },
 });

@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = function (config) {
   return {
-    mode: config.watch ? 'development' : 'production',
+    mode: config.watch ? 'production' : 'production',
     module: {
       rules: [
         {

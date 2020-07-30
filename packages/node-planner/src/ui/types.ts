@@ -1,0 +1,4 @@
+export enum ActionTypes {
+  LOADED_ALL_VALUES = 'LOADED_ALL_VALUES',
+  VALUE_CHANGED = 'VALUE_CHANGED',
+}

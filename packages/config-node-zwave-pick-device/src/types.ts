@@ -9,7 +9,11 @@ interface ConfigNodeZwavePickDeviceBaseProps {
   location: string;
 }
 
-export type NodeValue = string | number | boolean;
+export interface NodeKeyValues {
+  [key: string]: NodeValue;
+}
+
+export type NodeValue = string | number | boolean | undefined;
 
 export interface ConfigNodeZwavePickDeviceBackend extends NodeRed.Node {
   name: string;
@@ -28,6 +32,8 @@ export interface ConfigNodeZwavePickDeviceBackend extends NodeRed.Node {
   getNodeId: () => number;
 
   getLabel: () => string;
+
+  getValues: () => Promise<NodeKeyValues>;
 }
 
 export interface NodeContextValueOption {
@@ -35,6 +41,8 @@ export interface NodeContextValueOption {
   index: number;
   value: string;
 }
+
+export type NodeContextValueType = DeviceConfigurationType['Value']['type'];
 
 export interface NodeContextValue {
   id: number;
@@ -67,4 +75,20 @@ export interface ConfigNodeZwavePickDeviceBackendProps
 
 export interface ConfigNodeZwavePickDeviceFrontendProps extends ConfigNodeZwavePickDeviceBaseProps {}
 
-export type ReadAllNodesResponse = { id: string; label: string }[];
+export type ReadAllNodesResponse = { id: string; label: string; nodeId: number }[];
+
+export enum WebSocketMessageType {
+  VALUE_CHANGED = 'VALUE_CHANGED',
+  ALL_VALUES = 'ALL_VALUES',
+}
+
+export interface WebSocketMessage {
+  type: WebSocketMessageType;
+  nodeId: number;
+  valueKey: string;
+  value: string | number | boolean;
+}
+
+export interface NodesKeyValues {
+  [key: string]: NodeKeyValues;
+}

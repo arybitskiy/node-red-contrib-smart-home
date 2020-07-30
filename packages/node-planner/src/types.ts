@@ -1,5 +1,7 @@
 import type * as NodeRed from 'node-red';
 
+import type { NodeKeyValues } from '@sh/config-node-zwave-pick-device';
+
 interface NodePlannerBaseProps {
   name: string;
   url: string;

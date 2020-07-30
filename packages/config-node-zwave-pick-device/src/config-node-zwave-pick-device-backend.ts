@@ -4,12 +4,28 @@ import { ConfigNodeLocationBackend } from '@sh/config-node-location';
 import { SELECT_DEVICE } from '@sh/text-constants';
 import { getDeviceNameById } from '@sh/open-zwave-config';
 
-import type { ConfigNodeZwavePickDeviceBackend, ConfigNodeZwavePickDeviceBackendProps } from './types';
-import { readNodeContext, writeNodeContext, setValue, getValueKey, getCurrentValue, getSetValueTopic } from './utils';
+import type {
+  ConfigNodeZwavePickDeviceBackend,
+  ConfigNodeZwavePickDeviceBackendProps,
+  WebSocketMessage,
+} from './types';
+import { WebSocketMessageType } from './types';
+import {
+  readNodeContext,
+  writeNodeContext,
+  setValue,
+  getValueKey,
+  getCurrentValue,
+  getSetValueTopic,
+  getValues,
+} from './utils';
 import api from './api';
-import { VALUES_SET_EVENT } from './constants';
+import setWebsocket from './websocketServer';
+import { VALUES_SET_EVENT, WEBSOCKET_MESSAGE_EVENT } from './constants';
 
 export default (RED: NodeRed.Red) => {
+  const ws = setWebsocket(RED);
+
   function ConfigNodeZwavePickDeviceConstructor(
     this: ConfigNodeZwavePickDeviceBackend,
     props: ConfigNodeZwavePickDeviceBackendProps
@@ -23,6 +39,12 @@ export default (RED: NodeRed.Red) => {
     this.name = name;
     this.node_id = parseInt(node_id, 10);
     this.device = device;
+
+    this.getValues = async () => {
+      const context = await readNodeContext(this);
+
+      return getValues(context);
+    };
 
     this.getLabel = () => {
       const locationNode = RED.nodes.getNode(location) as ConfigNodeLocationBackend | null;
@@ -47,6 +69,12 @@ export default (RED: NodeRed.Red) => {
 
       if (hasChanged) {
         void writeNodeContext(this, setValue(context, commandClassId, value));
+        ws.emit(WEBSOCKET_MESSAGE_EVENT, {
+          type: WebSocketMessageType.VALUE_CHANGED,
+          nodeId: this.getNodeId(),
+          valueKey,
+          value: value.value,
+        } as WebSocketMessage);
       }
 
       this.emit(valueKey, {
@@ -81,7 +109,7 @@ export default (RED: NodeRed.Red) => {
     this.getNodeId = () => this.node_id;
   }
 
-  RED.nodes.registerType('config-node-zwave-pick-device', ConfigNodeZwavePickDeviceConstructor);
-
   api(RED);
+
+  RED.nodes.registerType('config-node-zwave-pick-device', ConfigNodeZwavePickDeviceConstructor);
 };

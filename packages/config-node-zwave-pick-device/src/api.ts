@@ -26,9 +26,8 @@ export default (RED: NodeRed.Red) => {
     RED.nodes.eachNode(nodeObject => {
       if (nodeObject.type === NODE_TYPE) {
         const node = RED.nodes.getNode(nodeObject.id) as ConfigNodeZwavePickDeviceBackend | null;
-        console.log('node: ', node);
         if (node) {
-          nodes.push({ id: node.id, label: node.getLabel() });
+          nodes.push({ id: node.id, label: node.getLabel(), nodeId: node.getNodeId() });
         }
       }
     });

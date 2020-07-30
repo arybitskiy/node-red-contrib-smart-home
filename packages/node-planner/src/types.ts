@@ -8,7 +8,9 @@ interface NodePlannerBaseProps {
   planner: string;
 }
 
-export interface NodePlannerBackend extends NodeRed.Node {}
+export interface NodePlannerBackend extends NodeRed.Node {
+  planner: string;
+}
 
 export interface NodePlannerBackendProps extends NodePlannerBaseProps, NodeRed.NodeProperties {}
 

@@ -18,15 +18,22 @@ export default (RED: NodeRed.Red) => {
   function NodePlannerConstructor(this: NodePlannerBackend, props: NodePlannerBackendProps) {
     RED.nodes.createNode(this, props);
 
-    const { url, planner } = props;
+    const { id, url, planner } = props;
+
+    this.planner = planner;
 
     console.log(`Listening to /${url}`);
     RED.httpNode.get(`/${url}`, async (req, res) => {
-      const html = fs.readFileSync(path.resolve(buildPath, 'index.html')).toString();
+      const self = RED.nodes.getNode(id) as NodePlannerBackend | null;
+      if (self) {
+        const html = fs.readFileSync(path.resolve(buildPath, 'index.html')).toString();
 
-      const cache = { planner: JSON.parse(planner), nodes: await getNodesKeyValuesFromRED(RED) };
-      const injectedHtml = html.replace('%%json_cache%%', JSON.stringify(cache));
-      res.send(injectedHtml);
+        const cache = { planner: JSON.parse(self.planner), nodes: await getNodesKeyValuesFromRED(RED) };
+        const injectedHtml = html.replace('%%json_cache%%', JSON.stringify(cache));
+        res.send(injectedHtml);
+      } else {
+        res.sendStatus(404);
+      }
     });
 
     console.log(`Serving static from ${buildPath}`);

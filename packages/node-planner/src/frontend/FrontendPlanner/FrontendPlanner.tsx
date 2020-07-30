@@ -3,7 +3,6 @@ import Modal from 'react-modal';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Planner } from '../../ui/Planner';
-import { StoreProvider } from '../../ui/StoreProvider';
 import type { StoreState } from '../../ui/StoreProvider';
 
 const getInput = () => {
@@ -52,11 +51,11 @@ export const FrontendPlanner: FunctionComponent<FrontendPlannerProps> = () => {
   }, [setIsModalOpen]);
 
   return (
-    <StoreProvider>
+    <>
       <button onClick={handleModalOpen}>Open Editor</button>
       <Modal style={styles} isOpen={isModalOpen} onRequestClose={handleModalClose} shouldCloseOnEsc={false}>
         <Planner />
       </Modal>
-    </StoreProvider>
+    </>
   );
 };

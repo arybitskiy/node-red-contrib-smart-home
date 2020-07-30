@@ -31,6 +31,12 @@ interface FrontendPlannerProps {}
 
 export const FrontendPlanner: FunctionComponent<FrontendPlannerProps> = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const json = useSelector((state: StoreState) => {
+    const scene = state.getIn(['react-planner', 'scene']);
+    return scene && scene.toJSON();
+  });
+
   const dispatch = useDispatch();
 
   const handleModalOpen = useCallback(() => {
@@ -46,14 +52,19 @@ export const FrontendPlanner: FunctionComponent<FrontendPlannerProps> = () => {
 
   const handleModalClose = useCallback(() => {
     setIsModalOpen(false);
-    const json = useSelector((state: StoreState) => state.get('react-planner').get('scene').toJSON());
     saveScene(json);
-  }, [setIsModalOpen]);
+  }, [setIsModalOpen, json]);
 
   return (
     <>
       <button onClick={handleModalOpen}>Open Editor</button>
-      <Modal style={styles} isOpen={isModalOpen} onRequestClose={handleModalClose} shouldCloseOnEsc={false}>
+      <Modal
+        style={styles}
+        isOpen={isModalOpen}
+        onRequestClose={handleModalClose}
+        shouldCloseOnEsc={false}
+        ariaHideApp={false}
+      >
         <Planner />
       </Modal>
     </>

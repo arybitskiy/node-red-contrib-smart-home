@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import useWebsocket from 'react-use-websocket';
 import { useDispatch } from 'react-redux';
 
@@ -5,7 +6,7 @@ import { WEBSOCKET_PATH, WebSocketMessageType } from '@sh/config-node-zwave-pick
 
 import { ActionTypes } from './types';
 
-export const WebSocketListener = () => {
+export const WebSocketListener = memo(() => {
   const dispatch = useDispatch();
   const { lastJsonMessage } = useWebsocket(
     location.origin.replace(/^http/, 'ws') + location.pathname.replace(/\/$/, '') + WEBSOCKET_PATH,
@@ -32,4 +33,4 @@ export const WebSocketListener = () => {
   }
 
   return null;
-};
+});

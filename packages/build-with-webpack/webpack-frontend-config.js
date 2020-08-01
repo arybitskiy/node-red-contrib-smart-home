@@ -5,6 +5,7 @@ const InlineChunkHtmlPlugin = require('react-dev-utils/InlineChunkHtmlPlugin');
 const { default: WatchExternalFilesPlugin } = require('webpack-watch-files-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { default: HTMLInlineCSSWebpackPlugin } = require('html-inline-css-webpack-plugin');
+const webpack = require('webpack');
 
 const commonConfig = require('./webpack-common-config');
 
@@ -89,6 +90,9 @@ module.exports = function (config) {
       new InlineChunkHtmlPlugin(HtmlWebpackPlugin, [/.+/]),
       new WatchExternalFilesPlugin({ files: [helpFile, formFile] }),
       new HTMLInlineCSSWebpackPlugin(),
+      new webpack.optimize.LimitChunkCountPlugin({
+        maxChunks: 1
+      }),
     ],
     entry: {
       app: `./src/${config.name}-frontend`,

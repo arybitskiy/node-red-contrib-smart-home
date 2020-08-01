@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const commonConfig = require('./webpack-common-config');
 
@@ -80,13 +81,20 @@ module.exports = function (config) {
         filename: 'index.html',
         cache: false,
       }),
+      // new BundleAnalyzerPlugin(),
     ],
     entry: {
       app: path.resolve(process.env.PWD, './src/ui/index.tsx'),
     },
     output: {
       filename: '[name].js',
+      chunkFilename: '[name].bundle.js',
       path: path.resolve(process.env.PWD, './build/ui'),
+    },
+    optimization: {
+      splitChunks: {
+        chunks: 'all',
+      },
     },
     watch: config.watch,
   };

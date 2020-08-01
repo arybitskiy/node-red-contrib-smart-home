@@ -7,5 +7,6 @@ module.exports = {
     '@babel/plugin-proposal-object-rest-spread',
     'babel-plugin-styled-components',
     'import-glob',
+    '@babel/plugin-syntax-dynamic-import',
   ],
 };

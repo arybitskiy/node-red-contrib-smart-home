@@ -62,6 +62,7 @@
         "react-awesome-query-builder": "^2.1.2",
         "react-dev-utils": "^10.2.1",
         "react-query": "^2.5.6",
+        "react-resize-detector": "^5.0.6",
         "react-select": "^3.1.0",
         "react-use-websocket": "^2.1.1",
         "rimraf": "^3.0.2",

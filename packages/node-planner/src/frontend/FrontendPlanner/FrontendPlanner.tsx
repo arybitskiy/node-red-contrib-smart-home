@@ -2,6 +2,7 @@ import React, { FunctionComponent, useState, useCallback } from 'react';
 import Modal from 'react-modal';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { EditableContextProvider } from '../../EditableContext';
 import { Planner } from '../../ui/Planner';
 import type { StoreState } from '../../ui/StoreProvider';
 
@@ -65,7 +66,9 @@ export const FrontendPlanner: FunctionComponent<FrontendPlannerProps> = () => {
         shouldCloseOnEsc={false}
         ariaHideApp={false}
       >
-        <Planner />
+        <EditableContextProvider isEditable>
+          <Planner />
+        </EditableContextProvider>
       </Modal>
     </>
   );

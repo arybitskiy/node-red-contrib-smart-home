@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 
 import { Planner } from './Planner';
 import { ActionTypes } from './types';
+import { EditableContextProvider } from '../EditableContext';
 
 const getCache = () => {
   try {
@@ -32,5 +33,9 @@ export const App = () => {
     }
   });
 
-  return <Planner />;
+  return (
+    <EditableContextProvider>
+      <Planner />
+    </EditableContextProvider>
+  );
 };

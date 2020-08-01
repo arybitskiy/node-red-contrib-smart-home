@@ -51,7 +51,7 @@ module.exports = function (config) {
           },
         },
         {
-          test: /\.(jpe?g|png|gif|obj)$/i,
+          test: /\.(jpe?g|png|gif|obj|svg)$/i,
           use: [
             {
               loader: 'file-loader',

@@ -104,5 +104,17 @@
                 "a0be0ab7.8c7498"
             ]
         ]
+    },
+    {
+        "id": "14615393.48138c",
+        "type": "node-presence-detection",
+        "z": "12f2fbb2.688eb4",
+        "name": "",
+        "graph": "{\"nodes\":[{\"id\":1596937950847,\"title\":\"OPEN_LOCK_SENSOR\",\"type\":\"OPEN_LOCK_SENSOR\",\"x\":231.79579162597656,\"y\":26.813087463378906,\"condition\":{\"node\":{\"id\":\"9d7c8fde.04677\",\"nodeId\":6},\"logic\":{\"and\":[{\"==\":[{\"var\":\"values-113-1-6\"},\"Door/Window Closed\"]}]}}},{\"id\":1596937947777,\"title\":\"ZONE\",\"type\":\"ZONE\",\"x\":369.69696044921875,\"y\":373.3333435058594}],\"edges\":[{\"source\":1596937947777,\"target\":1596937950847,\"type\":\"DEFAULT\"}]}",
+        "x": 300,
+        "y": 100,
+        "wires": [
+            []
+        ]
     }
 ]

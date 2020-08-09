@@ -61,6 +61,7 @@
         "prettier": "^2.0.5",
         "react-awesome-query-builder": "^2.1.2",
         "react-dev-utils": "^10.2.1",
+        "react-digraph": "^7.0.0",
         "react-query": "^2.5.6",
         "react-resize-detector": "^5.0.6",
         "react-select": "^3.1.0",
@@ -106,12 +107,14 @@
             "node-zwave-device-out": "packages/node-zwave-device-out/build/node-zwave-device-out.js",
             "node-zwave-device-in": "packages/node-zwave-device-in/build/node-zwave-device-in.js",
             "config-node-location": "packages/config-node-location/build/config-node-location.js",
-            "node-planner": "packages/node-planner/build/node-planner.js"
+            "node-planner": "packages/node-planner/build/node-planner.js",
+            "node-presence-detection": "packages/node-presence-detection/build/node-presence-detection.js"
         }
     },
     "husky": {
         "hooks": {
             "pre-push": "yarn tsc; yarn test; yarn lint"
         }
-    }
+    },
+    "private": true
 }

@@ -21,7 +21,7 @@ import {
 } from './utils';
 import api from './api';
 import setWebsocket from './websocketServer';
-import { VALUES_SET_EVENT, WEBSOCKET_MESSAGE_EVENT } from './constants';
+import { VALUES_SET_EVENT, WEBSOCKET_MESSAGE_EVENT, VALUE_CHANGE_EVENT } from './constants';
 
 export default (RED: NodeRed.Red) => {
   const ws = setWebsocket(RED);
@@ -75,6 +75,12 @@ export default (RED: NodeRed.Red) => {
           valueKey,
           value: value.value,
         } as WebSocketMessage);
+        this.emit(VALUE_CHANGE_EVENT, {
+          topic: valueKey,
+          payload: value.value,
+          nodeId: this.id,
+          zwaveNodeId: this.node_id,
+        });
       }
 
       this.emit(valueKey, {

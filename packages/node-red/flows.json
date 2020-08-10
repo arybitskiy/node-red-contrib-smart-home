@@ -28,8 +28,8 @@
         "z": "12f2fbb2.688eb4",
         "name": "",
         "device": "9d7c8fde.04677",
-        "x": 650,
-        "y": 280,
+        "x": 490,
+        "y": 260,
         "wires": [
             []
         ]
@@ -68,8 +68,8 @@
         "topic": "openzwave2mqtt/_EVENTS/ZWAVE_GATEWAY-openzwave2mqtt/value_changed",
         "payload": "{\"data\":[6,113,{\"value_id\":\"6-113-1-6\",\"node_id\":6,\"class_id\":113,\"type\":\"list\",\"genre\":\"user\",\"instance\":1,\"index\":6,\"label\":\"Access Control\",\"units\":\"\",\"help\":\"Access Control Alerts\",\"read_only\":true,\"write_only\":false,\"min\":0,\"max\":0,\"is_polled\":false,\"values\":[\"Clear\",\"Door/Window Open\",\"Door/Window Closed\"],\"value\":\"Door/Window Open\"}]}",
         "payloadType": "str",
-        "x": 200,
-        "y": 300,
+        "x": 150,
+        "y": 200,
         "wires": [
             [
                 "a0be0ab7.8c7498"
@@ -97,8 +97,8 @@
         "topic": "openzwave2mqtt/_EVENTS/ZWAVE_GATEWAY-openzwave2mqtt/value_changed",
         "payload": "{\"data\":[6,113,{\"value_id\":\"6-113-1-6\",\"node_id\":6,\"class_id\":113,\"type\":\"list\",\"genre\":\"user\",\"instance\":1,\"index\":6,\"label\":\"Access Control\",\"units\":\"\",\"help\":\"Access Control Alerts\",\"read_only\":true,\"write_only\":false,\"min\":0,\"max\":0,\"is_polled\":false,\"values\":[\"Clear\",\"Door/Window Open\",\"Door/Window Closed\"],\"value\":\"Door/Window Closed\"}]}",
         "payloadType": "str",
-        "x": 190,
-        "y": 340,
+        "x": 130,
+        "y": 240,
         "wires": [
             [
                 "a0be0ab7.8c7498"
@@ -110,11 +110,262 @@
         "type": "node-presence-detection",
         "z": "12f2fbb2.688eb4",
         "name": "",
-        "graph": "{\"nodes\":[{\"id\":1596937950847,\"title\":\"OPEN_LOCK_SENSOR\",\"type\":\"OPEN_LOCK_SENSOR\",\"x\":231.79579162597656,\"y\":26.813087463378906,\"condition\":{\"node\":{\"id\":\"9d7c8fde.04677\",\"nodeId\":6},\"logic\":{\"and\":[{\"==\":[{\"var\":\"values-113-1-6\"},\"Door/Window Closed\"]}]}}},{\"id\":1596937947777,\"title\":\"ZONE\",\"type\":\"ZONE\",\"x\":369.69696044921875,\"y\":373.3333435058594}],\"edges\":[{\"source\":1596937947777,\"target\":1596937950847,\"type\":\"DEFAULT\"}]}",
+        "graph": "{\"nodes\":[{\"id\":1597001983580,\"title\":\"BATHROOM L1\",\"type\":\"OPEN_LOCK_SENSOR\",\"x\":3.751365900039673,\"y\":569.77685546875,\"condition\":{\"node\":{\"id\":\"9d7c8fde.04677\",\"nodeId\":6},\"logic\":{\"and\":[{\"==\":[{\"var\":\"values-1003-1-0\"},true]}]}}},{\"id\":1597001957123,\"title\":\"Bathroom\",\"type\":\"ZONE\",\"x\":497.36309814453125,\"y\":541.0889892578125,\"tags\":\"bathroom\"},{\"id\":1597001946994,\"title\":\"BATHROOM M\",\"type\":\"MOTION_SENSOR\",\"x\":211.4007110595703,\"y\":546.6597290039062,\"condition\":{\"node\":{\"id\":\"9d7c8fde.04677\",\"nodeId\":6},\"logic\":{\"and\":[{\"==\":[{\"var\":\"values-1002-1-0\"},true]}]}}},{\"id\":1597001930204,\"title\":\"Kitchen\",\"type\":\"ZONE\",\"x\":579.066650390625,\"y\":160.4248046875,\"tags\":\"kitchen\"},{\"id\":1597001912156,\"title\":\"KITCHEN M2\",\"type\":\"MOTION_SENSOR\",\"x\":118.5557861328125,\"y\":294.1214904785156,\"condition\":{\"node\":{\"id\":\"9d7c8fde.04677\",\"nodeId\":6},\"logic\":{\"and\":[{\"==\":[{\"var\":\"values-1001-1-0\"},true]}]}}},{\"id\":1597001871531,\"title\":\"KITCHEN M1\",\"type\":\"MOTION_SENSOR\",\"x\":99.76023864746094,\"y\":80.66336822509766,\"condition\":{\"node\":{\"id\":\"9d7c8fde.04677\",\"nodeId\":6},\"logic\":{\"and\":[{\"==\":[{\"var\":\"values-1000-1-0\"},true]}]}}}],\"edges\":[{\"source\":1597001983580,\"target\":1597001946994,\"type\":\"DEFAULT\"},{\"source\":1597001946994,\"target\":1597001957123,\"type\":\"DEFAULT\"},{\"source\":1597001871531,\"target\":1597001912156,\"type\":\"DEFAULT\"},{\"source\":1597001912156,\"target\":1597001930204,\"type\":\"DEFAULT\"},{\"source\":1597001871531,\"target\":1597001930204,\"type\":\"DEFAULT\"}]}",
         "x": 300,
         "y": 100,
         "wires": [
-            []
+            [
+                "a2109fc4.09019"
+            ]
         ]
+    },
+    {
+        "id": "a6a61f8b.a35ba",
+        "type": "inject",
+        "z": "12f2fbb2.688eb4",
+        "name": "Motion on #1",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "openzwave2mqtt/_EVENTS/ZWAVE_GATEWAY-openzwave2mqtt/value_changed",
+        "payload": "{\"data\":[6,1000,{\"value_id\":\"6-1000-1-0\",\"node_id\":6,\"class_id\":1000,\"type\":\"bool\",\"genre\":\"user\",\"instance\":1,\"index\":0,\"label\":\"Motion sensor 1\",\"units\":\"\",\"help\":\"Motion sensor 1\",\"read_only\":true,\"write_only\":false,\"min\":0,\"max\":0,\"is_polled\":false,\"value\":true}]}",
+        "payloadType": "str",
+        "x": 150,
+        "y": 280,
+        "wires": [
+            [
+                "a0be0ab7.8c7498"
+            ]
+        ]
+    },
+    {
+        "id": "8986050b.62be38",
+        "type": "inject",
+        "z": "12f2fbb2.688eb4",
+        "name": "Motion off #1",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "openzwave2mqtt/_EVENTS/ZWAVE_GATEWAY-openzwave2mqtt/value_changed",
+        "payload": "{\"data\":[6,1000,{\"value_id\":\"6-1000-1-0\",\"node_id\":6,\"class_id\":1000,\"type\":\"bool\",\"genre\":\"user\",\"instance\":1,\"index\":0,\"label\":\"Motion sensor 1\",\"units\":\"\",\"help\":\"Motion sensor 1\",\"read_only\":true,\"write_only\":false,\"min\":0,\"max\":0,\"is_polled\":false,\"value\":false}]}",
+        "payloadType": "str",
+        "x": 150,
+        "y": 320,
+        "wires": [
+            [
+                "a0be0ab7.8c7498"
+            ]
+        ]
+    },
+    {
+        "id": "18b949eb.be68f6",
+        "type": "inject",
+        "z": "12f2fbb2.688eb4",
+        "name": "Motion on #2",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "openzwave2mqtt/_EVENTS/ZWAVE_GATEWAY-openzwave2mqtt/value_changed",
+        "payload": "{\"data\":[6,1001,{\"value_id\":\"6-1001-1-0\",\"node_id\":6,\"class_id\":1001,\"type\":\"bool\",\"genre\":\"user\",\"instance\":1,\"index\":0,\"label\":\"Motion sensor 2\",\"units\":\"\",\"help\":\"Motion sensor 2\",\"read_only\":true,\"write_only\":false,\"min\":0,\"max\":0,\"is_polled\":false,\"value\":true}]}",
+        "payloadType": "str",
+        "x": 150,
+        "y": 360,
+        "wires": [
+            [
+                "a0be0ab7.8c7498"
+            ]
+        ]
+    },
+    {
+        "id": "5f478674.68eb98",
+        "type": "inject",
+        "z": "12f2fbb2.688eb4",
+        "name": "Motion off #2",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "openzwave2mqtt/_EVENTS/ZWAVE_GATEWAY-openzwave2mqtt/value_changed",
+        "payload": "{\"data\":[6,1001,{\"value_id\":\"6-1001-1-0\",\"node_id\":6,\"class_id\":1001,\"type\":\"bool\",\"genre\":\"user\",\"instance\":1,\"index\":0,\"label\":\"Motion sensor 2\",\"units\":\"\",\"help\":\"Motion sensor 2\",\"read_only\":true,\"write_only\":false,\"min\":0,\"max\":0,\"is_polled\":false,\"value\":false}]}",
+        "payloadType": "str",
+        "x": 150,
+        "y": 400,
+        "wires": [
+            [
+                "a0be0ab7.8c7498"
+            ]
+        ]
+    },
+    {
+        "id": "f664f238.207bc",
+        "type": "inject",
+        "z": "12f2fbb2.688eb4",
+        "name": "Motion on #3",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "openzwave2mqtt/_EVENTS/ZWAVE_GATEWAY-openzwave2mqtt/value_changed",
+        "payload": "{\"data\":[6,1002,{\"value_id\":\"6-1002-1-0\",\"node_id\":6,\"class_id\":1002,\"type\":\"bool\",\"genre\":\"user\",\"instance\":1,\"index\":0,\"label\":\"Motion sensor 3\",\"units\":\"\",\"help\":\"Motion sensor 3\",\"read_only\":true,\"write_only\":false,\"min\":0,\"max\":0,\"is_polled\":false,\"value\":true}]}",
+        "payloadType": "str",
+        "x": 150,
+        "y": 440,
+        "wires": [
+            [
+                "a0be0ab7.8c7498"
+            ]
+        ]
+    },
+    {
+        "id": "40d4037e.1b3e5c",
+        "type": "inject",
+        "z": "12f2fbb2.688eb4",
+        "name": "Motion off #3",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "openzwave2mqtt/_EVENTS/ZWAVE_GATEWAY-openzwave2mqtt/value_changed",
+        "payload": "{\"data\":[6,1002,{\"value_id\":\"6-1002-1-0\",\"node_id\":6,\"class_id\":1002,\"type\":\"bool\",\"genre\":\"user\",\"instance\":1,\"index\":0,\"label\":\"Motion sensor 3\",\"units\":\"\",\"help\":\"Motion sensor 3\",\"read_only\":true,\"write_only\":false,\"min\":0,\"max\":0,\"is_polled\":false,\"value\":false}]}",
+        "payloadType": "str",
+        "x": 150,
+        "y": 480,
+        "wires": [
+            [
+                "a0be0ab7.8c7498"
+            ]
+        ]
+    },
+    {
+        "id": "bafa971.e6da268",
+        "type": "inject",
+        "z": "12f2fbb2.688eb4",
+        "name": "Lock on #1",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "openzwave2mqtt/_EVENTS/ZWAVE_GATEWAY-openzwave2mqtt/value_changed",
+        "payload": "{\"data\":[6,1003,{\"value_id\":\"6-1003-1-0\",\"node_id\":6,\"class_id\":1003,\"type\":\"bool\",\"genre\":\"user\",\"instance\":1,\"index\":0,\"label\":\"Lock 1\",\"units\":\"\",\"help\":\"Lock 1\",\"read_only\":true,\"write_only\":false,\"min\":0,\"max\":0,\"is_polled\":false,\"value\":true}]}",
+        "payloadType": "str",
+        "x": 140,
+        "y": 520,
+        "wires": [
+            [
+                "a0be0ab7.8c7498"
+            ]
+        ]
+    },
+    {
+        "id": "32d79917.fe7c96",
+        "type": "inject",
+        "z": "12f2fbb2.688eb4",
+        "name": "Lock off #1",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "openzwave2mqtt/_EVENTS/ZWAVE_GATEWAY-openzwave2mqtt/value_changed",
+        "payload": "{\"data\":[6,1003,{\"value_id\":\"6-1003-1-0\",\"node_id\":6,\"class_id\":1003,\"type\":\"bool\",\"genre\":\"user\",\"instance\":1,\"index\":0,\"label\":\"Lock 1\",\"units\":\"\",\"help\":\"Lock 1\",\"read_only\":true,\"write_only\":false,\"min\":0,\"max\":0,\"is_polled\":false,\"value\":false}]}",
+        "payloadType": "str",
+        "x": 140,
+        "y": 560,
+        "wires": [
+            [
+                "a0be0ab7.8c7498"
+            ]
+        ]
+    },
+    {
+        "id": "a2109fc4.09019",
+        "type": "debug",
+        "z": "12f2fbb2.688eb4",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 480,
+        "y": 180,
+        "wires": []
     }
 ]

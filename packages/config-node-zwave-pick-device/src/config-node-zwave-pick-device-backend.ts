@@ -96,6 +96,8 @@ export default (RED: NodeRed.Red) => {
       const context = await readNodeContext(this);
 
       const currentValue = getCurrentValue(context, commandClassId, instanceId, valueId);
+      console.log(this.id);
+      console.log('currentValue: ', currentValue);
 
       if (!currentValue) {
         return;
@@ -104,6 +106,9 @@ export default (RED: NodeRed.Red) => {
       const valueKey = getValueKey(commandClassId, currentValue);
 
       const hasChanged = currentValue?.value !== value && sendingValues[valueKey] !== value;
+      console.log('value: ', value);
+      console.log('sendingValues: ', sendingValues);
+      console.log('hasChanged: ', hasChanged);
 
       if (hasChanged) {
         sendingValues[valueKey] = value;

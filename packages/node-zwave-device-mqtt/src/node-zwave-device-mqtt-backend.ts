@@ -34,7 +34,7 @@ export default (RED: NodeRed.Red) => {
     });
 
     this.on('input', (msg, _, done) => {
-      if (this.device && this.device.haSetStateTopics.includes(msg.topic)) {
+      if (this.device && this.device.haSetStateTopics && this.device.haSetStateTopics.includes(msg.topic)) {
         this.device.setState(msg.topic, msg.payload).catch(console.error);
       } else {
         const zWaveEventType = detectOpenZWaveEvent(msg.topic);

@@ -15,6 +15,10 @@ export const WalliDoubleSwitch: FunctionComponent<WalliDoubleSwitchProps> = ({ v
       <label>HA Discovery:</label>
       <input type="text" data-name="ha_discovery" value={values.ha_discovery} onChange={onInputChange} />
     </div>
+    <div>
+      <label>Device Name:</label>
+      <input type="text" data-name="device_name" value={values.device_name} onChange={onInputChange} />
+    </div>
     <fieldset>
       <legend>First</legend>
       <div>

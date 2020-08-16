@@ -5,6 +5,8 @@ import { ZONE_PROBABILITY } from '@sh/node-presence-detection';
 
 import type { ConfigNodeZwavePickDeviceBackend } from '../../types';
 import { MQTT_DISCOVERY } from '../../constants';
+import { getValueKey } from '../../utils';
+import { first } from 'lodash';
 
 const getUniqueId = str => str.toLowerCase().replace(/\s/g, '_');
 
@@ -22,14 +24,23 @@ const getSecondName = (node: ConfigNodeZwavePickDeviceBackend, RED: NodeRed.Red)
   return `${locationNode?.name} ${node.configuration.second_name}`;
 };
 
-const getMQTTConfig = (node: ConfigNodeZwavePickDeviceBackend, RED: NodeRed.Red, name: string) => ({
-  command_topic: '~/set',
-  state_topic: '~/state',
-  schema: 'json',
-  '~': getMQTTTopic(getUniqueId(name)),
-  name: name,
-  unique_id: `alexa_${getUniqueId(name)}`,
-});
+const getMQTTConfig = (node: ConfigNodeZwavePickDeviceBackend, RED: NodeRed.Red, name: string) => {
+  const locationNode: ConfigNodeLocationBackend | null = RED.nodes.getNode(node.location) as any;
+
+  return {
+    command_topic: '~/set',
+    state_topic: '~/state',
+    schema: 'json',
+    device: {
+      manufacturer: 'Fibaro',
+      model: 'FGWDS221',
+      name: `${locationNode?.name} ${node.configuration.device_name}`,
+    },
+    '~': getMQTTTopic(getUniqueId(name)),
+    name,
+    unique_id: `alexa_${getUniqueId(name)}`,
+  };
+};
 
 export const FibaroWalliDoubleSwitch = (node: ConfigNodeZwavePickDeviceBackend, RED: NodeRed.Red) => {
   const firstName = getFirstName(node, RED);
@@ -39,6 +50,13 @@ export const FibaroWalliDoubleSwitch = (node: ConfigNodeZwavePickDeviceBackend, 
 
   const turnSwitch = async (instanceId: number, value: boolean) => {
     await node.sendValue(37, instanceId, 0, value);
+  };
+
+  const handleLightChange = ({ payload: value }) => {
+    node.emit(MQTT_DISCOVERY, {
+      topic: `${getMQTTTopic(getUniqueId(value.instanceId === 2 ? firstName : secondName))}/state`,
+      payload: { state: value.value ? 'on' : 'off' },
+    });
   };
 
   const handleZoneProbabilityChange = async ({ probability, value }) => {
@@ -80,8 +98,13 @@ export const FibaroWalliDoubleSwitch = (node: ConfigNodeZwavePickDeviceBackend, 
     })();
   }
 
+  node.on(getValueKey(37, { instanceId: 2, id: 0 } as any), handleLightChange);
+  node.on(getValueKey(37, { instanceId: 3, id: 0 } as any), handleLightChange);
+
   return () => {
     locationNode && locationNode.off(ZONE_PROBABILITY, handleZoneProbabilityChange);
+    node.off(getValueKey(37, { instanceId: 2, id: 0 } as any), handleLightChange);
+    node.off(getValueKey(37, { instanceId: 3, id: 0 } as any), handleLightChange);
     console.log('end');
   };
 };

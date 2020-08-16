@@ -132,7 +132,6 @@ const getAllZones = (nodesNormalized: NodesNormalized) =>
   }, [] as NodeNormalized[]);
 
 const getZoneIsActiveProbability = (dependencies: number[], probabilities) => {
-  DEBUG && DEBUG && console.log('probabilities: ', probabilities);
   const activeProbabilities = dependencies
     .map(dependencyId => {
       const probability = probabilities[dependencyId];
@@ -151,7 +150,6 @@ const getZoneIsActiveProbability = (dependencies: number[], probabilities) => {
       return probability;
     })
     .filter(({ probability }) => !!probability);
-  DEBUG && DEBUG && console.log('activeProbabilities: ', activeProbabilities);
 
   if (activeProbabilities.length === 0) {
     return {
@@ -185,15 +183,13 @@ const anyDependencyIsTrue = (nodesNormalized: NodesNormalized, dependencies: num
           return LOCK_TIMEOUT;
       }
     })();
-    DEBUG && console.log('timeout: ', timeout);
-    DEBUG && console.log('nodeNormalized.valueChangedAt: ', nodeNormalized.valueChangedAt);
-    DEBUG && console.log('nodeNormalized.valueChangedAt + timeout: ', nodeNormalized.valueChangedAt + timeout);
-    DEBUG && console.log('Date.now(): ', Date.now());
-    DEBUG && console.log('nodeNormalized.value: ', nodeNormalized.value);
     DEBUG &&
       console.log(
-        'nodeNormalized.valueChangedAt + timeout <= Date.now(): ',
-        nodeNormalized.valueChangedAt + timeout <= Date.now()
+        `anyDependencyIsTrue [${nodeNormalized.type}]: ${nodeNormalized.title} value[${nodeNormalized.value}] timeout[${
+          nodeNormalized.valueChangedAt + timeout <= Date.now()
+        }] return [${
+          nodeNormalized.valueChangedAt + timeout <= Date.now() ? !!nodeNormalized.value : !nodeNormalized.value
+        }]`
       );
     if (nodeNormalized.valueChangedAt + timeout <= Date.now()) {
       return !!nodeNormalized.value;
@@ -240,7 +236,6 @@ export const basicProbabilityAnalyzer = (input: NodeJS.EventEmitter, output: Nod
   }, SWITCH_TO_INACTIVE_AFTER_TICK);
 
   const listenNodes = (nodesNormalized: NodesNormalized) => {
-    DEBUG && console.log('nodesNormalized: ', nodesNormalized);
     cacheNodesNormalized = nodesNormalized;
     values(nodesNormalized).forEach(node => {
       if (node.type === NodeTypes.MOTION_SENSOR) {
@@ -263,9 +258,9 @@ export const basicProbabilityAnalyzer = (input: NodeJS.EventEmitter, output: Nod
   };
 
   const listenNode = (nodeNormalized: NodeNormalized) => {
-    DEBUG && console.log('nodeNormalized: ', nodeNormalized);
     cacheNodesNormalized[nodeNormalized.id] = nodeNormalized;
     let changed = false;
+    DEBUG && console.log(`listenNode [${nodeNormalized.type}]: ${nodeNormalized.title}`);
     // Update own probability
     if (nodeNormalized.type === NodeTypes.MOTION_SENSOR) {
       if (

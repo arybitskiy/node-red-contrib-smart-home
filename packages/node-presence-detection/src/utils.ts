@@ -171,8 +171,8 @@ const getZoneIsActiveProbability = (dependencies: number[], probabilities) => {
   }
 };
 
-const anyDependencyIsTrue = (nodesNormalized: NodesNormalized, dependencies: number[]): boolean =>
-  dependencies.some(dependencyId => {
+const allDependenciesAreTrue = (nodesNormalized: NodesNormalized, dependencies: number[]): boolean =>
+  dependencies.every(dependencyId => {
     const nodeNormalized = nodesNormalized[dependencyId];
     const timeout = (() => {
       switch (nodeNormalized.type) {
@@ -185,7 +185,7 @@ const anyDependencyIsTrue = (nodesNormalized: NodesNormalized, dependencies: num
     })();
     DEBUG &&
       console.log(
-        `anyDependencyIsTrue [${nodeNormalized.type}]: ${nodeNormalized.title} value[${nodeNormalized.value}] timeout[${
+        `allDependenciesAreTrue [${nodeNormalized.type}]: ${nodeNormalized.title} value[${nodeNormalized.value}] timeout[${
           nodeNormalized.valueChangedAt + timeout <= Date.now()
         }] return [${
           nodeNormalized.valueChangedAt + timeout <= Date.now() ? !!nodeNormalized.value : !nodeNormalized.value
@@ -265,7 +265,7 @@ export const basicProbabilityAnalyzer = (input: NodeJS.EventEmitter, output: Nod
     if (nodeNormalized.type === NodeTypes.MOTION_SENSOR) {
       if (
         nodeNormalized.dependencies.length &&
-        !anyDependencyIsTrue(cacheNodesNormalized, nodeNormalized.dependencies)
+        !allDependenciesAreTrue(cacheNodesNormalized, nodeNormalized.dependencies)
       ) {
         if (nodeNormalized.value !== probabilities[nodeNormalized.id].value && nodeNormalized.value) {
           probabilities[nodeNormalized.id] = {

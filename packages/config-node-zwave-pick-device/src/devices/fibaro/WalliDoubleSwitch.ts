@@ -6,7 +6,6 @@ import { ZONE_PROBABILITY } from '@sh/node-presence-detection';
 import type { ConfigNodeZwavePickDeviceBackend } from '../../types';
 import { MQTT_DISCOVERY } from '../../constants';
 import { getValueKey } from '../../utils';
-import { first } from 'lodash';
 
 const getUniqueId = str => str.toLowerCase().replace(/\s/g, '_');
 
@@ -25,18 +24,12 @@ const getSecondName = (node: ConfigNodeZwavePickDeviceBackend, RED: NodeRed.Red)
 };
 
 const getMQTTConfig = (node: ConfigNodeZwavePickDeviceBackend, RED: NodeRed.Red, name: string) => {
-  const locationNode: ConfigNodeLocationBackend | null = RED.nodes.getNode(node.location) as any;
-
   return {
     command_topic: '~/set',
     state_topic: '~/state',
     schema: 'json',
-    device: {
-      manufacturer: 'Fibaro',
-      model: 'FGWDS221',
-      name: `${locationNode?.name} ${node.configuration.device_name}`,
-      identifiers: [`${locationNode?.name} ${node.configuration.device_name}`],
-    },
+    payload_on: 'on',
+    payload_off: 'off',
     '~': getMQTTTopic(getUniqueId(name)),
     name,
     unique_id: `alexa_${getUniqueId(name)}`,

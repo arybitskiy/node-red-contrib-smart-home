@@ -1,6 +1,8 @@
 import { EventEmitter } from 'events';
 import * as NodeRed from 'node-red';
 
+import type { ConfigNodeLocationBackend } from '@sh/config-node-location';
+
 import type { NodePresenceDetectionBackend, NodePresenceDetectionBackendProps } from './types';
 import { listenNodeChanges, basicProbabilityAnalyzer } from './utils';
 import { ZONE_PROBABILITY } from './constants';
@@ -21,6 +23,10 @@ export default (RED: NodeRed.Red) => {
     const stopProbabilitiesListen = basicProbabilityAnalyzer(eventEmitter, probabilitiesEmitter);
 
     const listenProbabilityChanges = payload => {
+      const locationNode: ConfigNodeLocationBackend | null = RED.nodes.getNode(payload.zone.nodeId) as any;
+      if (locationNode) {
+        locationNode.emit(ZONE_PROBABILITY, payload);
+      }
       this.send({ topic: ZONE_PROBABILITY, payload });
     };
 

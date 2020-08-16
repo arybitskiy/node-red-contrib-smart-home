@@ -1,5 +1,4 @@
 import * as NodeRed from 'node-red';
-import { EventEmitter } from 'events';
 import { fromPairs, values } from 'lodash';
 import JsonLogic from 'json-logic-js';
 
@@ -15,6 +14,7 @@ import {
   ZONE_PROBABILITY,
   SWITCH_TO_INACTIVE_AFTER,
   SWITCH_TO_INACTIVE_AFTER_TICK,
+  DEBUG,
 } from './constants';
 
 const getNodeValue = (values: { [nodeId: string]: NodeKeyValues }, condition: any): boolean | undefined => {
@@ -62,6 +62,7 @@ export const listenNodeChanges = async (RED: NodeRed.Red, graph: Graph, eventEmi
       title: node.title,
       tags: node.tags,
       type: node.type,
+      nodeId: node.nodeId,
       value: getNodeValue(values, node.condition),
       condition: node.condition,
       valueChangedAt: Date.now(),
@@ -131,7 +132,7 @@ const getAllZones = (nodesNormalized: NodesNormalized) =>
   }, [] as NodeNormalized[]);
 
 const getZoneIsActiveProbability = (dependencies: number[], probabilities) => {
-  console.log('probabilities: ', probabilities);
+  DEBUG && DEBUG && console.log('probabilities: ', probabilities);
   const activeProbabilities = dependencies
     .map(dependencyId => {
       const probability = probabilities[dependencyId];
@@ -150,7 +151,7 @@ const getZoneIsActiveProbability = (dependencies: number[], probabilities) => {
       return probability;
     })
     .filter(({ probability }) => !!probability);
-  console.log('activeProbabilities: ', activeProbabilities);
+  DEBUG && DEBUG && console.log('activeProbabilities: ', activeProbabilities);
 
   if (activeProbabilities.length === 0) {
     return {
@@ -184,15 +185,16 @@ const anyDependencyIsTrue = (nodesNormalized: NodesNormalized, dependencies: num
           return LOCK_TIMEOUT;
       }
     })();
-    console.log('timeout: ', timeout);
-    console.log('nodeNormalized.valueChangedAt: ', nodeNormalized.valueChangedAt);
-    console.log('nodeNormalized.valueChangedAt + timeout: ', nodeNormalized.valueChangedAt + timeout);
-    console.log('Date.now(): ', Date.now());
-    console.log('nodeNormalized.value: ', nodeNormalized.value);
-    console.log(
-      'nodeNormalized.valueChangedAt + timeout <= Date.now(): ',
-      nodeNormalized.valueChangedAt + timeout <= Date.now()
-    );
+    DEBUG && console.log('timeout: ', timeout);
+    DEBUG && console.log('nodeNormalized.valueChangedAt: ', nodeNormalized.valueChangedAt);
+    DEBUG && console.log('nodeNormalized.valueChangedAt + timeout: ', nodeNormalized.valueChangedAt + timeout);
+    DEBUG && console.log('Date.now(): ', Date.now());
+    DEBUG && console.log('nodeNormalized.value: ', nodeNormalized.value);
+    DEBUG &&
+      console.log(
+        'nodeNormalized.valueChangedAt + timeout <= Date.now(): ',
+        nodeNormalized.valueChangedAt + timeout <= Date.now()
+      );
     if (nodeNormalized.valueChangedAt + timeout <= Date.now()) {
       return !!nodeNormalized.value;
     }
@@ -201,9 +203,10 @@ const anyDependencyIsTrue = (nodesNormalized: NodesNormalized, dependencies: num
   });
 
 const debugNodeInfo = (nodeNormalized: NodeNormalized, probability, reason) => {
-  console.log(
-    `${nodeNormalized.title} value[${probability.value}] probability[${probability.probability}] because of ${reason}`
-  );
+  DEBUG &&
+    console.log(
+      `${nodeNormalized.title} value[${probability.value}] probability[${probability.probability}] because of ${reason}`
+    );
 };
 
 export const basicProbabilityAnalyzer = (input: NodeJS.EventEmitter, output: NodeJS.EventEmitter) => {
@@ -237,7 +240,7 @@ export const basicProbabilityAnalyzer = (input: NodeJS.EventEmitter, output: Nod
   }, SWITCH_TO_INACTIVE_AFTER_TICK);
 
   const listenNodes = (nodesNormalized: NodesNormalized) => {
-    console.log('nodesNormalized: ', nodesNormalized);
+    DEBUG && console.log('nodesNormalized: ', nodesNormalized);
     cacheNodesNormalized = nodesNormalized;
     values(nodesNormalized).forEach(node => {
       if (node.type === NodeTypes.MOTION_SENSOR) {
@@ -260,7 +263,7 @@ export const basicProbabilityAnalyzer = (input: NodeJS.EventEmitter, output: Nod
   };
 
   const listenNode = (nodeNormalized: NodeNormalized) => {
-    console.log('nodeNormalized: ', nodeNormalized);
+    DEBUG && console.log('nodeNormalized: ', nodeNormalized);
     cacheNodesNormalized[nodeNormalized.id] = nodeNormalized;
     let changed = false;
     // Update own probability

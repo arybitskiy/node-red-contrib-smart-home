@@ -39,8 +39,7 @@ export interface EdgeDefault extends Edge {
 
 export interface NodeZone extends Node {
   type: NodeTypes.ZONE;
-  name?: string;
-  tags?: string;
+  nodeId?: string;
 }
 
 export interface NodeMotionSensor extends Node {

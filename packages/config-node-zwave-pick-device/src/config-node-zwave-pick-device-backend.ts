@@ -22,6 +22,7 @@ import {
 import api from './api';
 import setWebsocket from './websocketServer';
 import { VALUES_SET_EVENT, WEBSOCKET_MESSAGE_EVENT, VALUE_CHANGE_EVENT } from './constants';
+import { setupDevice } from './devices';
 
 export default (RED: NodeRed.Red) => {
   const ws = setWebsocket(RED);
@@ -39,6 +40,7 @@ export default (RED: NodeRed.Red) => {
     this.name = name;
     this.node_id = parseInt(node_id, 10);
     this.device = device;
+    this.location = location;
 
     this.getValues = async () => {
       const context = await readNodeContext(this);
@@ -113,6 +115,10 @@ export default (RED: NodeRed.Red) => {
     };
 
     this.getNodeId = () => this.node_id;
+
+    const stopDevice = setupDevice(this, RED);
+
+    this.on('close', stopDevice);
   }
 
   api(RED);

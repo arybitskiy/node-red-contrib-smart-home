@@ -110,7 +110,7 @@
         "type": "node-presence-detection",
         "z": "12f2fbb2.688eb4",
         "name": "",
-        "graph": "{\"nodes\":[{\"id\":1597001983580,\"title\":\"BATHROOM L1\",\"type\":\"OPEN_LOCK_SENSOR\",\"x\":3.751365900039673,\"y\":569.77685546875,\"condition\":{\"node\":{\"id\":\"9d7c8fde.04677\",\"nodeId\":6},\"logic\":{\"and\":[{\"==\":[{\"var\":\"values-1003-1-0\"},true]}]}}},{\"id\":1597001957123,\"title\":\"Bathroom\",\"type\":\"ZONE\",\"x\":497.36309814453125,\"y\":541.0889892578125,\"tags\":\"bathroom\"},{\"id\":1597001946994,\"title\":\"BATHROOM M\",\"type\":\"MOTION_SENSOR\",\"x\":211.4007110595703,\"y\":546.6597290039062,\"condition\":{\"node\":{\"id\":\"9d7c8fde.04677\",\"nodeId\":6},\"logic\":{\"and\":[{\"==\":[{\"var\":\"values-1002-1-0\"},true]}]}}},{\"id\":1597001930204,\"title\":\"Kitchen\",\"type\":\"ZONE\",\"x\":579.066650390625,\"y\":160.4248046875,\"tags\":\"kitchen\"},{\"id\":1597001912156,\"title\":\"KITCHEN M2\",\"type\":\"MOTION_SENSOR\",\"x\":118.5557861328125,\"y\":294.1214904785156,\"condition\":{\"node\":{\"id\":\"9d7c8fde.04677\",\"nodeId\":6},\"logic\":{\"and\":[{\"==\":[{\"var\":\"values-1001-1-0\"},true]}]}}},{\"id\":1597001871531,\"title\":\"KITCHEN M1\",\"type\":\"MOTION_SENSOR\",\"x\":99.76023864746094,\"y\":80.66336822509766,\"condition\":{\"node\":{\"id\":\"9d7c8fde.04677\",\"nodeId\":6},\"logic\":{\"and\":[{\"==\":[{\"var\":\"values-1000-1-0\"},true]}]}}}],\"edges\":[{\"source\":1597001983580,\"target\":1597001946994,\"type\":\"DEFAULT\"},{\"source\":1597001946994,\"target\":1597001957123,\"type\":\"DEFAULT\"},{\"source\":1597001871531,\"target\":1597001912156,\"type\":\"DEFAULT\"},{\"source\":1597001912156,\"target\":1597001930204,\"type\":\"DEFAULT\"},{\"source\":1597001871531,\"target\":1597001930204,\"type\":\"DEFAULT\"}]}",
+        "graph": "{\"nodes\":[{\"id\":1597001983580,\"title\":\"BATHROOM L1\",\"type\":\"OPEN_LOCK_SENSOR\",\"x\":3.751365900039673,\"y\":569.77685546875,\"condition\":{\"node\":{\"id\":\"9d7c8fde.04677\",\"nodeId\":6},\"logic\":{\"and\":[{\"==\":[{\"var\":\"values-1003-1-0\"},true]}]}}},{\"id\":1597001957123,\"title\":\"Bathroom\",\"type\":\"ZONE\",\"x\":497.36309814453125,\"y\":541.0889892578125,\"tags\":\"bathroom\",\"nodeId\":\"5502b9e2.1e9b88\"},{\"id\":1597001946994,\"title\":\"BATHROOM M\",\"type\":\"MOTION_SENSOR\",\"x\":211.4007110595703,\"y\":546.6597290039062,\"condition\":{\"node\":{\"id\":\"9d7c8fde.04677\",\"nodeId\":6},\"logic\":{\"and\":[{\"==\":[{\"var\":\"values-1002-1-0\"},true]}]}}},{\"id\":1597001930204,\"title\":\"Kitchen\",\"type\":\"ZONE\",\"x\":579.066650390625,\"y\":160.4248046875,\"tags\":\"kitchen\",\"nodeId\":\"5502b9e2.1e9b88\"},{\"id\":1597001912156,\"title\":\"KITCHEN M2\",\"type\":\"MOTION_SENSOR\",\"x\":118.5557861328125,\"y\":294.1214904785156,\"condition\":{\"node\":{\"id\":\"9d7c8fde.04677\",\"nodeId\":6},\"logic\":{\"and\":[{\"==\":[{\"var\":\"values-1001-1-0\"},true]}]}}},{\"id\":1597001871531,\"title\":\"KITCHEN M1\",\"type\":\"MOTION_SENSOR\",\"x\":99.76023864746094,\"y\":80.66336822509766,\"condition\":{\"node\":{\"id\":\"9d7c8fde.04677\",\"nodeId\":6},\"logic\":{\"and\":[{\"==\":[{\"var\":\"values-1000-1-0\"},true]}]}}}],\"edges\":[{\"source\":1597001983580,\"target\":1597001946994,\"type\":\"DEFAULT\"},{\"source\":1597001946994,\"target\":1597001957123,\"type\":\"DEFAULT\"},{\"source\":1597001871531,\"target\":1597001912156,\"type\":\"DEFAULT\"},{\"source\":1597001912156,\"target\":1597001930204,\"type\":\"DEFAULT\"},{\"source\":1597001871531,\"target\":1597001930204,\"type\":\"DEFAULT\"}]}",
         "x": 300,
         "y": 100,
         "wires": [
@@ -360,10 +360,11 @@
         "tosidebar": true,
         "console": false,
         "tostatus": false,
-        "complete": "false",
+        "complete": "true",
+        "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 500,
+        "x": 480,
         "y": 180,
         "wires": []
     }

@@ -12,3 +12,5 @@ export interface ConfigNodeLocationBackend extends NodeRed.Node {
 export interface ConfigNodeLocationBackendProps extends ConfigNodeLocationBaseProps, NodeRed.NodeProperties {}
 
 export interface ConfigNodeLocationFrontendProps extends ConfigNodeLocationBaseProps {}
+
+export type ReadAllLocationsResponse = { id: string; label: string }[];

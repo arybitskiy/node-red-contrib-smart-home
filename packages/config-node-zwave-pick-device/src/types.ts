@@ -19,6 +19,7 @@ export interface ConfigNodeZwavePickDeviceBackend extends NodeRed.Node {
   name: string;
   node_id: number;
   device: string;
+  location: string;
 
   setValue: (commandClassId: number, value: NodeContextValue) => Promise<void>;
 

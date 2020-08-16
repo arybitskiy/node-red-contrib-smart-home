@@ -23,6 +23,7 @@ export interface NodeNormalized {
   value?: boolean;
   valueChangedAt: number;
   condition?: any;
+  nodeId?: string;
 }
 
 export interface NodesNormalized {

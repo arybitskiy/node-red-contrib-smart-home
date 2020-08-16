@@ -1,6 +1,7 @@
 import * as NodeRed from 'node-red';
 
 import type { ConfigNodeLocationBackend, ConfigNodeLocationBackendProps } from './types';
+import api from './api';
 
 export default (RED: NodeRed.Red) => {
   function ConfigNodeLocationConstructor(this: ConfigNodeLocationBackend, props: ConfigNodeLocationBackendProps) {
@@ -15,6 +16,8 @@ export default (RED: NodeRed.Red) => {
       done();
     });
   }
+
+  api(RED);
 
   RED.nodes.registerType('config-node-location', ConfigNodeLocationConstructor);
 };

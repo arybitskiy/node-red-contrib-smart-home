@@ -26,8 +26,6 @@ const getMQTTConfig = (node: ConfigNodeZwavePickDeviceBackend, RED: NodeRed.Red,
   command_topic: '~/set',
   state_topic: '~/state',
   schema: 'json',
-  payload_on: true,
-  payload_off: false,
   '~': getMQTTTopic(getUniqueId(name)),
   name: name,
   unique_id: `alexa_${getUniqueId(name)}`,
@@ -72,12 +70,12 @@ export const FibaroWalliDoubleSwitch = (node: ConfigNodeZwavePickDeviceBackend, 
       const firstState = await node.getValue(37, 2, 0);
       node.emit(MQTT_DISCOVERY, {
         topic: `${getMQTTTopic(getUniqueId(firstName))}/state`,
-        payload: { state: firstState },
+        payload: { state: firstState ? 'on' : 'off' },
       });
       const secondState = await node.getValue(37, 3, 0);
       node.emit(MQTT_DISCOVERY, {
         topic: `${getMQTTTopic(getUniqueId(secondName))}/state`,
-        payload: { state: secondState },
+        payload: { state: secondState ? 'on' : 'off' },
       });
     })();
   }

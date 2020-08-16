@@ -55,30 +55,32 @@ export const FibaroWalliDoubleSwitch = (node: ConfigNodeZwavePickDeviceBackend, 
 
   locationNode && locationNode.on(ZONE_PROBABILITY, handleZoneProbabilityChange);
 
-  // Discovery
-  node.emit(MQTT_DISCOVERY, {
-    topic: `${getMQTTTopic(getUniqueId(firstName))}/config`,
-    payload: getMQTTConfig(node, RED, firstName),
-  });
-  node.emit(MQTT_DISCOVERY, {
-    topic: `${getMQTTTopic(getUniqueId(secondName))}/config`,
-    payload: getMQTTConfig(node, RED, secondName),
-  });
+  if (node.configuration.ha_discovery) {
+    // Discovery
+    node.emit(MQTT_DISCOVERY, {
+      topic: `${getMQTTTopic(getUniqueId(firstName))}/config`,
+      payload: getMQTTConfig(node, RED, firstName),
+    });
+    node.emit(MQTT_DISCOVERY, {
+      topic: `${getMQTTTopic(getUniqueId(secondName))}/config`,
+      payload: getMQTTConfig(node, RED, secondName),
+    });
 
-  // State
-  // eslint-disable-next-line @typescript-eslint/no-floating-promises
-  (async () => {
-    const firstState = await node.getValue(37, 2, 0);
-    node.emit(MQTT_DISCOVERY, {
-      topic: `${getMQTTTopic(getUniqueId(firstName))}/state`,
-      payload: { state: firstState },
-    });
-    const secondState = await node.getValue(37, 3, 0);
-    node.emit(MQTT_DISCOVERY, {
-      topic: `${getMQTTTopic(getUniqueId(secondName))}/state`,
-      payload: { state: secondState },
-    });
-  })();
+    // State
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    (async () => {
+      const firstState = await node.getValue(37, 2, 0);
+      node.emit(MQTT_DISCOVERY, {
+        topic: `${getMQTTTopic(getUniqueId(firstName))}/state`,
+        payload: { state: firstState },
+      });
+      const secondState = await node.getValue(37, 3, 0);
+      node.emit(MQTT_DISCOVERY, {
+        topic: `${getMQTTTopic(getUniqueId(secondName))}/state`,
+        payload: { state: secondState },
+      });
+    })();
+  }
 
   return () => {
     locationNode && locationNode.off(ZONE_PROBABILITY, handleZoneProbabilityChange);

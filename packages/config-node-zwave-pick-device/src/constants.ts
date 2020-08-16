@@ -8,4 +8,4 @@ export const READ_ALL_NODES = `${NODE_TYPE}-backend-read-all-nodes`;
 export const WEBSOCKET_PATH = `/${NODE_TYPE}-websocket`;
 export const WEBSOCKET_MESSAGE_EVENT = 'websocketMessage';
 export const VALUE_CHANGE_EVENT = 'VALUE_CHANGED_EVENT';
-export const DEBUG = true;
+export const DEBUG = false;

@@ -24,7 +24,7 @@ export default (RED: NodeRed.Red) => {
       this.send(msg);
     };
 
-    console.log(`Subscribed to ${VALUES_SET_EVENT} on ${this.device?.id}`);
+    // console.log(`Subscribed to ${VALUES_SET_EVENT} on ${this.device?.id}`);
     this.device?.on(VALUES_SET_EVENT, valueChangeListener);
 
     this.on('close', () => {

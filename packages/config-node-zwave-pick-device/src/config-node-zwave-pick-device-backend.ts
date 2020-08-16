@@ -112,7 +112,7 @@ export default (RED: NodeRed.Red) => {
 
       if (hasChanged) {
         sendingValues[valueKey] = value;
-        console.log(`Emit VALUES_SET_EVENT on ${this.id} => ${commandClassId}-${instanceId}-${valueId}: ${value}`);
+        DEBUG && console.log(`Emit VALUES_SET_EVENT on ${this.id} => ${commandClassId}-${instanceId}-${valueId}: ${value}`);
         this.emit(VALUES_SET_EVENT, {
           topic: getSetValueTopic(this.getNodeId(), commandClassId, instanceId, valueId),
           payload: value,

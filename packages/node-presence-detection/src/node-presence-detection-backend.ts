@@ -14,34 +14,38 @@ export default (RED: NodeRed.Red) => {
   ) {
     RED.nodes.createNode(this, props);
 
-    const graph = JSON.parse(props.graph);
-    const eventEmitter = new EventEmitter();
-    const probabilitiesEmitter = new EventEmitter();
+    // Quick fix to avoid situation when mqtt connection is not open yet
+    // TODO Refactor and make a proper fix
+    setTimeout(() => {
+      const graph = JSON.parse(props.graph);
+      const eventEmitter = new EventEmitter();
+      const probabilitiesEmitter = new EventEmitter();
 
-    const stopListenPromise = listenNodeChanges(RED, graph, eventEmitter);
+      const stopListenPromise = listenNodeChanges(RED, graph, eventEmitter);
 
-    const stopProbabilitiesListen = basicProbabilityAnalyzer(eventEmitter, probabilitiesEmitter);
+      const stopProbabilitiesListen = basicProbabilityAnalyzer(eventEmitter, probabilitiesEmitter);
 
-    const listenProbabilityChanges = payload => {
-      const locationNode: ConfigNodeLocationBackend | null = RED.nodes.getNode(payload.zone.nodeId) as any;
-      if (locationNode) {
-        locationNode.emit(ZONE_PROBABILITY, payload);
-      }
-      this.send({ topic: ZONE_PROBABILITY, payload });
-    };
+      const listenProbabilityChanges = payload => {
+        const locationNode: ConfigNodeLocationBackend | null = RED.nodes.getNode(payload.zone.nodeId) as any;
+        if (locationNode) {
+          locationNode.emit(ZONE_PROBABILITY, payload);
+        }
+        this.send({ topic: ZONE_PROBABILITY, payload });
+      };
 
-    probabilitiesEmitter.on(ZONE_PROBABILITY, listenProbabilityChanges);
+      probabilitiesEmitter.on(ZONE_PROBABILITY, listenProbabilityChanges);
 
-    this.on('input', (msg, send, done) => {
-      send(msg);
-      done();
-    });
+      this.on('input', (msg, send, done) => {
+        send(msg);
+        done();
+      });
 
-    this.on('close', () => {
-      stopListenPromise.then(cb => cb()).catch(console.error);
-      stopProbabilitiesListen();
-      probabilitiesEmitter.off(ZONE_PROBABILITY, listenProbabilityChanges);
-    });
+      this.on('close', () => {
+        stopListenPromise.then(cb => cb()).catch(console.error);
+        stopProbabilitiesListen();
+        probabilitiesEmitter.off(ZONE_PROBABILITY, listenProbabilityChanges);
+      });
+    }, 3000);
   }
 
   RED.nodes.registerType('node-presence-detection', NodePresenceDetectionConstructor);

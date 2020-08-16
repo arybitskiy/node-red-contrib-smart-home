@@ -14,8 +14,9 @@ export const FibaroWalliDoubleSwitch = (node: ConfigNodeZwavePickDeviceBackend, 
   console.log('locationNode: ', locationNode);
   console.log('node: ', node);
 
-  const handleZoneProbabilityChange = async ({ probability }) => {
-    if (probability > 0.5) {
+  const handleZoneProbabilityChange = async ({ probability, value }) => {
+    console.log('probability, value: ', probability, value);
+    if (probability > 0.5 && value) {
       await turnSwitch(2, true);
       await turnSwitch(3, true);
     } else {

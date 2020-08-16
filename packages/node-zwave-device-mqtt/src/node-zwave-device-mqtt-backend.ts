@@ -34,20 +34,24 @@ export default (RED: NodeRed.Red) => {
     });
 
     this.on('input', (msg, _, done) => {
-      const zWaveEventType = detectOpenZWaveEvent(msg.topic);
+      if (this.device && this.device.haSetStateTopics.includes(msg.topic)) {
+        this.device.setState(msg.topic, msg.payload).catch(console.error);
+      } else {
+        const zWaveEventType = detectOpenZWaveEvent(msg.topic);
 
-      if (zWaveEventType === OpenZWaveEventType.VALUE_CHANGED || zWaveEventType === OpenZWaveEventType.VALUE_ADDED) {
-        const {
-          data: [, , value],
-        } = parsePayloadAsJSON<OpenZWaveValueChangedPayload>(msg.payload);
+        if (zWaveEventType === OpenZWaveEventType.VALUE_CHANGED || zWaveEventType === OpenZWaveEventType.VALUE_ADDED) {
+          const {
+            data: [, , value],
+          } = parsePayloadAsJSON<OpenZWaveValueChangedPayload>(msg.payload);
 
-        if (this.device && this.device.getNodeId() === value.node_id) {
-          this.device
-            .setValue(value.class_id, convertValueForContext(this.device.device, value))
-            .then(done)
-            .catch((e: Error) => {
-              this.error(e.toString());
-            });
+          if (this.device && this.device.getNodeId() === value.node_id) {
+            this.device
+              .setValue(value.class_id, convertValueForContext(this.device.device, value))
+              .then(done)
+              .catch((e: Error) => {
+                this.error(e.toString());
+              });
+          }
         }
       }
     });

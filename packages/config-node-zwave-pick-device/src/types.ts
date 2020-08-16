@@ -23,6 +23,10 @@ export interface ConfigNodeZwavePickDeviceBackend extends NodeRed.Node {
   location: string;
   configuration: { [key: string]: string | number | undefined };
 
+  haSetStateTopics: string[];
+
+  setState: (topic: string, value: { [key: string]: string | number | boolean }) => Promise<void>;
+
   setValue: (commandClassId: number, value: NodeContextValue) => Promise<void>;
 
   getValue: (

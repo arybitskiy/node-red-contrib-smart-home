@@ -45,6 +45,17 @@ const getMQTTConfig = (node: ConfigNodeZwavePickDeviceBackend, RED: NodeRed.Red,
 export const FibaroWalliDoubleSwitch = (node: ConfigNodeZwavePickDeviceBackend, RED: NodeRed.Red) => {
   const firstName = getFirstName(node, RED);
   const secondName = getSecondName(node, RED);
+  node.haSetStateTopics = [
+    `${getMQTTTopic(getUniqueId(firstName))}/set`,
+    `${getMQTTTopic(getUniqueId(secondName))}/set`,
+  ];
+  node.setState = async (topic, value) => {
+    if (topic === `${getMQTTTopic(getUniqueId(firstName))}/set`) {
+      await node.sendValue(37, 2, 0, value.state === 'ON');
+    } else if (topic === `${getMQTTTopic(getUniqueId(secondName))}/set`) {
+      await node.sendValue(37, 3, 0, value.state === 'ON');
+    }
+  };
 
   const locationNode: ConfigNodeLocationBackend | null = RED.nodes.getNode(node.location) as any;
 
@@ -105,6 +116,8 @@ export const FibaroWalliDoubleSwitch = (node: ConfigNodeZwavePickDeviceBackend, 
     locationNode && locationNode.off(ZONE_PROBABILITY, handleZoneProbabilityChange);
     node.off(getValueKey(37, { instanceId: 2, id: 0 } as any), handleLightChange);
     node.off(getValueKey(37, { instanceId: 3, id: 0 } as any), handleLightChange);
+    delete node.setState;
+    delete node.haSetStateTopics;
     console.log('end');
   };
 };

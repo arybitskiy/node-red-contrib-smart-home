@@ -28,8 +28,6 @@ const getMQTTConfig = (node: ConfigNodeZwavePickDeviceBackend, RED: NodeRed.Red,
     command_topic: '~/set',
     state_topic: '~/state',
     schema: 'json',
-    payload_on: 'on',
-    payload_off: 'off',
     '~': getMQTTTopic(getUniqueId(name)),
     name,
     unique_id: `alexa_${getUniqueId(name)}`,
@@ -49,7 +47,7 @@ export const FibaroWalliDoubleSwitch = (node: ConfigNodeZwavePickDeviceBackend, 
   const handleLightChange = ({ payload: value }) => {
     node.emit(MQTT_DISCOVERY, {
       topic: `${getMQTTTopic(getUniqueId(value.instanceId === 2 ? firstName : secondName))}/state`,
-      payload: { state: value.value ? 'on' : 'off' },
+      payload: { state: value.value ? 'ON' : 'OFF' },
     });
   };
 
@@ -82,12 +80,12 @@ export const FibaroWalliDoubleSwitch = (node: ConfigNodeZwavePickDeviceBackend, 
       const firstState = await node.getValue(37, 2, 0);
       node.emit(MQTT_DISCOVERY, {
         topic: `${getMQTTTopic(getUniqueId(firstName))}/state`,
-        payload: { state: firstState ? 'on' : 'off' },
+        payload: { state: firstState ? 'ON' : 'OFF' },
       });
       const secondState = await node.getValue(37, 3, 0);
       node.emit(MQTT_DISCOVERY, {
         topic: `${getMQTTTopic(getUniqueId(secondName))}/state`,
-        payload: { state: secondState ? 'on' : 'off' },
+        payload: { state: secondState ? 'ON' : 'OFF' },
       });
     })();
   }

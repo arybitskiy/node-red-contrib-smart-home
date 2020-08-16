@@ -185,11 +185,11 @@ const allDependenciesAreTrue = (nodesNormalized: NodesNormalized, dependencies: 
     })();
     DEBUG &&
       console.log(
-        `allDependenciesAreTrue [${nodeNormalized.type}]: ${nodeNormalized.title} value[${nodeNormalized.value}] timeout[${
-          nodeNormalized.valueChangedAt + timeout <= Date.now()
-        }] return [${
+        `allDependenciesAreTrue [${nodeNormalized.type}]: ${nodeNormalized.title} value[${
+          nodeNormalized.value
+        }] timeout[${nodeNormalized.valueChangedAt + timeout <= Date.now()}] return [${
           nodeNormalized.valueChangedAt + timeout <= Date.now() ? !!nodeNormalized.value : !nodeNormalized.value
-        }]`
+        }] timeoutDiff[${nodeNormalized.valueChangedAt + timeout - Date.now()}]`
       );
     if (nodeNormalized.valueChangedAt + timeout <= Date.now()) {
       return !!nodeNormalized.value;

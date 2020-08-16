@@ -96,7 +96,7 @@
         "bump-version": "yarn version --patch",
         "push": "yarn bump-version && git push",
         "deploy-with-2fa": "git add . && git commit; yarn bump-version && git push && yarn build && yarn beep && npm publish . --otp $(bw get totp npm) && yarn beep",
-        "deploy": "git add . && git commit; yarn bump-version && git push && yarn build && yarn beep && npm publish . && yarn beep",
+        "deploy": "git add . && git commit; yarn bump-version && git push && yarn build && npm publish . && yarn beep",
         "prettify": "lerna run --parallel prettify",
         "beep": "node beep.js"
     },

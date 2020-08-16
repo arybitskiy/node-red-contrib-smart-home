@@ -33,7 +33,7 @@ export default (RED: NodeRed.Red) => {
   ) {
     RED.nodes.createNode(this, props);
 
-    const { name, node_id, device, location } = props;
+    const { name, node_id, device, location, configuration } = props;
 
     const sendingValues = {} as { [key: string]: any };
 
@@ -41,6 +41,11 @@ export default (RED: NodeRed.Red) => {
     this.node_id = parseInt(node_id, 10);
     this.device = device;
     this.location = location;
+    try {
+      this.configuration = JSON.parse(configuration);
+    } catch (error) {
+      this.configuration = {};
+    }
 
     this.getValues = async () => {
       const context = await readNodeContext(this);
@@ -92,6 +97,12 @@ export default (RED: NodeRed.Red) => {
       });
     };
 
+    this.getValue = async (commandClassId, instanceId, valueId) => {
+      const context = await readNodeContext(this);
+
+      return getCurrentValue(context, commandClassId, instanceId, valueId)?.value;
+    };
+
     this.sendValue = async (commandClassId, instanceId, valueId, value) => {
       const context = await readNodeContext(this);
 
@@ -112,7 +123,8 @@ export default (RED: NodeRed.Red) => {
 
       if (hasChanged) {
         sendingValues[valueKey] = value;
-        DEBUG && console.log(`Emit VALUES_SET_EVENT on ${this.id} => ${commandClassId}-${instanceId}-${valueId}: ${value}`);
+        DEBUG &&
+          console.log(`Emit VALUES_SET_EVENT on ${this.id} => ${commandClassId}-${instanceId}-${valueId}: ${value}`);
         this.emit(VALUES_SET_EVENT, {
           topic: getSetValueTopic(this.getNodeId(), commandClassId, instanceId, valueId),
           payload: value,
@@ -124,7 +136,10 @@ export default (RED: NodeRed.Red) => {
 
     const stopDevice = setupDevice(this, RED);
 
-    this.on('close', stopDevice);
+    this.on('close', async () => {
+      const response = await stopDevice;
+      response();
+    });
   }
 
   api(RED);

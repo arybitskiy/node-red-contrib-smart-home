@@ -1,7 +1,7 @@
 import * as NodeRed from 'node-red';
 
 import { parsePayloadAsJSON, detectOpenZWaveEvent, OpenZWaveEventType } from '@sh/common-utils';
-import { VALUES_SET_EVENT } from '@sh/config-node-zwave-pick-device';
+import { VALUES_SET_EVENT, MQTT_DISCOVERY } from '@sh/config-node-zwave-pick-device';
 
 import type {
   NodeZwaveDeviceInMqttBackend,
@@ -26,9 +26,11 @@ export default (RED: NodeRed.Red) => {
 
     // console.log(`Subscribed to ${VALUES_SET_EVENT} on ${this.device?.id}`);
     this.device?.on(VALUES_SET_EVENT, valueChangeListener);
+    this.device?.on(MQTT_DISCOVERY, valueChangeListener);
 
     this.on('close', () => {
       this.device?.off(VALUES_SET_EVENT, valueChangeListener);
+      this.device?.off(MQTT_DISCOVERY, valueChangeListener);
     });
 
     this.on('input', (msg, _, done) => {

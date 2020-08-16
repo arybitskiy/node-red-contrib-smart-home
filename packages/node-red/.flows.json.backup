@@ -23,6 +23,15 @@
         "location": "5502b9e2.1e9b88"
     },
     {
+        "id": "f30bffc5.78402",
+        "type": "config-node-zwave-pick-device",
+        "z": "",
+        "name": "",
+        "node_id": "11",
+        "device": "fibaroFGWDS221",
+        "location": "5502b9e2.1e9b88"
+    },
+    {
         "id": "a0be0ab7.8c7498",
         "type": "node-zwave-device-mqtt",
         "z": "12f2fbb2.688eb4",
@@ -367,5 +376,17 @@
         "x": 480,
         "y": 180,
         "wires": []
+    },
+    {
+        "id": "a4323db4.17a0d",
+        "type": "node-zwave-device-mqtt",
+        "z": "12f2fbb2.688eb4",
+        "name": "",
+        "device": "f30bffc5.78402",
+        "x": 510,
+        "y": 320,
+        "wires": [
+            []
+        ]
     }
 ]

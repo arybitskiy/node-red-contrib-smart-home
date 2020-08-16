@@ -16,6 +16,7 @@ RED.nodes.registerType<ConfigNodeZwavePickDeviceFrontendProps>('config-node-zwav
     node_id: { value: '', required: true },
     device: { value: '', required: true },
     location: { value: '', required: true, type: 'config-node-location' },
+    configuration: { value: '{}' },
   },
   label: function () {
     const location = RED.nodes.node<ConfigNodeLocationFrontendProps>(this.location);

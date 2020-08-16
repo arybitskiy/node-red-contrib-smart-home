@@ -29,7 +29,8 @@
         "name": "",
         "node_id": "11",
         "device": "fibaroFGWDS221",
-        "location": "5502b9e2.1e9b88"
+        "location": "5502b9e2.1e9b88",
+        "configuration": "{\"first_name\":\"Night Light\",\"second_name\":\"Day Light\"}"
     },
     {
         "id": "a0be0ab7.8c7498",
@@ -386,7 +387,9 @@
         "x": 510,
         "y": 320,
         "wires": [
-            []
+            [
+                "a2109fc4.09019"
+            ]
         ]
     }
 ]

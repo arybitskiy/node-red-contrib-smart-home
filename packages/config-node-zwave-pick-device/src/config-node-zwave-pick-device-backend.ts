@@ -21,7 +21,7 @@ import {
 } from './utils';
 import api from './api';
 import setWebsocket from './websocketServer';
-import { VALUES_SET_EVENT, WEBSOCKET_MESSAGE_EVENT, VALUE_CHANGE_EVENT } from './constants';
+import { VALUES_SET_EVENT, WEBSOCKET_MESSAGE_EVENT, VALUE_CHANGE_EVENT, DEBUG } from './constants';
 import { setupDevice } from './devices';
 
 export default (RED: NodeRed.Red) => {
@@ -96,8 +96,8 @@ export default (RED: NodeRed.Red) => {
       const context = await readNodeContext(this);
 
       const currentValue = getCurrentValue(context, commandClassId, instanceId, valueId);
-      console.log(this.id);
-      console.log('currentValue: ', currentValue);
+      DEBUG && console.log(this.id);
+      DEBUG && console.log('currentValue: ', currentValue);
 
       if (!currentValue) {
         return;
@@ -106,12 +106,13 @@ export default (RED: NodeRed.Red) => {
       const valueKey = getValueKey(commandClassId, currentValue);
 
       const hasChanged = currentValue?.value !== value && sendingValues[valueKey] !== value;
-      console.log('value: ', value);
-      console.log('sendingValues: ', sendingValues);
-      console.log('hasChanged: ', hasChanged);
+      DEBUG && console.log('value: ', value);
+      DEBUG && console.log('sendingValues: ', sendingValues);
+      DEBUG && console.log('hasChanged: ', hasChanged);
 
       if (hasChanged) {
         sendingValues[valueKey] = value;
+        console.log(`Emit VALUES_SET_EVENT on ${this.id} => ${commandClassId}-${instanceId}-${valueId}: ${value}`);
         this.emit(VALUES_SET_EVENT, {
           topic: getSetValueTopic(this.getNodeId(), commandClassId, instanceId, valueId),
           payload: value,

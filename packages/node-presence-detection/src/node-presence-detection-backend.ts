@@ -2,6 +2,7 @@ import { EventEmitter } from 'events';
 import * as NodeRed from 'node-red';
 
 import type { ConfigNodeLocationBackend } from '@sh/config-node-location';
+import { INFLUX_LOGGING } from '@sh/constants';
 
 import type { NodePresenceDetectionBackend, NodePresenceDetectionBackendProps } from './types';
 import { listenNodeChanges, basicProbabilityAnalyzer } from './utils';
@@ -25,6 +26,12 @@ export default (RED: NodeRed.Red) => {
 
       const stopProbabilitiesListen = basicProbabilityAnalyzer(eventEmitter, probabilitiesEmitter);
 
+      const listenInfluxdbLogs = message => {
+        this.send(message);
+      };
+
+      eventEmitter.on(INFLUX_LOGGING, listenInfluxdbLogs);
+
       const listenProbabilityChanges = payload => {
         const locationNode: ConfigNodeLocationBackend | null = RED.nodes.getNode(payload.zone.nodeId) as any;
         if (locationNode) {
@@ -41,6 +48,7 @@ export default (RED: NodeRed.Red) => {
       });
 
       this.on('close', () => {
+        eventEmitter.off(INFLUX_LOGGING, listenInfluxdbLogs);
         stopListenPromise.then(cb => cb()).catch(console.error);
         stopProbabilitiesListen();
         probabilitiesEmitter.off(ZONE_PROBABILITY, listenProbabilityChanges);

@@ -3,6 +3,7 @@ import * as NodeRed from 'node-red';
 import { ConfigNodeLocationBackend } from '@sh/config-node-location';
 import { SELECT_DEVICE } from '@sh/text-constants';
 import { getDeviceNameById } from '@sh/open-zwave-config';
+import { DOMAIN_CONFIG_ZWAVE_DEVICE, INFLUX_LOGGING } from '@sh/constants';
 
 import type {
   ConfigNodeZwavePickDeviceBackend,
@@ -90,6 +91,26 @@ export default (RED: NodeRed.Red) => {
         });
       }
 
+      this.emit(INFLUX_LOGGING, {
+        topic: INFLUX_LOGGING,
+        payload: [
+          {
+            timestamp: Date.now(),
+            value: value.value,
+            changed: hasChanged,
+          },
+          {
+            domain: DOMAIN_CONFIG_ZWAVE_DEVICE,
+            event: 'get-value-from-zwave-network',
+            node: this.id,
+            zwave_node_id: this.getNodeId(),
+            command_class_id: commandClassId,
+            instance_id: value.instanceId,
+            value_id: value.id,
+          },
+        ],
+      });
+
       this.emit(valueKey, {
         topic: valueKey,
         payload: value,
@@ -120,6 +141,28 @@ export default (RED: NodeRed.Red) => {
       DEBUG && console.log('value: ', value);
       DEBUG && console.log('sendingValues: ', sendingValues);
       DEBUG && console.log('hasChanged: ', hasChanged);
+
+      this.emit(INFLUX_LOGGING, {
+        topic: INFLUX_LOGGING,
+        payload: [
+          {
+            timestamp: Date.now(),
+            value,
+            changed: hasChanged,
+            currentValue: currentValue?.value,
+            sendingValues: sendingValues[valueKey],
+          },
+          {
+            domain: DOMAIN_CONFIG_ZWAVE_DEVICE,
+            event: 'send-value-to-zwave-network',
+            node: this.id,
+            zwave_node_id: this.getNodeId(),
+            command_class_id: commandClassId,
+            instance_id: instanceId,
+            value_id: valueId,
+          },
+        ],
+      });
 
       if (hasChanged) {
         sendingValues[valueKey] = value;

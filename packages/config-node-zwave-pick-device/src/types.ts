@@ -80,6 +80,7 @@ export interface NodeContextCommandClass {
 
 export interface NodeContext {
   commandClasses: NodeContextCommandClass[];
+  switches?: { [key: string]: boolean };
 }
 
 export interface ConfigNodeZwavePickDeviceBackendProps

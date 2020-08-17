@@ -2,6 +2,7 @@ import * as NodeRed from 'node-red';
 import { fromPairs, values } from 'lodash';
 import JsonLogic from 'json-logic-js';
 
+import { INFLUX_LOGGING, DOMAIN_PRESENCE_DETECTION } from '@sh/constants';
 import { ConfigNodeZwavePickDeviceBackend, NodeKeyValues, VALUE_CHANGE_EVENT } from '@sh/config-node-zwave-pick-device';
 
 import { Graph, NodeTypes } from './frontend/types';
@@ -80,6 +81,22 @@ export const listenNodeChanges = async (RED: NodeRed.Red, graph: Graph, eventEmi
       }, [] as number[]),
     };
 
+    eventEmitter.emit(INFLUX_LOGGING, {
+      topic: INFLUX_LOGGING,
+      payload: [
+        {
+          timestamp: Date.now(),
+          value: nodeNormalized.value,
+        },
+        {
+          domain: DOMAIN_PRESENCE_DETECTION,
+          event: 'init-nodes-normalized',
+          type: nodeNormalized.type,
+          title: nodeNormalized.title,
+          nodeId: nodeNormalized.nodeId,
+        },
+      ],
+    });
     acc[node.id] = nodeNormalized;
 
     return acc;
@@ -95,6 +112,24 @@ export const listenNodeChanges = async (RED: NodeRed.Red, graph: Graph, eventEmi
         if (newValue !== nodesNormalized[nodesNormalizedId].value) {
           nodesNormalized[nodesNormalizedId].value = newValue;
           nodesNormalized[nodesNormalizedId].valueChangedAt = Date.now();
+
+          eventEmitter.emit(INFLUX_LOGGING, {
+            topic: INFLUX_LOGGING,
+            payload: [
+              {
+                timestamp: Date.now(),
+                value: nodesNormalized[nodesNormalizedId].value,
+              },
+              {
+                domain: DOMAIN_PRESENCE_DETECTION,
+                event: 'node-value-changed',
+                type: nodesNormalized[nodesNormalizedId].type,
+                title: nodesNormalized[nodesNormalizedId].title,
+                nodeId: nodesNormalized[nodesNormalizedId].nodeId,
+              },
+            ],
+          });
+
           eventEmitter.emit(NODE_NORMALIZED, nodesNormalized[nodesNormalizedId]);
         }
       });
@@ -225,6 +260,24 @@ export const basicProbabilityAnalyzer = (input: NodeJS.EventEmitter, output: Nod
         getAllDependentZones(cacheNodesNormalized, node.dependents).forEach(zone => {
           probabilities[zone.id] = getZoneIsActiveProbability(zone.dependencies, probabilities);
           debugNodeInfo(zone, probabilities[zone.id], 'calculated based on dependencies');
+
+          input.emit(INFLUX_LOGGING, {
+            topic: INFLUX_LOGGING,
+            payload: [
+              {
+                timestamp: Date.now(),
+                ...probabilities[zone.id],
+              },
+              {
+                domain: DOMAIN_PRESENCE_DETECTION,
+                event: 'probability-based-on-dependencies',
+                type: zone.type,
+                title: zone.title,
+                nodeId: zone.nodeId,
+              },
+            ],
+          });
+
           output.emit(ZONE_PROBABILITY, {
             zone,
             value: probabilities[zone.id].value,
@@ -243,12 +296,48 @@ export const basicProbabilityAnalyzer = (input: NodeJS.EventEmitter, output: Nod
           value: node.value,
           probability: 1,
         };
+
+        input.emit(INFLUX_LOGGING, {
+          topic: INFLUX_LOGGING,
+          payload: [
+            {
+              timestamp: Date.now(),
+              ...probabilities[node.id],
+            },
+            {
+              domain: DOMAIN_PRESENCE_DETECTION,
+              event: 'probability-initiated',
+              type: node.type,
+              title: node.title,
+              nodeId: node.nodeId,
+            },
+          ],
+        });
+
         debugNodeInfo(node, probabilities[node.id], 'initiated');
       }
     });
     getAllZones(cacheNodesNormalized).forEach(zone => {
       probabilities[zone.id] = getZoneIsActiveProbability(zone.dependencies, probabilities);
       debugNodeInfo(zone, probabilities[zone.id], 'calculated based on dependencies');
+
+      input.emit(INFLUX_LOGGING, {
+        topic: INFLUX_LOGGING,
+        payload: [
+          {
+            timestamp: Date.now(),
+            ...probabilities[zone.id],
+          },
+          {
+            domain: DOMAIN_PRESENCE_DETECTION,
+            event: 'probability-initiated',
+            type: zone.type,
+            title: zone.title,
+            nodeId: zone.nodeId,
+          },
+        ],
+      });
+
       output.emit(ZONE_PROBABILITY, {
         zone,
         value: probabilities[zone.id].value,
@@ -272,6 +361,24 @@ export const basicProbabilityAnalyzer = (input: NodeJS.EventEmitter, output: Nod
             value: nodeNormalized.value,
             probability: 1,
           };
+
+          input.emit(INFLUX_LOGGING, {
+            topic: INFLUX_LOGGING,
+            payload: [
+              {
+                timestamp: Date.now(),
+                ...probabilities[nodeNormalized.id],
+              },
+              {
+                domain: DOMAIN_PRESENCE_DETECTION,
+                event: 'probability-all-dependencies-are-inactive',
+                type: nodeNormalized.type,
+                title: nodeNormalized.title,
+                nodeId: nodeNormalized.nodeId,
+              },
+            ],
+          });
+
           debugNodeInfo(nodeNormalized, probabilities[nodeNormalized.id], 'all dependencies are inactive');
           changed = true;
         }
@@ -280,6 +387,26 @@ export const basicProbabilityAnalyzer = (input: NodeJS.EventEmitter, output: Nod
           value: nodeNormalized.value,
           probability: nodeNormalized.value ? 1 : 0.5,
         };
+
+        input.emit(INFLUX_LOGGING, {
+          topic: INFLUX_LOGGING,
+          payload: [
+            {
+              timestamp: Date.now(),
+              ...probabilities[nodeNormalized.id],
+            },
+            {
+              domain: DOMAIN_PRESENCE_DETECTION,
+              event: nodeNormalized.value
+                ? 'motion-was-just-detected'
+                : 'cannot-detect-exact-probability-because-of-unknowns',
+              type: nodeNormalized.type,
+              title: nodeNormalized.title,
+              nodeId: nodeNormalized.nodeId,
+            },
+          ],
+        });
+
         debugNodeInfo(
           nodeNormalized,
           probabilities[nodeNormalized.id],
@@ -292,6 +419,23 @@ export const basicProbabilityAnalyzer = (input: NodeJS.EventEmitter, output: Nod
     if (changed) {
       getAllDependentZones(cacheNodesNormalized, nodeNormalized.dependents).forEach(zone => {
         probabilities[zone.id] = getZoneIsActiveProbability(zone.dependencies, probabilities);
+
+        input.emit(INFLUX_LOGGING, {
+          topic: INFLUX_LOGGING,
+          payload: [
+            {
+              timestamp: Date.now(),
+              ...probabilities[zone.id],
+            },
+            {
+              domain: DOMAIN_PRESENCE_DETECTION,
+              event: 'calculated-based-on-dependencies',
+              type: zone.type,
+              title: zone.title,
+              nodeId: zone.nodeId,
+            },
+          ],
+        });
         debugNodeInfo(zone, probabilities[zone.id], 'calculated based on dependencies');
         output.emit(ZONE_PROBABILITY, {
           zone,

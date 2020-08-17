@@ -96,7 +96,7 @@ export const FibaroWalliDoubleSwitchDiscovery = (node: ConfigNodeZwavePickDevice
 
   const locationNode: ConfigNodeLocationBackend | null = RED.nodes.getNode(node.location) as any;
   const firstName = `${locationNode?.name} ${node.configuration.first_name}`;
-  const secondName = `${locationNode?.name} ${node.configuration.last_name}`;
+  const secondName = `${locationNode?.name} ${node.configuration.second_name}`;
 
   node.haSetStateTopics = [];
 

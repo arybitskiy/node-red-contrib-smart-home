@@ -95,9 +95,7 @@ export default (RED: NodeRed.Red) => {
         topic: INFLUX_LOGGING,
         payload: [
           {
-            timestamp: Date.now(),
-            value: typeof value.value === 'boolean' ? Number(value.value) : value.value,
-            changed: Number(hasChanged),
+            value: String(value.value),
           },
           {
             domain: DOMAIN_CONFIG_ZWAVE_DEVICE,
@@ -107,6 +105,8 @@ export default (RED: NodeRed.Red) => {
             command_class_id: commandClassId,
             instance_id: value.instanceId,
             value_id: value.id,
+            timestamp: Date.now(),
+            changed: Number(hasChanged),
           },
         ],
       });
@@ -146,11 +146,7 @@ export default (RED: NodeRed.Red) => {
         topic: INFLUX_LOGGING,
         payload: [
           {
-            timestamp: Date.now(),
-            value: typeof value === 'boolean' ? Number(value) : value,
-            changed: Number(hasChanged),
-            currentValue: typeof currentValue?.value === 'boolean' ? Number(currentValue?.value) : value,
-            sendingValues: typeof sendingValues[valueKey] === 'boolean' ? Number(sendingValues[valueKey]) : value,
+            value: String(value),
           },
           {
             domain: DOMAIN_CONFIG_ZWAVE_DEVICE,
@@ -160,6 +156,10 @@ export default (RED: NodeRed.Red) => {
             command_class_id: commandClassId,
             instance_id: instanceId,
             value_id: valueId,
+            timestamp: Date.now(),
+            changed: Number(hasChanged),
+            currentValue: typeof currentValue?.value === 'boolean' ? Number(currentValue?.value) : value,
+            sendingValues: typeof sendingValues[valueKey] === 'boolean' ? Number(sendingValues[valueKey]) : value,
           },
         ],
       });

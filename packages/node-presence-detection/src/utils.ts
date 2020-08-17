@@ -85,10 +85,10 @@ export const listenNodeChanges = async (RED: NodeRed.Red, graph: Graph, eventEmi
       topic: INFLUX_LOGGING,
       payload: [
         {
-          timestamp: Date.now(),
-          value: Number(nodeNormalized.value),
+          value: String(nodeNormalized.value),
         },
         {
+          timestamp: Date.now(),
           domain: DOMAIN_PRESENCE_DETECTION,
           event: 'init-nodes-normalized',
           type: nodeNormalized.type,
@@ -117,10 +117,10 @@ export const listenNodeChanges = async (RED: NodeRed.Red, graph: Graph, eventEmi
             topic: INFLUX_LOGGING,
             payload: [
               {
-                timestamp: Date.now(),
-                value: Number(nodesNormalized[nodesNormalizedId].value),
+                value: String(nodesNormalized[nodesNormalizedId].value),
               },
               {
+                timestamp: Date.now(),
                 domain: DOMAIN_PRESENCE_DETECTION,
                 event: 'node-value-changed',
                 type: nodesNormalized[nodesNormalizedId].type,
@@ -265,11 +265,11 @@ export const basicProbabilityAnalyzer = (input: NodeJS.EventEmitter, output: Nod
             topic: INFLUX_LOGGING,
             payload: [
               {
-                ...probabilities[zone.id],
-                timestamp: Date.now(),
-                value: Number(probabilities[zone.id].value),
+                value: String(probabilities[zone.id].value),
               },
               {
+                timestamp: Date.now(),
+                probability: probabilities[zone.id].probability,
                 domain: DOMAIN_PRESENCE_DETECTION,
                 event: 'probability-based-on-dependencies',
                 type: zone.type,
@@ -302,11 +302,11 @@ export const basicProbabilityAnalyzer = (input: NodeJS.EventEmitter, output: Nod
           topic: INFLUX_LOGGING,
           payload: [
             {
-              ...probabilities[node.id],
-              timestamp: Date.now(),
-              value: Number(probabilities[node.id].value),
+              value: String(probabilities[node.id].value),
             },
             {
+              probability: probabilities[node.id].probability,
+              timestamp: Date.now(),
               domain: DOMAIN_PRESENCE_DETECTION,
               event: 'probability-initiated',
               type: node.type,
@@ -327,11 +327,11 @@ export const basicProbabilityAnalyzer = (input: NodeJS.EventEmitter, output: Nod
         topic: INFLUX_LOGGING,
         payload: [
           {
-            ...probabilities[zone.id],
-            timestamp: Date.now(),
-            value: Number(probabilities[zone.id].value),
+            value: String(probabilities[zone.id].value),
           },
           {
+            probability: probabilities[zone.id].probability,
+            timestamp: Date.now(),
             domain: DOMAIN_PRESENCE_DETECTION,
             event: 'probability-initiated',
             type: zone.type,
@@ -369,11 +369,11 @@ export const basicProbabilityAnalyzer = (input: NodeJS.EventEmitter, output: Nod
             topic: INFLUX_LOGGING,
             payload: [
               {
-                ...probabilities[nodeNormalized.id],
-                timestamp: Date.now(),
-                value: Number(probabilities[nodeNormalized.id].value),
+                value: String(probabilities[nodeNormalized.id].value),
               },
               {
+                probability: probabilities[nodeNormalized.id].probability,
+                timestamp: Date.now(),
                 domain: DOMAIN_PRESENCE_DETECTION,
                 event: 'probability-all-dependencies-are-inactive',
                 type: nodeNormalized.type,
@@ -396,11 +396,11 @@ export const basicProbabilityAnalyzer = (input: NodeJS.EventEmitter, output: Nod
           topic: INFLUX_LOGGING,
           payload: [
             {
-              ...probabilities[nodeNormalized.id],
-              timestamp: Date.now(),
-              value: Number(probabilities[nodeNormalized.id].value),
+              value: String(probabilities[nodeNormalized.id].value),
             },
             {
+              probability: probabilities[nodeNormalized.id].probability,
+              timestamp: Date.now(),
               domain: DOMAIN_PRESENCE_DETECTION,
               event: nodeNormalized.value
                 ? 'motion-was-just-detected'
@@ -429,11 +429,11 @@ export const basicProbabilityAnalyzer = (input: NodeJS.EventEmitter, output: Nod
           topic: INFLUX_LOGGING,
           payload: [
             {
-              ...probabilities[zone.id],
-              timestamp: Date.now(),
-              value: Number(probabilities[zone.id].value),
+              value: String(probabilities[zone.id].value),
             },
             {
+              probability: probabilities[zone.id].probability,
+              timestamp: Date.now(),
               domain: DOMAIN_PRESENCE_DETECTION,
               event: 'calculated-based-on-dependencies',
               type: zone.type,

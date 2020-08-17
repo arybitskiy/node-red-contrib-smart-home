@@ -22,7 +22,7 @@ import {
 } from './utils';
 import api from './api';
 import setWebsocket from './websocketServer';
-import { VALUES_SET_EVENT, WEBSOCKET_MESSAGE_EVENT, VALUE_CHANGE_EVENT, DEBUG } from './constants';
+import { VALUES_SET_EVENT, WEBSOCKET_MESSAGE_EVENT, VALUE_CHANGE_EVENT, TIMEOUT_SEND_VALUE } from './constants';
 import { setupDevice } from './devices';
 
 export default (RED: NodeRed.Red) => {
@@ -178,9 +178,16 @@ export default (RED: NodeRed.Red) => {
       }
 
       // Setting target value
-      void writeNodeContext(this, setValue(context, commandClassId, { ...currentValue, targetValue: value }));
+      void writeNodeContext(
+        this,
+        setValue(context, commandClassId, { ...currentValue, targetValue: value, targetValueAt: Date.now() })
+      );
 
-      if (typeof currentValue.targetValue === 'undefined') {
+      if (
+        typeof currentValue.targetValue === 'undefined' ||
+        typeof currentValue.targetValueAt === 'undefined' ||
+        currentValue.targetValueAt + TIMEOUT_SEND_VALUE < Date.now()
+      ) {
         // Sending update
         this.emit(INFLUX_LOGGING, {
           topic: INFLUX_LOGGING,

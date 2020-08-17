@@ -62,6 +62,7 @@ export interface NodeContextValue {
   instanceId: number;
   value?: NodeValue;
   targetValue?: NodeValue;
+  targetValueAt?: number;
   type: DeviceConfigurationType['Value']['type'];
   genre: DeviceConfigurationType['Value']['genre'];
   units?: string;

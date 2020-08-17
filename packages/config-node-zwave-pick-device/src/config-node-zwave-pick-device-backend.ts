@@ -96,8 +96,8 @@ export default (RED: NodeRed.Red) => {
         payload: [
           {
             timestamp: Date.now(),
-            value: value.value,
-            changed: hasChanged,
+            value: typeof value.value === 'boolean' ? Number(value.value) : value.value,
+            changed: Number(hasChanged),
           },
           {
             domain: DOMAIN_CONFIG_ZWAVE_DEVICE,
@@ -147,10 +147,10 @@ export default (RED: NodeRed.Red) => {
         payload: [
           {
             timestamp: Date.now(),
-            value,
-            changed: hasChanged,
-            currentValue: currentValue?.value,
-            sendingValues: sendingValues[valueKey],
+            value: typeof value === 'boolean' ? Number(value) : value,
+            changed: Number(hasChanged),
+            currentValue: typeof currentValue?.value === 'boolean' ? Number(currentValue?.value) : value,
+            sendingValues: typeof sendingValues[valueKey] === 'boolean' ? Number(sendingValues[valueKey]) : value,
           },
           {
             domain: DOMAIN_CONFIG_ZWAVE_DEVICE,

@@ -12,7 +12,7 @@ const getUniqueId = str => str.toLowerCase().replace(/\s/g, '_');
 
 const getLightMQTTTopic = id => `homeassistant/light/${id}`;
 
-const getSwitchMQTTTopic = id => `homeassistant/light/${id}`;
+const getSwitchMQTTTopic = id => `homeassistant/switch/${id}`;
 
 const getLightMQTTConfig = (node: ConfigNodeZwavePickDeviceBackend, RED: NodeRed.Red, name: string) => {
   const locationNode: ConfigNodeLocationBackend | null = RED.nodes.getNode(node.location) as any;
@@ -29,7 +29,7 @@ const getLightMQTTConfig = (node: ConfigNodeZwavePickDeviceBackend, RED: NodeRed
     },
     '~': getLightMQTTTopic(getUniqueId(name)),
     name,
-    unique_id: `alexa_${getUniqueId(name)}`,
+    unique_id: `light_${getUniqueId(name)}`,
   };
 };
 
@@ -48,7 +48,7 @@ const getSwitchMQTTConfig = (node: ConfigNodeZwavePickDeviceBackend, RED: NodeRe
     },
     '~': getSwitchMQTTTopic(getUniqueId(name)),
     name,
-    unique_id: `alexa_${getUniqueId(name)}`,
+    unique_id: `switch_${getUniqueId(name)}`,
   };
 };
 
@@ -57,8 +57,6 @@ const FibaroWalliDoubleSwitchSingleInstanceDiscovery = (
   RED: NodeRed.Red,
   { name, instanceId }
 ) => {
-  (node.haSetStateTopics as string[]).push(`${getLightMQTTTopic(getUniqueId(name))}/set`);
-
   // Discovery
   node.emit(MQTT_DISCOVERY, {
     topic: `${getLightMQTTTopic(getUniqueId(name))}/config`,
@@ -97,13 +95,15 @@ export const FibaroWalliDoubleSwitchDiscovery = (node: ConfigNodeZwavePickDevice
   const locationNode: ConfigNodeLocationBackend | null = RED.nodes.getNode(node.location) as any;
   const firstName = `${locationNode?.name} ${node.configuration.first_name}`;
   const secondName = `${locationNode?.name} ${node.configuration.second_name}`;
+  const firstSetTopic = `${getLightMQTTTopic(getUniqueId(firstName))}/set`;
+  const secondSetTopic = `${getLightMQTTTopic(getUniqueId(secondName))}/set`;
 
-  node.haSetStateTopics = [];
+  node.haSetStateTopics = [firstSetTopic, secondSetTopic];
 
   node.setState = async (topic, value) => {
-    if (topic === `${getLightMQTTTopic(getUniqueId(firstName))}/set`) {
+    if (topic === firstSetTopic) {
       await node.sendValue(COMMAND_CLASS_ID, FIRST_INSTANCE_ID, VALUE_ID, value.state === ON);
-    } else if (topic === `${getLightMQTTTopic(getUniqueId(secondName))}/set`) {
+    } else if (topic === secondSetTopic) {
       await node.sendValue(COMMAND_CLASS_ID, SECOND_INSTANCE_ID, VALUE_ID, value.state === ON);
     }
   };

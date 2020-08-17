@@ -10,4 +10,5 @@ export const WEBSOCKET_PATH = `/${NODE_TYPE}-websocket`;
 export const WEBSOCKET_MESSAGE_EVENT = 'websocketMessage';
 export const VALUE_CHANGE_EVENT = 'VALUE_CHANGED_EVENT';
 export const DEBUG = false;
-export const TIMEOUT_SEND_VALUE = 2000;
+export const TIMEOUT_SEND_VALUE = 5000;
+export const DELAY_RESEND_VALUE = 1000;

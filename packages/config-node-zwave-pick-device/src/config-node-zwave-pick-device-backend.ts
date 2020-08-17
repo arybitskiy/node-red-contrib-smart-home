@@ -10,7 +10,7 @@ import type {
   ConfigNodeZwavePickDeviceBackendProps,
   WebSocketMessage,
 } from './types';
-import { WebSocketMessageType } from './types';
+import { WebSocketMessageType, NodeValue } from './types';
 import {
   readNodeContext,
   writeNodeContext,
@@ -22,8 +22,57 @@ import {
 } from './utils';
 import api from './api';
 import setWebsocket from './websocketServer';
-import { VALUES_SET_EVENT, WEBSOCKET_MESSAGE_EVENT, VALUE_CHANGE_EVENT, TIMEOUT_SEND_VALUE } from './constants';
+import {
+  VALUES_SET_EVENT,
+  WEBSOCKET_MESSAGE_EVENT,
+  VALUE_CHANGE_EVENT,
+  TIMEOUT_SEND_VALUE,
+  DELAY_RESEND_VALUE,
+} from './constants';
 import { setupDevice } from './devices';
+
+class ValuesProcessor {
+  targetValues: { [key: string]: NodeValue };
+
+  processing: { [key: string]: boolean };
+
+  timeouts: { [key: string]: number };
+
+  constructor() {
+    this.targetValues = {};
+    this.processing = {};
+    this.timeouts = {};
+  }
+
+  static getHash(commandClassId: number, instanceId: number, valueId: number) {
+    return `${commandClassId}-${instanceId}-${valueId}`;
+  }
+
+  getIsProcessing(commandClassId: number, instanceId: number, valueId: number) {
+    return this.processing[ValuesProcessor.getHash(commandClassId, instanceId, valueId)];
+  }
+
+  setIsProcessing(commandClassId: number, instanceId: number, valueId: number) {
+    clearTimeout(this.timeouts[ValuesProcessor.getHash(commandClassId, instanceId, valueId)]);
+    this.timeouts[ValuesProcessor.getHash(commandClassId, instanceId, valueId)] = setTimeout(() => {
+      console.error('Timeout sending value');
+      this.unsetIsProcessing(commandClassId, instanceId, valueId);
+    }, TIMEOUT_SEND_VALUE);
+    this.processing[ValuesProcessor.getHash(commandClassId, instanceId, valueId)] = true;
+  }
+
+  unsetIsProcessing(commandClassId: number, instanceId: number, valueId: number) {
+    this.processing[ValuesProcessor.getHash(commandClassId, instanceId, valueId)] = false;
+  }
+
+  setTargetValue(commandClassId: number, instanceId: number, valueId: number, value: NodeValue) {
+    this.targetValues[ValuesProcessor.getHash(commandClassId, instanceId, valueId)] = value;
+  }
+
+  getTargetValue(commandClassId: number, instanceId: number, valueId: number) {
+    return this.targetValues[ValuesProcessor.getHash(commandClassId, instanceId, valueId)];
+  }
+}
 
 export default (RED: NodeRed.Red) => {
   const ws = setWebsocket(RED);
@@ -36,7 +85,7 @@ export default (RED: NodeRed.Red) => {
 
     const { name, node_id, device, location, configuration } = props;
 
-    const sendingValues = {} as { [key: string]: any };
+    const valueProcessor = new ValuesProcessor();
 
     this.name = name;
     this.node_id = parseInt(node_id, 10);
@@ -65,31 +114,34 @@ export default (RED: NodeRed.Red) => {
       );
     };
 
-    this.setValue = async (commandClassId, value) => {
-      console.log('value: ', value);
+    this.setValue = async (commandClassId, nextValueObject) => {
+      const { value: nextValue } = nextValueObject;
       const context = await readNodeContext(this);
 
-      const currentValue = getCurrentValue(context, commandClassId, value.instanceId, value.id);
-      console.log('currentValue: ', currentValue);
+      const { instanceId, id: valueId } = nextValueObject;
 
-      const valueKey = getValueKey(commandClassId, value);
-      delete sendingValues[valueKey];
+      const currentValueObject = getCurrentValue(context, commandClassId, instanceId, valueId);
+      const currentValue = currentValueObject?.value;
 
-      const hasChanged = currentValue?.value !== value.value;
+      const valueKey = getValueKey(commandClassId, nextValueObject);
+
+      const hasChanged = currentValue !== nextValue;
 
       if (hasChanged) {
-        void writeNodeContext(this, setValue(context, commandClassId, value));
+        void writeNodeContext(this, setValue(context, commandClassId, nextValueObject));
+
         ws.emit(WEBSOCKET_MESSAGE_EVENT, {
           type: WebSocketMessageType.VALUE_CHANGED,
           nodeId: this.getNodeId(),
           valueKey,
-          value: value.value,
+          value: nextValue,
         } as WebSocketMessage);
+
         this.emit(VALUE_CHANGE_EVENT, {
           topic: valueKey,
-          payload: value.value,
+          payload: nextValue,
           nodeId: this.id,
-          zwaveNodeId: this.node_id,
+          zwaveNodeId: this.getNodeId(),
         });
       }
 
@@ -97,7 +149,7 @@ export default (RED: NodeRed.Red) => {
         topic: INFLUX_LOGGING,
         payload: [
           {
-            value: String(value.value),
+            value: String(nextValue),
           },
           {
             domain: DOMAIN_CONFIG_ZWAVE_DEVICE,
@@ -105,8 +157,8 @@ export default (RED: NodeRed.Red) => {
             node: this.id,
             zwave_node_id: this.getNodeId(),
             command_class_id: commandClassId,
-            instance_id: value.instanceId,
-            value_id: value.id,
+            instance_id: instanceId,
+            value_id: valueId,
             timestamp: Date.now(),
             changed: String(hasChanged),
           },
@@ -115,42 +167,50 @@ export default (RED: NodeRed.Red) => {
 
       this.emit(valueKey, {
         topic: valueKey,
-        payload: value,
+        payload: nextValueObject,
         hasChanged,
       });
 
-      // Check update
-      if (typeof currentValue?.targetValue !== 'undefined' && currentValue.targetValue !== value.value) {
-        // Sending update
-        this.emit(INFLUX_LOGGING, {
-          topic: INFLUX_LOGGING,
-          payload: [
-            {
-              value: String(currentValue.targetValue),
-            },
-            {
-              domain: DOMAIN_CONFIG_ZWAVE_DEVICE,
-              event: 'send-value-to-zwave-network',
-              node: this.id,
-              zwave_node_id: this.getNodeId(),
-              command_class_id: commandClassId,
-              instance_id: value.instanceId,
-              value_id: value.id,
-              timestamp: Date.now(),
-              changed: 1,
-              currentValue: String(value.value),
-              targetValue: String(currentValue.targetValue),
-            },
-          ],
-        });
+      if (valueProcessor.getIsProcessing(commandClassId, instanceId, valueId)) {
+        const targetValue = valueProcessor.getTargetValue(commandClassId, instanceId, valueId);
+        if (targetValue === nextValue) {
+          valueProcessor.unsetIsProcessing(commandClassId, instanceId, valueId);
+        } else {
+          valueProcessor.setIsProcessing(commandClassId, instanceId, valueId);
+          setTimeout(() => {
+            const targetValue = valueProcessor.getTargetValue(commandClassId, instanceId, valueId);
+            if (targetValue === nextValue) {
+              valueProcessor.unsetIsProcessing(commandClassId, instanceId, valueId);
+            } else {
+              this.emit(INFLUX_LOGGING, {
+                topic: INFLUX_LOGGING,
+                payload: [
+                  {
+                    value: String(targetValue),
+                  },
+                  {
+                    domain: DOMAIN_CONFIG_ZWAVE_DEVICE,
+                    event: 'send-value-to-zwave-network',
+                    node: this.id,
+                    zwave_node_id: this.getNodeId(),
+                    command_class_id: commandClassId,
+                    instance_id: instanceId,
+                    value_id: valueId,
+                    timestamp: Date.now(),
+                  },
+                ],
+              });
 
-        this.emit(VALUES_SET_EVENT, {
-          topic: getSetValueTopic(this.getNodeId(), commandClassId, value.instanceId, value.id),
-          payload: {
-            ...value,
-            value: currentValue.targetValue,
-          },
-        });
+              this.emit(VALUES_SET_EVENT, {
+                topic: getSetValueTopic(this.getNodeId(), commandClassId, instanceId, valueId),
+                payload: {
+                  ...nextValueObject,
+                  value: targetValue,
+                },
+              });
+            }
+          }, DELAY_RESEND_VALUE);
+        }
       }
     };
 
@@ -160,20 +220,21 @@ export default (RED: NodeRed.Red) => {
       return getCurrentValue(context, commandClassId, instanceId, valueId)?.value;
     };
 
-    this.sendValue = async (commandClassId, instanceId, valueId, value) => {
+    this.sendValue = async (commandClassId, instanceId, valueId, targetValue) => {
       const context = await readNodeContext(this);
+      const currentValueObject = getCurrentValue(context, commandClassId, instanceId, valueId);
 
-      const currentValue = getCurrentValue(context, commandClassId, instanceId, valueId);
-
-      if (!currentValue) {
+      if (!currentValueObject) {
         return;
       }
+
+      const { value: currentValue } = currentValueObject;
 
       this.emit(INFLUX_LOGGING, {
         topic: INFLUX_LOGGING,
         payload: [
           {
-            value: String(value),
+            value: String(targetValue),
           },
           {
             domain: DOMAIN_CONFIG_ZWAVE_DEVICE,
@@ -184,58 +245,43 @@ export default (RED: NodeRed.Red) => {
             instance_id: instanceId,
             value_id: valueId,
             timestamp: Date.now(),
-            changed: 1,
-            currentValue: String(currentValue?.value),
+            currentValue: String(currentValue),
           },
         ],
       });
 
-      if (
-        currentValue.value === value &&
-        (typeof currentValue.targetValue === 'undefined' || currentValue?.targetValue === value)
-      ) {
-        // Value is already correct or will be corrected
+      valueProcessor.setTargetValue(commandClassId, instanceId, valueId, targetValue);
+
+      if (valueProcessor.getIsProcessing(commandClassId, instanceId, valueId) || targetValue === currentValue) {
         return;
       }
 
-      // Setting target value
-      void writeNodeContext(
-        this,
-        setValue(context, commandClassId, { ...currentValue, targetValue: value, targetValueAt: Date.now() })
-      );
+      valueProcessor.setIsProcessing(commandClassId, instanceId, valueId);
 
-      if (
-        typeof currentValue.targetValue === 'undefined' ||
-        typeof currentValue.targetValueAt === 'undefined' ||
-        currentValue.targetValueAt + TIMEOUT_SEND_VALUE < Date.now()
-      ) {
-        // Sending update
-        this.emit(INFLUX_LOGGING, {
-          topic: INFLUX_LOGGING,
-          payload: [
-            {
-              value: String(value),
-            },
-            {
-              domain: DOMAIN_CONFIG_ZWAVE_DEVICE,
-              event: 'send-value-to-zwave-network',
-              node: this.id,
-              zwave_node_id: this.getNodeId(),
-              command_class_id: commandClassId,
-              instance_id: instanceId,
-              value_id: valueId,
-              timestamp: Date.now(),
-              changed: 1,
-              currentValue: String(currentValue?.value),
-            },
-          ],
-        });
+      this.emit(INFLUX_LOGGING, {
+        topic: INFLUX_LOGGING,
+        payload: [
+          {
+            value: String(targetValue),
+          },
+          {
+            domain: DOMAIN_CONFIG_ZWAVE_DEVICE,
+            event: 'send-value-to-zwave-network',
+            node: this.id,
+            zwave_node_id: this.getNodeId(),
+            command_class_id: commandClassId,
+            instance_id: instanceId,
+            value_id: valueId,
+            timestamp: Date.now(),
+            currentValue: String(currentValue),
+          },
+        ],
+      });
 
-        this.emit(VALUES_SET_EVENT, {
-          topic: getSetValueTopic(this.getNodeId(), commandClassId, instanceId, valueId),
-          payload: value,
-        });
-      }
+      this.emit(VALUES_SET_EVENT, {
+        topic: getSetValueTopic(this.getNodeId(), commandClassId, instanceId, valueId),
+        payload: targetValue,
+      });
     };
 
     this.getNodeId = () => this.node_id;

@@ -108,7 +108,7 @@ export default (RED: NodeRed.Red) => {
             instance_id: value.instanceId,
             value_id: value.id,
             timestamp: Date.now(),
-            changed: Number(hasChanged),
+            changed: String(hasChanged),
           },
         ],
       });
@@ -126,7 +126,7 @@ export default (RED: NodeRed.Red) => {
           topic: INFLUX_LOGGING,
           payload: [
             {
-              value: String(value.value),
+              value: String(currentValue.targetValue),
             },
             {
               domain: DOMAIN_CONFIG_ZWAVE_DEVICE,
@@ -138,8 +138,8 @@ export default (RED: NodeRed.Red) => {
               value_id: value.id,
               timestamp: Date.now(),
               changed: 1,
-              currentValue: typeof value.value === 'boolean' ? Number(value.value) : value,
-              targetValue: typeof currentValue.targetValue === 'boolean' ? Number(currentValue.targetValue) : value,
+              currentValue: String(value.value),
+              targetValue: String(currentValue.targetValue),
             },
           ],
         });
@@ -205,7 +205,7 @@ export default (RED: NodeRed.Red) => {
               value_id: valueId,
               timestamp: Date.now(),
               changed: 1,
-              currentValue: typeof currentValue?.value === 'boolean' ? Number(currentValue?.value) : value,
+              currentValue: String(currentValue?.value),
             },
           ],
         });

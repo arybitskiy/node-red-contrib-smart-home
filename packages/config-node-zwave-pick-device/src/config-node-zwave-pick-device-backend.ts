@@ -116,6 +116,37 @@ export default (RED: NodeRed.Red) => {
         payload: value,
         hasChanged,
       });
+
+      // Check update
+      if (typeof currentValue?.targetValue !== 'undefined' && currentValue.targetValue !== value.value) {
+        // Sending update
+        this.emit(INFLUX_LOGGING, {
+          topic: INFLUX_LOGGING,
+          payload: [
+            {
+              value: String(value.value),
+            },
+            {
+              domain: DOMAIN_CONFIG_ZWAVE_DEVICE,
+              event: 'send-value-to-zwave-network',
+              node: this.id,
+              zwave_node_id: this.getNodeId(),
+              command_class_id: commandClassId,
+              instance_id: value.instanceId,
+              value_id: value.id,
+              timestamp: Date.now(),
+              changed: 1,
+              currentValue: typeof value.value === 'boolean' ? Number(value.value) : value,
+              targetValue: typeof currentValue.targetValue === 'boolean' ? Number(currentValue.targetValue) : value,
+            },
+          ],
+        });
+
+        this.emit(VALUES_SET_EVENT, {
+          topic: getSetValueTopic(this.getNodeId(), commandClassId, value.instanceId, value.id),
+          payload: value,
+        });
+      }
     };
 
     this.getValue = async (commandClassId, instanceId, valueId) => {
@@ -128,46 +159,45 @@ export default (RED: NodeRed.Red) => {
       const context = await readNodeContext(this);
 
       const currentValue = getCurrentValue(context, commandClassId, instanceId, valueId);
-      DEBUG && console.log(this.id);
-      DEBUG && console.log('currentValue: ', currentValue);
 
       if (!currentValue) {
         return;
       }
 
-      const valueKey = getValueKey(commandClassId, currentValue);
+      if (
+        currentValue.value === value &&
+        (typeof currentValue.targetValue === 'undefined' || currentValue?.targetValue === value)
+      ) {
+        // Value is already correct or will be corrected
+        return;
+      }
 
-      const hasChanged = currentValue?.value !== value && sendingValues[valueKey] !== value;
-      DEBUG && console.log('value: ', value);
-      DEBUG && console.log('sendingValues: ', sendingValues);
-      DEBUG && console.log('hasChanged: ', hasChanged);
+      // Setting target value
+      void writeNodeContext(this, setValue(context, commandClassId, { ...currentValue, targetValue: value }));
 
-      this.emit(INFLUX_LOGGING, {
-        topic: INFLUX_LOGGING,
-        payload: [
-          {
-            value: String(value),
-          },
-          {
-            domain: DOMAIN_CONFIG_ZWAVE_DEVICE,
-            event: 'send-value-to-zwave-network',
-            node: this.id,
-            zwave_node_id: this.getNodeId(),
-            command_class_id: commandClassId,
-            instance_id: instanceId,
-            value_id: valueId,
-            timestamp: Date.now(),
-            changed: Number(hasChanged),
-            currentValue: typeof currentValue?.value === 'boolean' ? Number(currentValue?.value) : value,
-            sendingValues: typeof sendingValues[valueKey] === 'boolean' ? Number(sendingValues[valueKey]) : value,
-          },
-        ],
-      });
+      if (typeof currentValue.targetValue === 'undefined') {
+        // Sending update
+        this.emit(INFLUX_LOGGING, {
+          topic: INFLUX_LOGGING,
+          payload: [
+            {
+              value: String(value),
+            },
+            {
+              domain: DOMAIN_CONFIG_ZWAVE_DEVICE,
+              event: 'send-value-to-zwave-network',
+              node: this.id,
+              zwave_node_id: this.getNodeId(),
+              command_class_id: commandClassId,
+              instance_id: instanceId,
+              value_id: valueId,
+              timestamp: Date.now(),
+              changed: 1,
+              currentValue: typeof currentValue?.value === 'boolean' ? Number(currentValue?.value) : value,
+            },
+          ],
+        });
 
-      if (hasChanged) {
-        sendingValues[valueKey] = value;
-        DEBUG &&
-          console.log(`Emit VALUES_SET_EVENT on ${this.id} => ${commandClassId}-${instanceId}-${valueId}: ${value}`);
         this.emit(VALUES_SET_EVENT, {
           topic: getSetValueTopic(this.getNodeId(), commandClassId, instanceId, valueId),
           payload: value,

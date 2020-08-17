@@ -169,6 +169,27 @@ export default (RED: NodeRed.Red) => {
         return;
       }
 
+      this.emit(INFLUX_LOGGING, {
+        topic: INFLUX_LOGGING,
+        payload: [
+          {
+            value: String(value),
+          },
+          {
+            domain: DOMAIN_CONFIG_ZWAVE_DEVICE,
+            event: 'pre-send-value-to-zwave-network',
+            node: this.id,
+            zwave_node_id: this.getNodeId(),
+            command_class_id: commandClassId,
+            instance_id: instanceId,
+            value_id: valueId,
+            timestamp: Date.now(),
+            changed: 1,
+            currentValue: String(currentValue?.value),
+          },
+        ],
+      });
+
       if (
         currentValue.value === value &&
         (typeof currentValue.targetValue === 'undefined' || currentValue?.targetValue === value)

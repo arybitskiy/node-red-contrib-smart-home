@@ -66,9 +66,11 @@ export default (RED: NodeRed.Red) => {
     };
 
     this.setValue = async (commandClassId, value) => {
+      console.log('value: ', value);
       const context = await readNodeContext(this);
 
       const currentValue = getCurrentValue(context, commandClassId, value.instanceId, value.id);
+      console.log('currentValue: ', currentValue);
 
       const valueKey = getValueKey(commandClassId, value);
       delete sendingValues[valueKey];
@@ -144,7 +146,10 @@ export default (RED: NodeRed.Red) => {
 
         this.emit(VALUES_SET_EVENT, {
           topic: getSetValueTopic(this.getNodeId(), commandClassId, value.instanceId, value.id),
-          payload: value,
+          payload: {
+            ...value,
+            value: currentValue.targetValue,
+          },
         });
       }
     };

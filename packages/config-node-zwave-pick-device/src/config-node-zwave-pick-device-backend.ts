@@ -97,6 +97,22 @@ export default (RED: NodeRed.Red) => {
       this.configuration = {};
     }
 
+    this.getKey = async key => {
+      const context = await readNodeContext(this);
+      return context.keys[key];
+    };
+
+    this.setKey = async (key, value) => {
+      const context = await readNodeContext(this);
+      await writeNodeContext(this, {
+        ...context,
+        keys: {
+          ...context.keys,
+          [key]: value,
+        },
+      });
+    };
+
     this.getValues = async () => {
       const context = await readNodeContext(this);
 

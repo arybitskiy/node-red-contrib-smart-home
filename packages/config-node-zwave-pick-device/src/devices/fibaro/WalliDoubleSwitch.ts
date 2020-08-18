@@ -4,7 +4,14 @@ import type { ConfigNodeLocationBackend } from '@sh/config-node-location';
 import { ZONE_PROBABILITY } from '@sh/node-presence-detection';
 
 import type { ConfigNodeZwavePickDeviceBackend } from '../../types';
-import { COMMAND_CLASS_ID, FIRST_INSTANCE_ID, SECOND_INSTANCE_ID, VALUE_ID } from './constants';
+import {
+  COMMAND_CLASS_ID,
+  FIRST_INSTANCE_ID,
+  SECOND_INSTANCE_ID,
+  VALUE_ID,
+  FIRST_INSTANCE_MANUAL_MODE,
+  SECOND_INSTANCE_MANUAL_MODE,
+} from './constants';
 import { FibaroWalliDoubleSwitchDiscovery } from './FibaroWalliDoubleSwitchDiscovery';
 
 export const FibaroWalliDoubleSwitch = (node: ConfigNodeZwavePickDeviceBackend, RED: NodeRed.Red) => {
@@ -17,12 +24,15 @@ export const FibaroWalliDoubleSwitch = (node: ConfigNodeZwavePickDeviceBackend, 
   };
 
   const handleZoneProbabilityChange = async ({ probability, value }) => {
-    if (probability > 0.5 && value) {
-      await turnSwitch(FIRST_INSTANCE_ID, true);
-      await turnSwitch(SECOND_INSTANCE_ID, true);
-    } else {
-      await turnSwitch(FIRST_INSTANCE_ID, false);
-      await turnSwitch(SECOND_INSTANCE_ID, false);
+    const firstInstanceManualMode = node.configuration.manual_mode && (await node.getKey(FIRST_INSTANCE_MANUAL_MODE));
+    const secondInstanceManualMode = node.configuration.manual_mode && (await node.getKey(SECOND_INSTANCE_MANUAL_MODE));
+    const turnOn = probability > 0.5 && value;
+
+    if (!firstInstanceManualMode) {
+      await turnSwitch(FIRST_INSTANCE_ID, turnOn);
+    }
+    if (!secondInstanceManualMode) {
+      await turnSwitch(SECOND_INSTANCE_ID, turnOn);
     }
   };
 

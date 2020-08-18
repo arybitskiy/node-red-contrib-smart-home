@@ -25,6 +25,10 @@ export interface ConfigNodeZwavePickDeviceBackend extends NodeRed.Node {
 
   haSetStateTopics?: string[];
 
+  getKey: (key: string) => Promise<string | number | boolean | undefined>;
+
+  setKey: (key: string, value: string | number | boolean | undefined) => Promise<void>;
+
   setState: (topic: string, value: { [key: string]: string | number | boolean }) => Promise<void>;
 
   setValue: (commandClassId: number, value: NodeContextValue) => Promise<void>;
@@ -80,7 +84,7 @@ export interface NodeContextCommandClass {
 
 export interface NodeContext {
   commandClasses: NodeContextCommandClass[];
-  switches?: { [key: string]: boolean };
+  keys: { [key: string]: string | boolean | number | undefined };
 }
 
 export interface ConfigNodeZwavePickDeviceBackendProps

@@ -38,9 +38,15 @@ export const readNodeContext = (node: ConfigNodeZwavePickDeviceBackend): Promise
   new Promise(resolve => {
     node.context().get(CONTEXT, NODE_RED_FILE_STORAGE, (err: Error, context: NodeContext | undefined) => {
       if (err || typeof context === 'undefined') {
-        resolve({ commandClasses: [] });
+        resolve({ commandClasses: [], keys: {} });
       } else {
-        resolve(context);
+        resolve({
+          // @ts-ignore
+          commandClasses: [],
+          // @ts-ignore
+          keys: {},
+          ...context,
+        });
       }
     });
   });

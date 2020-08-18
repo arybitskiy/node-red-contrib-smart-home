@@ -37,6 +37,7 @@ const FibaroWalliDoubleSwitchSingleInstanceLightDiscovery = (
     MQTT_DISCOVERY_OUT,
     getLightMQTTConfigMessage({
       name,
+      deviceName,
       manufacturer: 'Fibaro',
       model: 'FGWDS221',
       identifiers: [deviceName],
@@ -89,6 +90,7 @@ const FibaroWalliDoubleSwitchSingleInstanceManualModeDiscovery = (
     MQTT_DISCOVERY_OUT,
     getSwitchMQTTConfigMessage({
       name: name,
+      deviceName,
       manufacturer: 'Fibaro',
       model: 'FGWDS221',
       identifiers: [deviceName],

@@ -3,6 +3,7 @@ import { ON, OFF } from './constants';
 
 interface GetLightMQTTConfigMessageParams {
   name: string;
+  deviceName: string;
   manufacturer: string;
   model: string;
   identifiers: string[] | string;
@@ -17,6 +18,7 @@ export const getLightMQTTTopic = (deviceId: string) => `homeassistant/light/${ge
 
 export const getLightMQTTConfigMessage = ({
   name,
+  deviceName,
   manufacturer,
   model,
   identifiers,
@@ -29,7 +31,7 @@ export const getLightMQTTConfigMessage = ({
     device: {
       manufacturer,
       model,
-      name,
+      name: deviceName,
       identifiers,
     },
     '~': getLightMQTTTopic(name),

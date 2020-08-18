@@ -3,6 +3,7 @@ import { ON, OFF } from './constants';
 
 interface GetSwitchMQTTConfigMessageParams {
   name: string;
+  deviceName: string;
   manufacturer: string;
   model: string;
   identifiers: string[] | string;
@@ -17,6 +18,7 @@ export const getSwitchMQTTTopic = (deviceId: string) => `homeassistant/switch/${
 
 export const getSwitchMQTTConfigMessage = ({
   name,
+  deviceName,
   manufacturer,
   model,
   identifiers,
@@ -28,7 +30,7 @@ export const getSwitchMQTTConfigMessage = ({
     device: {
       manufacturer,
       model,
-      name,
+      name: deviceName,
       identifiers,
     },
     '~': getSwitchMQTTTopic(name),

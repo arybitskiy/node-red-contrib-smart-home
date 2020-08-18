@@ -81,14 +81,15 @@ const FibaroWalliDoubleSwitchSingleInstanceManualModeDiscovery = (
   RED: NodeRed.Red,
   { name, key }
 ) => {
-  const setTopic = `${getSwitchMQTTTopic(name)}/set`;
+  const manualModeName = `${name} Manual Mode`;
+  const setTopic = `${getSwitchMQTTTopic(manualModeName)}/set`;
   (node.haSetStateTopics as string[]).push(setTopic);
 
   // Initial Discovery
   node.emit(
     MQTT_DISCOVERY_OUT,
     getSwitchMQTTConfigMessage({
-      name,
+      name: manualModeName,
       manufacturer: 'Fibaro',
       model: 'FGWDS221',
       identifiers: [name],
@@ -98,7 +99,7 @@ const FibaroWalliDoubleSwitchSingleInstanceManualModeDiscovery = (
   // Initial State
   void (async () => {
     const state = await node.getKey(key);
-    node.emit(MQTT_DISCOVERY_OUT, getSwitchMQTTStateMessage({ name, state: state as boolean }));
+    node.emit(MQTT_DISCOVERY_OUT, getSwitchMQTTStateMessage({ name: manualModeName, state: state as boolean }));
   })();
 
   // Listen incoming data
@@ -108,7 +109,7 @@ const FibaroWalliDoubleSwitchSingleInstanceManualModeDiscovery = (
         const { state } = JSON.parse(msg.payload);
         const isEnabled = state === ON;
         await node.setKey(key, isEnabled);
-        node.emit(MQTT_DISCOVERY_OUT, getSwitchMQTTStateMessage({ name, state: isEnabled }));
+        node.emit(MQTT_DISCOVERY_OUT, getSwitchMQTTStateMessage({ name: manualModeName, state: isEnabled }));
       } catch (error) {
         console.error(error);
       }
@@ -129,8 +130,6 @@ export const FibaroWalliDoubleSwitchDiscovery = (node: ConfigNodeZwavePickDevice
   const locationNode: ConfigNodeLocationBackend | null = RED.nodes.getNode(node.location) as any;
   const firstName = `${locationNode?.name} ${node.configuration.first_name}`;
   const secondName = `${locationNode?.name} ${node.configuration.second_name}`;
-  const firstManualModeName = `${firstName} Manual Mode`;
-  const secondManualModeName = `${secondName} Manual Mode`;
 
   node.haSetStateTopics = [];
 
@@ -147,12 +146,12 @@ export const FibaroWalliDoubleSwitchDiscovery = (node: ConfigNodeZwavePickDevice
   });
 
   const stopFirstInstanceManualModeDiscovery = FibaroWalliDoubleSwitchSingleInstanceManualModeDiscovery(node, RED, {
-    name: firstManualModeName,
+    name: firstName,
     key: FIRST_INSTANCE_MANUAL_MODE,
   });
 
   const stopSecondInstanceManualModeDiscovery = FibaroWalliDoubleSwitchSingleInstanceManualModeDiscovery(node, RED, {
-    name: secondManualModeName,
+    name: secondName,
     key: SECOND_INSTANCE_MANUAL_MODE,
   });
 

@@ -107,8 +107,7 @@ const FibaroWalliDoubleSwitchSingleInstanceManualModeDiscovery = (
   const handleRequestToChangeSwitch = async msg => {
     if (msg.topic === setTopic) {
       try {
-        const state = JSON.parse(msg.payload);
-        const isEnabled = state === ON;
+        const isEnabled = msg.payload === ON;
         await node.setKey(key, isEnabled);
         node.emit(MQTT_DISCOVERY_OUT, getSwitchMQTTStateMessage({ name, state: isEnabled }));
       } catch (error) {

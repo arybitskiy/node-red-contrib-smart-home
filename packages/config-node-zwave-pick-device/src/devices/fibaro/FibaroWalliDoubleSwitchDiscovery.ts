@@ -1,6 +1,7 @@
 import * as NodeRed from 'node-red';
 import { noop } from 'lodash';
 
+import { NODE_KEY_CHANGED } from '@sh/constants';
 import type { ConfigNodeLocationBackend } from '@sh/config-node-location';
 
 import type { ConfigNodeZwavePickDeviceBackend } from '../../types';
@@ -109,7 +110,6 @@ const FibaroWalliDoubleSwitchSingleInstanceManualModeDiscovery = (
       try {
         const isEnabled = msg.payload === ON;
         await node.setKey(key, isEnabled);
-        node.emit(MQTT_DISCOVERY_OUT, getSwitchMQTTStateMessage({ name, state: isEnabled }));
       } catch (error) {
         console.error(error);
       }
@@ -117,8 +117,16 @@ const FibaroWalliDoubleSwitchSingleInstanceManualModeDiscovery = (
   };
   node.on(MQTT_DISCOVERY_IN, handleRequestToChangeSwitch);
 
+  const handleKeyChange = msg => {
+    if (msg.key === key) {
+      node.emit(MQTT_DISCOVERY_OUT, getSwitchMQTTStateMessage({ name, state: msg.value }));
+    }
+  };
+  node.on(NODE_KEY_CHANGED, handleKeyChange);
+
   return () => {
     node.off(MQTT_DISCOVERY_IN, handleRequestToChangeSwitch);
+    node.off(NODE_KEY_CHANGED, handleKeyChange);
   };
 };
 

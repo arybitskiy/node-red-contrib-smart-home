@@ -3,7 +3,7 @@ import * as NodeRed from 'node-red';
 import { ConfigNodeLocationBackend } from '@sh/config-node-location';
 import { SELECT_DEVICE } from '@sh/text-constants';
 import { getDeviceNameById } from '@sh/open-zwave-config';
-import { DOMAIN_CONFIG_ZWAVE_DEVICE, INFLUX_LOGGING } from '@sh/constants';
+import { DOMAIN_CONFIG_ZWAVE_DEVICE, INFLUX_LOGGING, NODE_KEY_CHANGED } from '@sh/constants';
 
 import type {
   ConfigNodeZwavePickDeviceBackend,
@@ -111,6 +111,7 @@ export default (RED: NodeRed.Red) => {
           [key]: value,
         },
       });
+      this.emit(NODE_KEY_CHANGED, { key, value });
     };
 
     this.getValues = async () => {

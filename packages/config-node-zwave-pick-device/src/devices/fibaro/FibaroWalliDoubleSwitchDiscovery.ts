@@ -4,86 +4,58 @@ import { noop } from 'lodash';
 import type { ConfigNodeLocationBackend } from '@sh/config-node-location';
 
 import type { ConfigNodeZwavePickDeviceBackend } from '../../types';
-import { MQTT_DISCOVERY } from '../../constants';
+import { MQTT_DISCOVERY_OUT, MQTT_DISCOVERY_IN } from '../../constants';
 import { getValueKey } from '../../utils';
-import { COMMAND_CLASS_ID, FIRST_INSTANCE_ID, SECOND_INSTANCE_ID, VALUE_ID, ON, OFF } from './constants';
-
-const getUniqueId = str => str.toLowerCase().replace(/\s/g, '_');
-
-const getLightMQTTTopic = id => `homeassistant/light/${id}`;
-
-const getSwitchMQTTTopic = id => `homeassistant/switch/${id}`;
-
-const getLightMQTTConfig = (node: ConfigNodeZwavePickDeviceBackend, RED: NodeRed.Red, name: string) => {
-  const locationNode: ConfigNodeLocationBackend | null = RED.nodes.getNode(node.location) as any;
-
-  return {
-    command_topic: '~/set',
-    state_topic: '~/state',
-    schema: 'json',
-    device: {
-      manufacturer: 'Fibaro',
-      model: 'FGWDS221',
-      name: `${locationNode?.name} ${node.configuration.device_name}`,
-      identifiers: [`${locationNode?.name} ${node.configuration.device_name}`],
-    },
-    '~': getLightMQTTTopic(getUniqueId(name)),
-    name,
-    unique_id: `light_${getUniqueId(name)}`,
-  };
-};
-
-const getSwitchMQTTConfig = (node: ConfigNodeZwavePickDeviceBackend, RED: NodeRed.Red, name: string) => {
-  const locationNode: ConfigNodeLocationBackend | null = RED.nodes.getNode(node.location) as any;
-
-  return {
-    command_topic: '~/set',
-    state_topic: '~/state',
-    schema: 'json',
-    device: {
-      manufacturer: 'Fibaro',
-      model: 'FGWDS221',
-      name: `${locationNode?.name} ${node.configuration.device_name}`,
-      identifiers: [`${locationNode?.name} ${node.configuration.device_name}`],
-    },
-    '~': getSwitchMQTTTopic(getUniqueId(name)),
-    name,
-    unique_id: `switch_${getUniqueId(name)}`,
-  };
-};
+import { getLightMQTTConfigMessage, getLightMQTTStateMessage, getLightMQTTTopic, ON } from '../../mqttDiscovery';
+import { COMMAND_CLASS_ID, FIRST_INSTANCE_ID, SECOND_INSTANCE_ID, VALUE_ID } from './constants';
 
 const FibaroWalliDoubleSwitchSingleInstanceDiscovery = (
   node: ConfigNodeZwavePickDeviceBackend,
   RED: NodeRed.Red,
   { name, instanceId }
 ) => {
-  // Discovery
-  node.emit(MQTT_DISCOVERY, {
-    topic: `${getLightMQTTTopic(getUniqueId(name))}/config`,
-    payload: getLightMQTTConfig(node, RED, name),
-  });
+  const setTopic = `${getLightMQTTTopic(name)}/set`;
+  (node.haSetStateTopics as string[]).push(setTopic);
 
-  // State
-  // eslint-disable-next-line @typescript-eslint/no-floating-promises
-  (async () => {
+  // Initial Discovery
+  node.emit(
+    MQTT_DISCOVERY_OUT,
+    getLightMQTTConfigMessage({
+      name,
+      manufacturer: 'Fibaro',
+      model: 'FGWDS221',
+      identifiers: [name],
+    })
+  );
+
+  // Initial State
+  void (async () => {
     const state = await node.getValue(COMMAND_CLASS_ID, instanceId, VALUE_ID);
-    node.emit(MQTT_DISCOVERY, {
-      topic: `${getLightMQTTTopic(getUniqueId(name))}/state`,
-      payload: { state: state ? ON : OFF },
-    });
+    node.emit(MQTT_DISCOVERY_OUT, getLightMQTTStateMessage({ name, state: state as boolean }));
   })();
 
+  // Update State
   const handleLightChange = ({ payload: value }) => {
-    node.emit(MQTT_DISCOVERY, {
-      topic: `${getLightMQTTTopic(getUniqueId(name))}/state`,
-      payload: { state: value.value ? ON : OFF },
-    });
+    node.emit(MQTT_DISCOVERY_OUT, getLightMQTTStateMessage({ name, state: value.value as boolean }));
   };
-
   node.on(getValueKey(COMMAND_CLASS_ID, { instanceId, id: VALUE_ID } as any), handleLightChange);
+
+  // Listen incoming data
+  const handleRequestToChangeLight = msg => {
+    if (msg.topic === setTopic) {
+      try {
+        const { state } = JSON.parse(msg.payload);
+        node.sendValue(COMMAND_CLASS_ID, FIRST_INSTANCE_ID, VALUE_ID, state === ON).catch(console.error);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+  node.on(MQTT_DISCOVERY_IN, handleRequestToChangeLight);
 
   return () => {
     node.off(getValueKey(COMMAND_CLASS_ID, { instanceId, id: VALUE_ID } as any), handleLightChange);
+    node.off(MQTT_DISCOVERY_IN, handleRequestToChangeLight);
   };
 };
 
@@ -95,18 +67,8 @@ export const FibaroWalliDoubleSwitchDiscovery = (node: ConfigNodeZwavePickDevice
   const locationNode: ConfigNodeLocationBackend | null = RED.nodes.getNode(node.location) as any;
   const firstName = `${locationNode?.name} ${node.configuration.first_name}`;
   const secondName = `${locationNode?.name} ${node.configuration.second_name}`;
-  const firstSetTopic = `${getLightMQTTTopic(getUniqueId(firstName))}/set`;
-  const secondSetTopic = `${getLightMQTTTopic(getUniqueId(secondName))}/set`;
 
-  node.haSetStateTopics = [firstSetTopic, secondSetTopic];
-
-  node.setState = async (topic, value) => {
-    if (topic === firstSetTopic) {
-      await node.sendValue(COMMAND_CLASS_ID, FIRST_INSTANCE_ID, VALUE_ID, value.state === ON);
-    } else if (topic === secondSetTopic) {
-      await node.sendValue(COMMAND_CLASS_ID, SECOND_INSTANCE_ID, VALUE_ID, value.state === ON);
-    }
-  };
+  node.haSetStateTopics = [];
 
   const stopFirstInstanceDiscovery = FibaroWalliDoubleSwitchSingleInstanceDiscovery(node, RED, {
     name: firstName,

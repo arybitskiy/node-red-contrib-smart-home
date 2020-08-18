@@ -1,6 +1,7 @@
 export const VALUES = 'values';
 export const VALUES_SET_EVENT = 'values_set';
-export const MQTT_DISCOVERY = 'mqtt_discovery';
+export const MQTT_DISCOVERY_OUT = 'mqtt_discovery_out';
+export const MQTT_DISCOVERY_IN = 'mqtt_discovery_in';
 export const CONTEXT = 'context';
 export const NODE_TYPE = 'config-node-zwave-pick-device';
 export const READ_CONTEXT_ENDPOINT = `${NODE_TYPE}-backend-read-context`;

@@ -1,7 +1,7 @@
 import * as NodeRed from 'node-red';
 
 import { parsePayloadAsJSON, detectOpenZWaveEvent, OpenZWaveEventType } from '@sh/common-utils';
-import { VALUES_SET_EVENT, MQTT_DISCOVERY } from '@sh/config-node-zwave-pick-device';
+import { VALUES_SET_EVENT, MQTT_DISCOVERY_OUT, MQTT_DISCOVERY_IN } from '@sh/config-node-zwave-pick-device';
 import { INFLUX_LOGGING } from '@sh/constants';
 
 import type {
@@ -27,22 +27,18 @@ export default (RED: NodeRed.Red) => {
 
     // console.log(`Subscribed to ${VALUES_SET_EVENT} on ${this.device?.id}`);
     this.device?.on(VALUES_SET_EVENT, valueChangeListener);
-    this.device?.on(MQTT_DISCOVERY, valueChangeListener);
+    this.device?.on(MQTT_DISCOVERY_OUT, valueChangeListener);
     this.device?.on(INFLUX_LOGGING, valueChangeListener);
 
     this.on('close', () => {
       this.device?.off(VALUES_SET_EVENT, valueChangeListener);
-      this.device?.off(MQTT_DISCOVERY, valueChangeListener);
+      this.device?.off(MQTT_DISCOVERY_OUT, valueChangeListener);
       this.device?.off(INFLUX_LOGGING, valueChangeListener);
     });
 
     this.on('input', (msg, _, done) => {
       if (this.device && this.device.haSetStateTopics && this.device.haSetStateTopics.includes(msg.topic)) {
-        try {
-          this.device.setState(msg.topic, JSON.parse(msg.payload)).catch(console.error);
-        } catch (error) {
-          console.error(error);
-        }
+        this.device.emit(MQTT_DISCOVERY_IN, msg);
       } else {
         const zWaveEventType = detectOpenZWaveEvent(msg.topic);
 

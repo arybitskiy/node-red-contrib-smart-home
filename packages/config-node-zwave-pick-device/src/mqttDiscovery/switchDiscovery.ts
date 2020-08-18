@@ -25,7 +25,6 @@ export const getSwitchMQTTConfigMessage = ({
   payload: {
     command_topic: '~/set',
     state_topic: '~/state',
-    schema: 'json',
     device: {
       manufacturer,
       model,

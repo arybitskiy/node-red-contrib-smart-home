@@ -63,7 +63,7 @@ const FibaroWalliDoubleSwitchSingleInstanceLightDiscovery = (
         const { state } = JSON.parse(msg.payload);
         const turnOn = state === ON;
         node.setKey(key, turnOn).catch(console.error);
-        node.sendValue(COMMAND_CLASS_ID, FIRST_INSTANCE_ID, VALUE_ID, turnOn).catch(console.error);
+        node.sendValue(COMMAND_CLASS_ID, instanceId, VALUE_ID, turnOn).catch(console.error);
       } catch (error) {
         console.error(error);
       }
@@ -107,7 +107,7 @@ const FibaroWalliDoubleSwitchSingleInstanceManualModeDiscovery = (
   const handleRequestToChangeSwitch = async msg => {
     if (msg.topic === setTopic) {
       try {
-        const { state } = JSON.parse(msg.payload);
+        const state = JSON.parse(msg.payload);
         const isEnabled = state === ON;
         await node.setKey(key, isEnabled);
         node.emit(MQTT_DISCOVERY_OUT, getSwitchMQTTStateMessage({ name, state: isEnabled }));

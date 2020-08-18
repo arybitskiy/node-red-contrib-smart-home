@@ -41,5 +41,5 @@ export const getSwitchMQTTConfigMessage = ({
 
 export const getSwitchMQTTStateMessage = ({ name, state }: GetSwitchMQTTStateMessageParams) => ({
   topic: `${getSwitchMQTTTopic(name)}/state`,
-  payload: { state: state ? ON : OFF },
+  payload: state ? ON : OFF,
 });

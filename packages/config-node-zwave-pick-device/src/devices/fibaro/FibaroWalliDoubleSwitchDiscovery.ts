@@ -28,7 +28,7 @@ import {
 const FibaroWalliDoubleSwitchSingleInstanceLightDiscovery = (
   node: ConfigNodeZwavePickDeviceBackend,
   RED: NodeRed.Red,
-  { name, deviceName, instanceId, key }
+  { name, deviceName, instanceId, manualModeKey }
 ) => {
   const setTopic = `${getLightMQTTTopic(name)}/set`;
   (node.haSetStateTopics as string[]).push(setTopic);
@@ -63,7 +63,7 @@ const FibaroWalliDoubleSwitchSingleInstanceLightDiscovery = (
       try {
         const { state } = JSON.parse(msg.payload);
         const turnOn = state === ON;
-        node.setKey(key, turnOn).catch(console.error);
+        node.setKey(manualModeKey, turnOn).catch(console.error);
         node.sendValue(COMMAND_CLASS_ID, instanceId, VALUE_ID, turnOn).catch(console.error);
       } catch (error) {
         console.error(error);
@@ -81,7 +81,7 @@ const FibaroWalliDoubleSwitchSingleInstanceLightDiscovery = (
 const FibaroWalliDoubleSwitchSingleInstanceManualModeDiscovery = (
   node: ConfigNodeZwavePickDeviceBackend,
   RED: NodeRed.Red,
-  { name, deviceName, key }
+  { name, deviceName, manualModeKey }
 ) => {
   const setTopic = `${getSwitchMQTTTopic(name)}/set`;
   (node.haSetStateTopics as string[]).push(setTopic);
@@ -100,7 +100,7 @@ const FibaroWalliDoubleSwitchSingleInstanceManualModeDiscovery = (
 
   // Initial State
   void (async () => {
-    const state = await node.getKey(key);
+    const state = await node.getKey(manualModeKey);
     node.emit(MQTT_DISCOVERY_OUT, getSwitchMQTTStateMessage({ name, state: state as boolean }));
   })();
 
@@ -109,7 +109,7 @@ const FibaroWalliDoubleSwitchSingleInstanceManualModeDiscovery = (
     if (msg.topic === setTopic) {
       try {
         const isEnabled = msg.payload === ON;
-        await node.setKey(key, isEnabled);
+        await node.setKey(manualModeKey, isEnabled);
       } catch (error) {
         console.error(error);
       }
@@ -118,7 +118,7 @@ const FibaroWalliDoubleSwitchSingleInstanceManualModeDiscovery = (
   node.on(MQTT_DISCOVERY_IN, handleRequestToChangeSwitch);
 
   const handleKeyChange = msg => {
-    if (msg.key === key) {
+    if (msg.key === manualModeKey) {
       node.emit(MQTT_DISCOVERY_OUT, getSwitchMQTTStateMessage({ name, state: msg.value }));
     }
   };
@@ -148,26 +148,26 @@ export const FibaroWalliDoubleSwitchDiscovery = (node: ConfigNodeZwavePickDevice
     name: firstName,
     deviceName,
     instanceId: FIRST_INSTANCE_ID,
-    key: FIRST_INSTANCE_MANUAL_MODE,
+    manualModeKey: FIRST_INSTANCE_MANUAL_MODE,
   });
 
   const stopSecondInstanceLightDiscovery = FibaroWalliDoubleSwitchSingleInstanceLightDiscovery(node, RED, {
     name: secondName,
     deviceName,
     instanceId: SECOND_INSTANCE_ID,
-    key: SECOND_INSTANCE_MANUAL_MODE,
+    manualModeKey: SECOND_INSTANCE_MANUAL_MODE,
   });
 
   const stopFirstInstanceManualModeDiscovery = FibaroWalliDoubleSwitchSingleInstanceManualModeDiscovery(node, RED, {
     name: firstManualModeName,
     deviceName,
-    key: FIRST_INSTANCE_MANUAL_MODE,
+    manualModeKey: FIRST_INSTANCE_MANUAL_MODE,
   });
 
   const stopSecondInstanceManualModeDiscovery = FibaroWalliDoubleSwitchSingleInstanceManualModeDiscovery(node, RED, {
     name: secondManualModeName,
     deviceName,
-    key: SECOND_INSTANCE_MANUAL_MODE,
+    manualModeKey: SECOND_INSTANCE_MANUAL_MODE,
   });
 
   return () => {

@@ -2,6 +2,7 @@ import * as NodeRed from 'node-red';
 
 import type { ConfigNodeLocationBackend } from '@sh/config-node-location';
 import { ZONE_PROBABILITY } from '@sh/node-presence-detection';
+import { DOMAIN_CONFIG_ZWAVE_DEVICE, INFLUX_LOGGING, NODE_KEY_CHANGED } from '@sh/constants';
 
 import type { ConfigNodeZwavePickDeviceBackend } from '../../types';
 import {
@@ -13,6 +14,7 @@ import {
   SECOND_INSTANCE_MANUAL_MODE,
 } from './constants';
 import { FibaroWalliDoubleSwitchDiscovery } from './FibaroWalliDoubleSwitchDiscovery';
+import { DOMAIN_LIGHT } from '../../mqttDiscovery';
 
 export const FibaroWalliDoubleSwitch = (node: ConfigNodeZwavePickDeviceBackend, RED: NodeRed.Red) => {
   const stopDiscovery = FibaroWalliDoubleSwitchDiscovery(node, RED);
@@ -28,11 +30,73 @@ export const FibaroWalliDoubleSwitch = (node: ConfigNodeZwavePickDeviceBackend, 
     const secondInstanceManualMode = node.configuration.manual_mode && (await node.getKey(SECOND_INSTANCE_MANUAL_MODE));
     const turnOn = probability > 0.5 && value;
 
+    node.emit(INFLUX_LOGGING, {
+      topic: INFLUX_LOGGING,
+      payload: [
+        {
+          value: String(turnOn),
+        },
+        {
+          domain: DOMAIN_LIGHT,
+          event: 'handle-probability-change',
+          node: node.id,
+          zwave_node_id: node.getNodeId(),
+          command_class_id: COMMAND_CLASS_ID,
+          value_id: VALUE_ID,
+          timestamp: Date.now(),
+          first_instance_manual_mode: String(firstInstanceManualMode),
+          second_instance_manual_mode: String(secondInstanceManualMode),
+        },
+      ],
+    });
+
     if (!firstInstanceManualMode) {
       await turnSwitch(FIRST_INSTANCE_ID, turnOn);
+
+      node.emit(INFLUX_LOGGING, {
+        topic: INFLUX_LOGGING,
+        payload: [
+          {
+            value: String(turnOn),
+          },
+          {
+            domain: DOMAIN_LIGHT,
+            event: 'light-change',
+            node: node.id,
+            zwave_node_id: node.getNodeId(),
+            command_class_id: COMMAND_CLASS_ID,
+            instance_id: FIRST_INSTANCE_ID,
+            value_id: VALUE_ID,
+            timestamp: Date.now(),
+            first_instance_manual_mode: String(firstInstanceManualMode),
+            second_instance_manual_mode: String(secondInstanceManualMode),
+          },
+        ],
+      });
     }
     if (!secondInstanceManualMode) {
       await turnSwitch(SECOND_INSTANCE_ID, turnOn);
+
+      node.emit(INFLUX_LOGGING, {
+        topic: INFLUX_LOGGING,
+        payload: [
+          {
+            value: String(turnOn),
+          },
+          {
+            domain: DOMAIN_LIGHT,
+            event: 'light-change',
+            node: node.id,
+            zwave_node_id: node.getNodeId(),
+            command_class_id: COMMAND_CLASS_ID,
+            instance_id: SECOND_INSTANCE_ID,
+            value_id: VALUE_ID,
+            timestamp: Date.now(),
+            first_instance_manual_mode: String(firstInstanceManualMode),
+            second_instance_manual_mode: String(secondInstanceManualMode),
+          },
+        ],
+      });
     }
   };
 

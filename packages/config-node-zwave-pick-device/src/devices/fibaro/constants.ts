@@ -1,7 +1,14 @@
-export const COMMAND_CLASS_ID = 37;
-export const FIRST_INSTANCE_ID = 2;
-export const SECOND_INSTANCE_ID = 3;
-export const VALUE_ID = 0;
+export const DOUBLE_SWITCH_COMMAND_CLASS_ID = 37;
+export const DOUBLE_SWITCH_FIRST_INSTANCE_ID = 2;
+export const DOUBLE_SWITCH_SECOND_INSTANCE_ID = 3;
+export const DOUBLE_SWITCH_VALUE_ID = 0;
 
 export const FIRST_INSTANCE_MANUAL_MODE = 'FIRST_INSTANCE_MANUAL_MODE';
 export const SECOND_INSTANCE_MANUAL_MODE = 'SECOND_INSTANCE_MANUAL_MODE';
+
+export const DIMMER_COMMAND_CLASS_ID = 38;
+export const DIMMER_INSTANCE_ID = 1;
+export const DIMMER_SET_LEVEL_VALUE_ID = 0;
+export const DIMMER_GET_LEVEL_VALUE_ID = 9;
+export const DIMMER_ON_VALUE = 99;
+export const DIMMER_OFF_VALUE = 0;

@@ -6,10 +6,10 @@ import { INFLUX_LOGGING } from '@sh/constants';
 
 import type { ConfigNodeZwavePickDeviceBackend } from '../../types';
 import {
-  COMMAND_CLASS_ID,
-  FIRST_INSTANCE_ID,
-  SECOND_INSTANCE_ID,
-  VALUE_ID,
+  DOUBLE_SWITCH_COMMAND_CLASS_ID,
+  DOUBLE_SWITCH_FIRST_INSTANCE_ID,
+  DOUBLE_SWITCH_SECOND_INSTANCE_ID,
+  DOUBLE_SWITCH_VALUE_ID,
   FIRST_INSTANCE_MANUAL_MODE,
   SECOND_INSTANCE_MANUAL_MODE,
 } from './constants';
@@ -24,7 +24,7 @@ export const FibaroWalliDoubleSwitch = (node: ConfigNodeZwavePickDeviceBackend, 
   const locationNode: ConfigNodeLocationBackend | null = RED.nodes.getNode(node.location) as any;
 
   const turnSwitch = (instanceId: number, value: boolean) => {
-    valueProcessor.sendAndExpect({ commandClassId: COMMAND_CLASS_ID, instanceId, valueId: VALUE_ID }, value);
+    valueProcessor.sendAndExpect({ commandClassId: DOUBLE_SWITCH_COMMAND_CLASS_ID, instanceId, valueId: DOUBLE_SWITCH_VALUE_ID }, value);
   };
 
   const handleZoneProbabilityChange = async ({ probability, value }) => {
@@ -43,8 +43,8 @@ export const FibaroWalliDoubleSwitch = (node: ConfigNodeZwavePickDeviceBackend, 
           event: 'handle-probability-change',
           node: node.id,
           zwave_node_id: node.getNodeId(),
-          command_class_id: COMMAND_CLASS_ID,
-          value_id: VALUE_ID,
+          DOUBLE_SWITCH_command_class_id: DOUBLE_SWITCH_COMMAND_CLASS_ID,
+          DOUBLE_SWITCH_value_id: DOUBLE_SWITCH_VALUE_ID,
           timestamp: Date.now(),
           first_instance_manual_mode: String(firstInstanceManualMode),
           second_instance_manual_mode: String(secondInstanceManualMode),
@@ -53,7 +53,7 @@ export const FibaroWalliDoubleSwitch = (node: ConfigNodeZwavePickDeviceBackend, 
     });
 
     if (!firstInstanceManualMode) {
-      turnSwitch(FIRST_INSTANCE_ID, turnOn);
+      turnSwitch(DOUBLE_SWITCH_FIRST_INSTANCE_ID, turnOn);
 
       node.emit(INFLUX_LOGGING, {
         topic: INFLUX_LOGGING,
@@ -66,9 +66,9 @@ export const FibaroWalliDoubleSwitch = (node: ConfigNodeZwavePickDeviceBackend, 
             event: 'light-change',
             node: node.id,
             zwave_node_id: node.getNodeId(),
-            command_class_id: COMMAND_CLASS_ID,
-            instance_id: FIRST_INSTANCE_ID,
-            value_id: VALUE_ID,
+            DOUBLE_SWITCH_command_class_id: DOUBLE_SWITCH_COMMAND_CLASS_ID,
+            instance_id: DOUBLE_SWITCH_FIRST_INSTANCE_ID,
+            DOUBLE_SWITCH_value_id: DOUBLE_SWITCH_VALUE_ID,
             timestamp: Date.now(),
             first_instance_manual_mode: String(firstInstanceManualMode),
             second_instance_manual_mode: String(secondInstanceManualMode),
@@ -77,7 +77,7 @@ export const FibaroWalliDoubleSwitch = (node: ConfigNodeZwavePickDeviceBackend, 
       });
     }
     if (!secondInstanceManualMode) {
-      turnSwitch(SECOND_INSTANCE_ID, turnOn);
+      turnSwitch(DOUBLE_SWITCH_SECOND_INSTANCE_ID, turnOn);
 
       node.emit(INFLUX_LOGGING, {
         topic: INFLUX_LOGGING,
@@ -90,9 +90,9 @@ export const FibaroWalliDoubleSwitch = (node: ConfigNodeZwavePickDeviceBackend, 
             event: 'light-change',
             node: node.id,
             zwave_node_id: node.getNodeId(),
-            command_class_id: COMMAND_CLASS_ID,
-            instance_id: SECOND_INSTANCE_ID,
-            value_id: VALUE_ID,
+            DOUBLE_SWITCH_command_class_id: DOUBLE_SWITCH_COMMAND_CLASS_ID,
+            instance_id: DOUBLE_SWITCH_SECOND_INSTANCE_ID,
+            DOUBLE_SWITCH_value_id: DOUBLE_SWITCH_VALUE_ID,
             timestamp: Date.now(),
             first_instance_manual_mode: String(firstInstanceManualMode),
             second_instance_manual_mode: String(secondInstanceManualMode),

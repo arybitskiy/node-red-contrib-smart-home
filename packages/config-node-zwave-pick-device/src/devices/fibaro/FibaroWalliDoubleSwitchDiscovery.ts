@@ -19,10 +19,10 @@ import {
   DOMAIN_LIGHT,
 } from '../../mqttDiscovery';
 import {
-  COMMAND_CLASS_ID,
-  FIRST_INSTANCE_ID,
-  SECOND_INSTANCE_ID,
-  VALUE_ID,
+  DOUBLE_SWITCH_COMMAND_CLASS_ID,
+  DOUBLE_SWITCH_FIRST_INSTANCE_ID,
+  DOUBLE_SWITCH_SECOND_INSTANCE_ID,
+  DOUBLE_SWITCH_VALUE_ID,
   FIRST_INSTANCE_MANUAL_MODE,
   SECOND_INSTANCE_MANUAL_MODE,
 } from './constants';
@@ -51,7 +51,7 @@ const FibaroWalliDoubleSwitchSingleInstanceLightDiscovery = (
 
   // Initial State
   void (async () => {
-    const state = await node.getValue(COMMAND_CLASS_ID, instanceId, VALUE_ID);
+    const state = await node.getValue(DOUBLE_SWITCH_COMMAND_CLASS_ID, instanceId, DOUBLE_SWITCH_VALUE_ID);
     node.emit(MQTT_DISCOVERY_OUT, getLightMQTTStateMessage({ name, state: state as boolean }));
   })();
 
@@ -59,7 +59,7 @@ const FibaroWalliDoubleSwitchSingleInstanceLightDiscovery = (
   const handleLightChange = ({ payload: value }) => {
     node.emit(MQTT_DISCOVERY_OUT, getLightMQTTStateMessage({ name, state: value.value as boolean }));
   };
-  node.on(getValueKey(COMMAND_CLASS_ID, { instanceId, id: VALUE_ID } as any), handleLightChange);
+  node.on(getValueKey(DOUBLE_SWITCH_COMMAND_CLASS_ID, { instanceId, id: DOUBLE_SWITCH_VALUE_ID } as any), handleLightChange);
 
   // Listen incoming data
   const handleRequestToChangeLight = msg => {
@@ -78,14 +78,15 @@ const FibaroWalliDoubleSwitchSingleInstanceLightDiscovery = (
               event: 'request-to-change-light-from-ha-received',
               node: node.id,
               zwave_node_id: node.getNodeId(),
-              command_class_id: COMMAND_CLASS_ID,
-              value_id: VALUE_ID,
+              command_class_id: DOUBLE_SWITCH_COMMAND_CLASS_ID,
+              instance_id: instanceId,
+              value_id: DOUBLE_SWITCH_VALUE_ID,
               timestamp: Date.now(),
             },
           ],
         });
         node.setKey(manualModeKey, turnOn).catch(console.error);
-        valueProcessor.sendAndExpect({ commandClassId: COMMAND_CLASS_ID, instanceId, valueId: VALUE_ID }, turnOn);
+        valueProcessor.sendAndExpect({ commandClassId: DOUBLE_SWITCH_COMMAND_CLASS_ID, instanceId, valueId: DOUBLE_SWITCH_VALUE_ID }, turnOn);
       } catch (error) {
         console.error(error);
       }
@@ -94,7 +95,7 @@ const FibaroWalliDoubleSwitchSingleInstanceLightDiscovery = (
   node.on(MQTT_DISCOVERY_IN, handleRequestToChangeLight);
 
   return () => {
-    node.off(getValueKey(COMMAND_CLASS_ID, { instanceId, id: VALUE_ID } as any), handleLightChange);
+    node.off(getValueKey(DOUBLE_SWITCH_COMMAND_CLASS_ID, { instanceId, id: DOUBLE_SWITCH_VALUE_ID } as any), handleLightChange);
     node.off(MQTT_DISCOVERY_IN, handleRequestToChangeLight);
   };
 };
@@ -177,7 +178,7 @@ export const FibaroWalliDoubleSwitchDiscovery = (
     {
       name: firstName,
       deviceName,
-      instanceId: FIRST_INSTANCE_ID,
+      instanceId: DOUBLE_SWITCH_FIRST_INSTANCE_ID,
       manualModeKey: FIRST_INSTANCE_MANUAL_MODE,
     }
   );
@@ -189,7 +190,7 @@ export const FibaroWalliDoubleSwitchDiscovery = (
     {
       name: secondName,
       deviceName,
-      instanceId: SECOND_INSTANCE_ID,
+      instanceId: DOUBLE_SWITCH_SECOND_INSTANCE_ID,
       manualModeKey: SECOND_INSTANCE_MANUAL_MODE,
     }
   );

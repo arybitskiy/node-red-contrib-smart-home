@@ -19,12 +19,13 @@ import {
   DOMAIN_LIGHT,
 } from '../../mqttDiscovery';
 import {
-  COMMAND_CLASS_ID,
-  FIRST_INSTANCE_ID,
-  SECOND_INSTANCE_ID,
-  VALUE_ID,
+  DIMMER_COMMAND_CLASS_ID,
+  DIMMER_INSTANCE_ID,
+  DIMMER_GET_LEVEL_VALUE_ID,
+  DIMMER_SET_LEVEL_VALUE_ID,
+  DIMMER_ON_VALUE,
+  DIMMER_OFF_VALUE,
   FIRST_INSTANCE_MANUAL_MODE,
-  SECOND_INSTANCE_MANUAL_MODE,
 } from './constants';
 import type { ValuesProcessor } from '../ValueProcessor';
 
@@ -32,7 +33,7 @@ const FibaroWalliDimmerSingleInstanceLightDiscovery = (
   node: ConfigNodeZwavePickDeviceBackend,
   RED: NodeRed.Red,
   valueProcessor: ValuesProcessor,
-  { name, deviceName, instanceId, manualModeKey }
+  { name, deviceName, manualModeKey }
 ) => {
   const setTopic = `${getLightMQTTTopic(name)}/set`;
   (node.haSetStateTopics as string[]).push(setTopic);
@@ -51,41 +52,59 @@ const FibaroWalliDimmerSingleInstanceLightDiscovery = (
 
   // Initial State
   void (async () => {
-    const state = await node.getValue(COMMAND_CLASS_ID, instanceId, VALUE_ID);
-    node.emit(MQTT_DISCOVERY_OUT, getLightMQTTStateMessage({ name, state: state as boolean }));
+    const state = await node.getValue(DIMMER_COMMAND_CLASS_ID, DIMMER_INSTANCE_ID, DIMMER_GET_LEVEL_VALUE_ID);
+    node.emit(MQTT_DISCOVERY_OUT, getLightMQTTStateMessage({ name, state: state === DIMMER_ON_VALUE }));
   })();
 
   // Update State
   const handleLightChange = ({ payload: value }) => {
-    node.emit(MQTT_DISCOVERY_OUT, getLightMQTTStateMessage({ name, state: value.value as boolean }));
+    node.emit(MQTT_DISCOVERY_OUT, getLightMQTTStateMessage({ name, state: value.value === DIMMER_ON_VALUE }));
   };
-  node.on(getValueKey(COMMAND_CLASS_ID, { instanceId, id: VALUE_ID } as any), handleLightChange);
+  node.on(
+    getValueKey(DIMMER_COMMAND_CLASS_ID, { instanceId: DIMMER_INSTANCE_ID, id: DIMMER_GET_LEVEL_VALUE_ID } as any),
+    handleLightChange
+  );
 
   // Listen incoming data
   const handleRequestToChangeLight = msg => {
     if (msg.topic === setTopic) {
       try {
         const { state } = JSON.parse(msg.payload);
+        const level = state === ON ? DIMMER_ON_VALUE : DIMMER_OFF_VALUE;
         const turnOn = state === ON;
         node.emit(INFLUX_LOGGING, {
           topic: INFLUX_LOGGING,
           payload: [
             {
-              value: String(turnOn),
+              value: String(level),
             },
             {
               domain: DOMAIN_LIGHT,
               event: 'request-to-change-light-from-ha-received',
               node: node.id,
               zwave_node_id: node.getNodeId(),
-              command_class_id: COMMAND_CLASS_ID,
-              value_id: VALUE_ID,
+              command_class_id: DIMMER_COMMAND_CLASS_ID,
+              instance_id: DIMMER_INSTANCE_ID,
+              value_id: DIMMER_SET_LEVEL_VALUE_ID,
               timestamp: Date.now(),
             },
           ],
         });
         node.setKey(manualModeKey, turnOn).catch(console.error);
-        valueProcessor.sendAndExpect({ commandClassId: COMMAND_CLASS_ID, instanceId, valueId: VALUE_ID }, turnOn);
+        valueProcessor.sendAndExpect(
+          {
+            commandClassId: DIMMER_COMMAND_CLASS_ID,
+            instanceId: DIMMER_INSTANCE_ID,
+            valueId: DIMMER_SET_LEVEL_VALUE_ID,
+          },
+          level,
+          level,
+          {
+            commandClassId: DIMMER_COMMAND_CLASS_ID,
+            instanceId: DIMMER_INSTANCE_ID,
+            valueId: DIMMER_GET_LEVEL_VALUE_ID,
+          }
+        );
       } catch (error) {
         console.error(error);
       }
@@ -94,7 +113,10 @@ const FibaroWalliDimmerSingleInstanceLightDiscovery = (
   node.on(MQTT_DISCOVERY_IN, handleRequestToChangeLight);
 
   return () => {
-    node.off(getValueKey(COMMAND_CLASS_ID, { instanceId, id: VALUE_ID } as any), handleLightChange);
+    node.off(
+      getValueKey(DIMMER_COMMAND_CLASS_ID, { instanceId: DIMMER_INSTANCE_ID, id: DIMMER_GET_LEVEL_VALUE_ID } as any),
+      handleLightChange
+    );
     node.off(MQTT_DISCOVERY_IN, handleRequestToChangeLight);
   };
 };
@@ -163,25 +185,14 @@ export const FibaroWalliDimmerDiscovery = (
 
   const locationNode: ConfigNodeLocationBackend | null = RED.nodes.getNode(node.location) as any;
   const deviceName = `${locationNode?.name} ${node.configuration.device_name}`;
-  const firstName = `${locationNode?.name} ${node.configuration.first_name}`;
-  const secondName = `${locationNode?.name} ${node.configuration.second_name}`;
-  const firstManualModeName = `${firstName} Manual Mode`;
-  const secondManualModeName = `${secondName} Manual Mode`;
+  const manualModeName = `${deviceName} Manual Mode`;
 
   node.haSetStateTopics = [];
 
   const stopFirstInstanceLightDiscovery = FibaroWalliDimmerSingleInstanceLightDiscovery(node, RED, valueProcessor, {
-    name: firstName,
+    name: deviceName,
     deviceName,
-    instanceId: FIRST_INSTANCE_ID,
     manualModeKey: FIRST_INSTANCE_MANUAL_MODE,
-  });
-
-  const stopSecondInstanceLightDiscovery = FibaroWalliDimmerSingleInstanceLightDiscovery(node, RED, valueProcessor, {
-    name: secondName,
-    deviceName,
-    instanceId: SECOND_INSTANCE_ID,
-    manualModeKey: SECOND_INSTANCE_MANUAL_MODE,
   });
 
   const stopFirstInstanceManualModeDiscovery = FibaroWalliDimmerSingleInstanceManualModeDiscovery(
@@ -189,28 +200,15 @@ export const FibaroWalliDimmerDiscovery = (
     RED,
     valueProcessor,
     {
-      name: firstManualModeName,
+      name: manualModeName,
       deviceName,
       manualModeKey: FIRST_INSTANCE_MANUAL_MODE,
     }
   );
 
-  const stopSecondInstanceManualModeDiscovery = FibaroWalliDimmerSingleInstanceManualModeDiscovery(
-    node,
-    RED,
-    valueProcessor,
-    {
-      name: secondManualModeName,
-      deviceName,
-      manualModeKey: SECOND_INSTANCE_MANUAL_MODE,
-    }
-  );
-
   return () => {
     stopFirstInstanceLightDiscovery();
-    stopSecondInstanceLightDiscovery();
     stopFirstInstanceManualModeDiscovery();
-    stopSecondInstanceManualModeDiscovery();
     delete node.haSetStateTopics;
   };
 };

@@ -12,6 +12,8 @@ export const setupDevice = (node: ConfigNodeZwavePickDeviceBackend, RED: NodeRed
       switch (node.device) {
         case 'fibaroFGWDS221':
           return resolve(fibaro.FibaroWalliDoubleSwitch(node, RED));
+        case 'fibaroFGWD111':
+          return resolve(fibaro.FibaroWalliDimmer(node, RED));
         default:
           return resolve(noop);
       }

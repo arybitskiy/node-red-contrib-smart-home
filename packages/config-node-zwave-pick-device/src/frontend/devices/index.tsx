@@ -25,6 +25,8 @@ export const DeviceConfig: FunctionComponent<DeviceConfigProps> = ({ device, val
   switch (device) {
     case 'fibaroFGWDS221':
       return <fibaro.WalliDoubleSwitch values={values} onInputChange={handleInputChange} />;
+    case 'fibaroFGWD111':
+      return <fibaro.WalliDimmer values={values} onInputChange={handleInputChange} />;
     default:
       return null;
   }

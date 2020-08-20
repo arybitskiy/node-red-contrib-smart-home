@@ -162,7 +162,7 @@ export default (RED: NodeRed.Red) => {
           },
           {
             domain: DOMAIN_CONFIG_ZWAVE_DEVICE,
-            event: 'pre-send-value-to-zwave-network',
+            event: 'send-value-to-zwave-network',
             node: this.id,
             zwave_node_id: this.getNodeId(),
             command_class_id: commandClassId,

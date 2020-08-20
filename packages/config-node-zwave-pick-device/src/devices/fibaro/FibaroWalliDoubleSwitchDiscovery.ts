@@ -3,6 +3,7 @@ import { noop } from 'lodash';
 
 import { NODE_KEY_CHANGED } from '@sh/constants';
 import type { ConfigNodeLocationBackend } from '@sh/config-node-location';
+import { INFLUX_LOGGING } from '@sh/constants';
 
 import type { ConfigNodeZwavePickDeviceBackend } from '../../types';
 import { MQTT_DISCOVERY_OUT, MQTT_DISCOVERY_IN } from '../../constants';
@@ -15,6 +16,7 @@ import {
   getSwitchMQTTTopic,
   getSwitchMQTTConfigMessage,
   getSwitchMQTTStateMessage,
+  DOMAIN_LIGHT,
 } from '../../mqttDiscovery';
 import {
   COMMAND_CLASS_ID,
@@ -65,6 +67,23 @@ const FibaroWalliDoubleSwitchSingleInstanceLightDiscovery = (
       try {
         const { state } = JSON.parse(msg.payload);
         const turnOn = state === ON;
+        node.emit(INFLUX_LOGGING, {
+          topic: INFLUX_LOGGING,
+          payload: [
+            {
+              value: String(turnOn),
+            },
+            {
+              domain: DOMAIN_LIGHT,
+              event: 'request-to-change-light-from-ha-received',
+              node: node.id,
+              zwave_node_id: node.getNodeId(),
+              command_class_id: COMMAND_CLASS_ID,
+              value_id: VALUE_ID,
+              timestamp: Date.now(),
+            },
+          ],
+        });
         node.setKey(manualModeKey, turnOn).catch(console.error);
         valueProcessor.sendAndExpect({ commandClassId: COMMAND_CLASS_ID, instanceId, valueId: VALUE_ID }, turnOn);
       } catch (error) {

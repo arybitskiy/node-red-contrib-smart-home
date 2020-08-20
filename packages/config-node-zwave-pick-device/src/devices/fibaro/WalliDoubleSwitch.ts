@@ -2,7 +2,7 @@ import * as NodeRed from 'node-red';
 
 import type { ConfigNodeLocationBackend } from '@sh/config-node-location';
 import { ZONE_PROBABILITY } from '@sh/node-presence-detection';
-import { DOMAIN_CONFIG_ZWAVE_DEVICE, INFLUX_LOGGING, NODE_KEY_CHANGED } from '@sh/constants';
+import { INFLUX_LOGGING } from '@sh/constants';
 
 import type { ConfigNodeZwavePickDeviceBackend } from '../../types';
 import {
@@ -15,14 +15,16 @@ import {
 } from './constants';
 import { FibaroWalliDoubleSwitchDiscovery } from './FibaroWalliDoubleSwitchDiscovery';
 import { DOMAIN_LIGHT } from '../../mqttDiscovery';
+import { ValuesProcessor } from '../ValueProcessor';
 
 export const FibaroWalliDoubleSwitch = (node: ConfigNodeZwavePickDeviceBackend, RED: NodeRed.Red) => {
-  const stopDiscovery = FibaroWalliDoubleSwitchDiscovery(node, RED);
+  const valueProcessor = new ValuesProcessor({ node });
+  const stopDiscovery = FibaroWalliDoubleSwitchDiscovery(node, RED, valueProcessor);
 
   const locationNode: ConfigNodeLocationBackend | null = RED.nodes.getNode(node.location) as any;
 
-  const turnSwitch = async (instanceId: number, value: boolean) => {
-    await node.sendValue(COMMAND_CLASS_ID, instanceId, VALUE_ID, value);
+  const turnSwitch = (instanceId: number, value: boolean) => {
+    valueProcessor.sendAndExpect({ commandClassId: COMMAND_CLASS_ID, instanceId, valueId: VALUE_ID }, value);
   };
 
   const handleZoneProbabilityChange = async ({ probability, value }) => {
@@ -51,7 +53,7 @@ export const FibaroWalliDoubleSwitch = (node: ConfigNodeZwavePickDeviceBackend, 
     });
 
     if (!firstInstanceManualMode) {
-      await turnSwitch(FIRST_INSTANCE_ID, turnOn);
+      turnSwitch(FIRST_INSTANCE_ID, turnOn);
 
       node.emit(INFLUX_LOGGING, {
         topic: INFLUX_LOGGING,
@@ -75,7 +77,7 @@ export const FibaroWalliDoubleSwitch = (node: ConfigNodeZwavePickDeviceBackend, 
       });
     }
     if (!secondInstanceManualMode) {
-      await turnSwitch(SECOND_INSTANCE_ID, turnOn);
+      turnSwitch(SECOND_INSTANCE_ID, turnOn);
 
       node.emit(INFLUX_LOGGING, {
         topic: INFLUX_LOGGING,
@@ -105,5 +107,6 @@ export const FibaroWalliDoubleSwitch = (node: ConfigNodeZwavePickDeviceBackend, 
   return () => {
     stopDiscovery();
     locationNode && locationNode.off(ZONE_PROBABILITY, handleZoneProbabilityChange);
+    valueProcessor.destroy();
   };
 };

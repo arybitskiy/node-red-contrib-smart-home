@@ -24,10 +24,12 @@ import {
   FIRST_INSTANCE_MANUAL_MODE,
   SECOND_INSTANCE_MANUAL_MODE,
 } from './constants';
+import type { ValuesProcessor } from '../ValueProcessor';
 
 const FibaroWalliDoubleSwitchSingleInstanceLightDiscovery = (
   node: ConfigNodeZwavePickDeviceBackend,
   RED: NodeRed.Red,
+  valueProcessor: ValuesProcessor,
   { name, deviceName, instanceId, manualModeKey }
 ) => {
   const setTopic = `${getLightMQTTTopic(name)}/set`;
@@ -64,7 +66,7 @@ const FibaroWalliDoubleSwitchSingleInstanceLightDiscovery = (
         const { state } = JSON.parse(msg.payload);
         const turnOn = state === ON;
         node.setKey(manualModeKey, turnOn).catch(console.error);
-        node.sendValue(COMMAND_CLASS_ID, instanceId, VALUE_ID, turnOn).catch(console.error);
+        valueProcessor.sendAndExpect({ commandClassId: COMMAND_CLASS_ID, instanceId, valueId: VALUE_ID }, turnOn);
       } catch (error) {
         console.error(error);
       }
@@ -81,6 +83,7 @@ const FibaroWalliDoubleSwitchSingleInstanceLightDiscovery = (
 const FibaroWalliDoubleSwitchSingleInstanceManualModeDiscovery = (
   node: ConfigNodeZwavePickDeviceBackend,
   RED: NodeRed.Red,
+  valueProcessor: ValuesProcessor,
   { name, deviceName, manualModeKey }
 ) => {
   const setTopic = `${getSwitchMQTTTopic(name)}/set`;
@@ -130,7 +133,11 @@ const FibaroWalliDoubleSwitchSingleInstanceManualModeDiscovery = (
   };
 };
 
-export const FibaroWalliDoubleSwitchDiscovery = (node: ConfigNodeZwavePickDeviceBackend, RED: NodeRed.Red) => {
+export const FibaroWalliDoubleSwitchDiscovery = (
+  node: ConfigNodeZwavePickDeviceBackend,
+  RED: NodeRed.Red,
+  valueProcessor: ValuesProcessor
+) => {
   if (!node.configuration.ha_discovery) {
     return noop;
   }
@@ -144,31 +151,51 @@ export const FibaroWalliDoubleSwitchDiscovery = (node: ConfigNodeZwavePickDevice
 
   node.haSetStateTopics = [];
 
-  const stopFirstInstanceLightDiscovery = FibaroWalliDoubleSwitchSingleInstanceLightDiscovery(node, RED, {
-    name: firstName,
-    deviceName,
-    instanceId: FIRST_INSTANCE_ID,
-    manualModeKey: FIRST_INSTANCE_MANUAL_MODE,
-  });
+  const stopFirstInstanceLightDiscovery = FibaroWalliDoubleSwitchSingleInstanceLightDiscovery(
+    node,
+    RED,
+    valueProcessor,
+    {
+      name: firstName,
+      deviceName,
+      instanceId: FIRST_INSTANCE_ID,
+      manualModeKey: FIRST_INSTANCE_MANUAL_MODE,
+    }
+  );
 
-  const stopSecondInstanceLightDiscovery = FibaroWalliDoubleSwitchSingleInstanceLightDiscovery(node, RED, {
-    name: secondName,
-    deviceName,
-    instanceId: SECOND_INSTANCE_ID,
-    manualModeKey: SECOND_INSTANCE_MANUAL_MODE,
-  });
+  const stopSecondInstanceLightDiscovery = FibaroWalliDoubleSwitchSingleInstanceLightDiscovery(
+    node,
+    RED,
+    valueProcessor,
+    {
+      name: secondName,
+      deviceName,
+      instanceId: SECOND_INSTANCE_ID,
+      manualModeKey: SECOND_INSTANCE_MANUAL_MODE,
+    }
+  );
 
-  const stopFirstInstanceManualModeDiscovery = FibaroWalliDoubleSwitchSingleInstanceManualModeDiscovery(node, RED, {
-    name: firstManualModeName,
-    deviceName,
-    manualModeKey: FIRST_INSTANCE_MANUAL_MODE,
-  });
+  const stopFirstInstanceManualModeDiscovery = FibaroWalliDoubleSwitchSingleInstanceManualModeDiscovery(
+    node,
+    RED,
+    valueProcessor,
+    {
+      name: firstManualModeName,
+      deviceName,
+      manualModeKey: FIRST_INSTANCE_MANUAL_MODE,
+    }
+  );
 
-  const stopSecondInstanceManualModeDiscovery = FibaroWalliDoubleSwitchSingleInstanceManualModeDiscovery(node, RED, {
-    name: secondManualModeName,
-    deviceName,
-    manualModeKey: SECOND_INSTANCE_MANUAL_MODE,
-  });
+  const stopSecondInstanceManualModeDiscovery = FibaroWalliDoubleSwitchSingleInstanceManualModeDiscovery(
+    node,
+    RED,
+    valueProcessor,
+    {
+      name: secondManualModeName,
+      deviceName,
+      manualModeKey: SECOND_INSTANCE_MANUAL_MODE,
+    }
+  );
 
   return () => {
     stopFirstInstanceLightDiscovery();

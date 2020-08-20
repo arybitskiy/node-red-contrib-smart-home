@@ -12,7 +12,7 @@ import {
   NodesKeyValues,
 } from './types';
 
-export const getValueKey = (commandClassId: number, value: NodeContextValue) =>
+export const getValueKey = (commandClassId: number, value: { instanceId: number; id: number }) =>
   `${VALUES}-${commandClassId}-${value.instanceId}-${value.id}`;
 
 const parseValueKeyRegexp = new RegExp(`^${VALUES}-(\\d+)-(\\d+)-(\\d+)$`);

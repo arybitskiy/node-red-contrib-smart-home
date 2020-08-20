@@ -79,6 +79,7 @@ export class ValuesProcessor {
         console.error('Timeout sending value');
       }, TIMEOUT_SEND_VALUE);
       const listenForChange = ({ payload }: { payload: NodeContextValue }) => {
+        this.timeLastReceivedValue[getValuePathHash(expectValuePath)] = Date.now();
         clearTimeout(timeoutSendingValue);
         this.unsetIsProcessing(queueItemHash);
         if (payload.value !== expectValue) {

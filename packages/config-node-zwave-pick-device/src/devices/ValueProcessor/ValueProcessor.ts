@@ -67,7 +67,7 @@ export class ValuesProcessor {
 
   private processQueueItem(queueItem: QueueItem) {
     const queueItemHash = getQueueItemHash(queueItem);
-    this.unsetIsProcessing(queueItemHash);
+    delete this.queue[queueItemHash];
     const timeToWait = this.getTimeToWaitNextSend(queueItem.expectValuePath);
     const { sendValuePath, sendValue, expectValuePath, expectValue } = queueItem;
 
@@ -75,10 +75,12 @@ export class ValuesProcessor {
       const nodeValueKey = getNodeValueKey(expectValuePath);
       const timeoutSendingValue = setTimeout(() => {
         this.node.off(nodeValueKey, listenForChange);
+        this.unsetIsProcessing(queueItemHash);
         console.error('Timeout sending value');
       }, TIMEOUT_SEND_VALUE);
       const listenForChange = ({ payload }: { payload: NodeContextValue }) => {
         clearTimeout(timeoutSendingValue);
+        this.unsetIsProcessing(queueItemHash);
         if (payload.value !== expectValue) {
           this.sendAndExpect(sendValuePath, sendValue, expectValue, expectValuePath);
         }

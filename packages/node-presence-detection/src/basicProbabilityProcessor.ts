@@ -167,7 +167,7 @@ export const startBasicProbabilityProcessor = (input: NodeJS.EventEmitter, outpu
         !allDependenciesAreTrue(cacheNodesNormalized, nodeNormalized.dependencies)
       ) {
         const probability = nodeNormalized.value ? 1 : 0;
-        if (probability !== probabilities[nodeNormalized.id]) {
+        if (probability !== probabilities[nodeNormalized.id] && probability) {
           probabilities[nodeNormalized.id] = probability;
           changed = true;
 

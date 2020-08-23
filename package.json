@@ -1,6 +1,6 @@
 {
     "name": "node-red-contrib-smart-home",
-    "version": "0.0.155",
+    "version": "0.0.156",
     "license": "Apache-2.0",
     "workspaces": [
         "packages/*"

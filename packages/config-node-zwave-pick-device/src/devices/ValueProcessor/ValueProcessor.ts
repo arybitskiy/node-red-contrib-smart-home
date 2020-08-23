@@ -51,44 +51,51 @@ export class ValuesProcessor {
       expectValue,
     };
     this.queue[getQueueItemHash(queueItem)] = queueItem;
-    // console.log('Add item to queue: ', this.queue);
 
     this.process();
   }
 
   private process() {
     const queue = { ...this.queue };
-    // console.log('Process queue: ', queue);
     forEach(queue, (queueItem, queueItemHash) => {
       if (!this.getIsProcessing(queueItemHash)) {
         this.setIsProcessing(queueItemHash);
-        this.processQueueItem(queueItem);
+        this.processQueueItem(queueItem).catch(console.error);
       }
     });
   }
 
-  private processQueueItem(queueItem: QueueItem) {
-    // console.log('Process queue item: ', queueItem);
+  private async processQueueItem(queueItem: QueueItem) {
     const queueItemHash = getQueueItemHash(queueItem);
     delete this.queue[queueItemHash];
-    // console.log('Delete item from queue: ', this.queue);
-    const timeToWait = this.getTimeToWaitNextSend(queueItem.expectValuePath);
+
     const { sendValuePath, sendValue, expectValuePath, expectValue } = queueItem;
+    const nodeValueKey = getNodeValueKey(expectValuePath);
+    const currentExpectedValue = await this.node.getValue(
+      expectValuePath.commandClassId,
+      expectValuePath.instanceId,
+      expectValuePath.valueId
+    );
+
+    if (currentExpectedValue === expectValue) {
+      this.unsetIsProcessing(queueItemHash);
+      this.process();
+      return;
+    }
+
+    const timeToWait = this.getTimeToWaitNextSend(queueItem.expectValuePath);
 
     this.timeouts[queueItemHash] = setTimeout(() => {
-      const nodeValueKey = getNodeValueKey(expectValuePath);
       const timeoutSendingValue = setTimeout(() => {
         this.node.off(nodeValueKey, listenForChange);
         this.unsetIsProcessing(queueItemHash);
         console.error('Timeout sending value');
-        // console.log('Timeout item: ', queueItem);
         this.process();
       }, TIMEOUT_SEND_VALUE);
       const listenForChange = ({ payload }: { payload: NodeContextValue }) => {
         this.timeLastReceivedValue[getValuePathHash(expectValuePath)] = Date.now();
         clearTimeout(timeoutSendingValue);
         this.unsetIsProcessing(queueItemHash);
-        // console.log('Unset processing item: ', queueItem);
         if (payload.value !== expectValue) {
           this.sendAndExpect(sendValuePath, sendValue, expectValue, expectValuePath);
         } else {

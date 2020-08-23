@@ -354,42 +354,15 @@ export const basicProbabilityAnalyzer = (input: NodeJS.EventEmitter, output: Nod
     let changed = false;
     DEBUG && console.log(`listenNode [${nodeNormalized.type}]: ${nodeNormalized.title}`);
     // Update own probability
-    if (nodeNormalized.type === NodeTypes.MOTION_SENSOR) {
-      if (
-        nodeNormalized.dependencies.length &&
-        !allDependenciesAreTrue(cacheNodesNormalized, nodeNormalized.dependencies)
-      ) {
-        if (nodeNormalized.value !== probabilities[nodeNormalized.id].value && nodeNormalized.value) {
-          probabilities[nodeNormalized.id] = {
-            value: nodeNormalized.value,
-            probability: 1,
-          };
-
-          input.emit(INFLUX_LOGGING, {
-            topic: INFLUX_LOGGING,
-            payload: [
-              {
-                value: String(probabilities[nodeNormalized.id].value),
-              },
-              {
-                probability: probabilities[nodeNormalized.id].probability,
-                timestamp: Date.now(),
-                domain: DOMAIN_PRESENCE_DETECTION,
-                event: 'probability-all-dependencies-are-inactive',
-                type: nodeNormalized.type,
-                title: nodeNormalized.title,
-                nodeId: nodeNormalized.nodeId,
-              },
-            ],
-          });
-
-          debugNodeInfo(nodeNormalized, probabilities[nodeNormalized.id], 'all dependencies are inactive');
-          changed = true;
-        }
-      } else {
+    // if (nodeNormalized.type === NodeTypes.MOTION_SENSOR) {
+    if (
+      nodeNormalized.dependencies.length &&
+      !allDependenciesAreTrue(cacheNodesNormalized, nodeNormalized.dependencies)
+    ) {
+      if (nodeNormalized.value !== probabilities[nodeNormalized.id].value && nodeNormalized.value) {
         probabilities[nodeNormalized.id] = {
           value: nodeNormalized.value,
-          probability: nodeNormalized.value ? 1 : 0.5,
+          probability: 1,
         };
 
         input.emit(INFLUX_LOGGING, {
@@ -402,9 +375,7 @@ export const basicProbabilityAnalyzer = (input: NodeJS.EventEmitter, output: Nod
               probability: probabilities[nodeNormalized.id].probability,
               timestamp: Date.now(),
               domain: DOMAIN_PRESENCE_DETECTION,
-              event: nodeNormalized.value
-                ? 'motion-was-just-detected'
-                : 'cannot-detect-exact-probability-because-of-unknowns',
+              event: 'probability-all-dependencies-are-inactive',
               type: nodeNormalized.type,
               title: nodeNormalized.title,
               nodeId: nodeNormalized.nodeId,
@@ -412,14 +383,43 @@ export const basicProbabilityAnalyzer = (input: NodeJS.EventEmitter, output: Nod
           ],
         });
 
-        debugNodeInfo(
-          nodeNormalized,
-          probabilities[nodeNormalized.id],
-          nodeNormalized.value ? 'motion just was detected' : "can't detect exact probability because of unknowns"
-        );
+        debugNodeInfo(nodeNormalized, probabilities[nodeNormalized.id], 'all dependencies are inactive');
         changed = true;
       }
+    } else {
+      probabilities[nodeNormalized.id] = {
+        value: nodeNormalized.value,
+        probability: nodeNormalized.value ? 1 : 0.5,
+      };
+
+      input.emit(INFLUX_LOGGING, {
+        topic: INFLUX_LOGGING,
+        payload: [
+          {
+            value: String(probabilities[nodeNormalized.id].value),
+          },
+          {
+            probability: probabilities[nodeNormalized.id].probability,
+            timestamp: Date.now(),
+            domain: DOMAIN_PRESENCE_DETECTION,
+            event: nodeNormalized.value
+              ? 'motion-was-just-detected'
+              : 'cannot-detect-exact-probability-because-of-unknowns',
+            type: nodeNormalized.type,
+            title: nodeNormalized.title,
+            nodeId: nodeNormalized.nodeId,
+          },
+        ],
+      });
+
+      debugNodeInfo(
+        nodeNormalized,
+        probabilities[nodeNormalized.id],
+        nodeNormalized.value ? 'motion just was detected' : "can't detect exact probability because of unknowns"
+      );
+      changed = true;
     }
+    // }
     // Update zone probability
     if (changed) {
       getAllDependentZones(cacheNodesNormalized, nodeNormalized.dependents).forEach(zone => {

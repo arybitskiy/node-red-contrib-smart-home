@@ -4,6 +4,6 @@ export const ZONE_PROBABILITY = 'ZONE_PROBABILITY';
 
 export const LOCK_TIMEOUT = 20 * 1000;
 export const MOTION_TIMEOUT = -2 * 1000;
-export const SWITCH_TO_INACTIVE_AFTER = 2 * 60 * 1000;
+export const SWITCH_TO_INACTIVE_AFTER = 15 * 1000;
 export const SWITCH_TO_INACTIVE_AFTER_TICK = 5 * 1000;
 export const DEBUG = true;

@@ -15,7 +15,6 @@ import {
   ZONE_PROBABILITY,
   SWITCH_TO_INACTIVE_AFTER,
   SWITCH_TO_INACTIVE_AFTER_TICK,
-  DEBUG,
 } from './constants';
 
 const getNodeValue = (values: { [nodeId: string]: NodeKeyValues }, condition: any): boolean | undefined => {
@@ -218,27 +217,12 @@ const allDependenciesAreTrue = (nodesNormalized: NodesNormalized, dependencies: 
           return LOCK_TIMEOUT;
       }
     })();
-    DEBUG &&
-      console.log(
-        `allDependenciesAreTrue [${nodeNormalized.type}]: ${nodeNormalized.title} value[${
-          nodeNormalized.value
-        }] timeout[${nodeNormalized.valueChangedAt + timeout <= Date.now()}] return [${
-          nodeNormalized.valueChangedAt + timeout <= Date.now() ? !!nodeNormalized.value : !nodeNormalized.value
-        }] timeoutDiff[${nodeNormalized.valueChangedAt + timeout - Date.now()}]`
-      );
     if (nodeNormalized.valueChangedAt + timeout <= Date.now()) {
       return !!nodeNormalized.value;
     }
 
     return !nodeNormalized.value;
   });
-
-const debugNodeInfo = (nodeNormalized: NodeNormalized, probability, reason) => {
-  DEBUG &&
-    console.log(
-      `${nodeNormalized.title} value[${probability.value}] probability[${probability.probability}] because of ${reason}`
-    );
-};
 
 export const basicProbabilityAnalyzer = (input: NodeJS.EventEmitter, output: NodeJS.EventEmitter) => {
   const probabilities = {} as any;
@@ -259,7 +243,6 @@ export const basicProbabilityAnalyzer = (input: NodeJS.EventEmitter, output: Nod
         prob.probability = 1;
         getAllDependentZones(cacheNodesNormalized, node.dependents).forEach(zone => {
           probabilities[zone.id] = getZoneIsActiveProbability(zone.dependencies, probabilities);
-          debugNodeInfo(zone, probabilities[zone.id], 'calculated based on dependencies');
 
           input.emit(INFLUX_LOGGING, {
             topic: INFLUX_LOGGING,
@@ -316,12 +299,10 @@ export const basicProbabilityAnalyzer = (input: NodeJS.EventEmitter, output: Nod
         ],
       });
 
-      debugNodeInfo(node, probabilities[node.id], 'initiated');
       // }
     });
     getAllZones(cacheNodesNormalized).forEach(zone => {
       probabilities[zone.id] = getZoneIsActiveProbability(zone.dependencies, probabilities);
-      debugNodeInfo(zone, probabilities[zone.id], 'calculated based on dependencies');
 
       input.emit(INFLUX_LOGGING, {
         topic: INFLUX_LOGGING,
@@ -352,7 +333,6 @@ export const basicProbabilityAnalyzer = (input: NodeJS.EventEmitter, output: Nod
   const listenNode = (nodeNormalized: NodeNormalized) => {
     cacheNodesNormalized[nodeNormalized.id] = nodeNormalized;
     let changed = false;
-    DEBUG && console.log(`listenNode [${nodeNormalized.type}]: ${nodeNormalized.title}`);
     // Update own probability
     // if (nodeNormalized.type === NodeTypes.MOTION_SENSOR) {
     if (
@@ -383,7 +363,6 @@ export const basicProbabilityAnalyzer = (input: NodeJS.EventEmitter, output: Nod
           ],
         });
 
-        debugNodeInfo(nodeNormalized, probabilities[nodeNormalized.id], 'all dependencies are inactive');
         changed = true;
       }
     } else {
@@ -411,12 +390,6 @@ export const basicProbabilityAnalyzer = (input: NodeJS.EventEmitter, output: Nod
           },
         ],
       });
-
-      debugNodeInfo(
-        nodeNormalized,
-        probabilities[nodeNormalized.id],
-        nodeNormalized.value ? 'motion just was detected' : "can't detect exact probability because of unknowns"
-      );
       changed = true;
     }
     // }
@@ -442,7 +415,6 @@ export const basicProbabilityAnalyzer = (input: NodeJS.EventEmitter, output: Nod
             },
           ],
         });
-        debugNodeInfo(zone, probabilities[zone.id], 'calculated based on dependencies');
         output.emit(ZONE_PROBABILITY, {
           zone,
           value: probabilities[zone.id].value,

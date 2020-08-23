@@ -51,14 +51,14 @@ export class ValuesProcessor {
       expectValue,
     };
     this.queue[getQueueItemHash(queueItem)] = queueItem;
-    console.log('Add item to queue: ', this.queue);
+    // console.log('Add item to queue: ', this.queue);
 
     this.process();
   }
 
   private process() {
     const queue = { ...this.queue };
-    console.log('Process queue: ', queue);
+    // console.log('Process queue: ', queue);
     forEach(queue, (queueItem, queueItemHash) => {
       if (!this.getIsProcessing(queueItemHash)) {
         this.setIsProcessing(queueItemHash);
@@ -68,10 +68,10 @@ export class ValuesProcessor {
   }
 
   private processQueueItem(queueItem: QueueItem) {
-    console.log('Process queue item: ', queueItem);
+    // console.log('Process queue item: ', queueItem);
     const queueItemHash = getQueueItemHash(queueItem);
     delete this.queue[queueItemHash];
-    console.log('Delete item from queue: ', this.queue);
+    // console.log('Delete item from queue: ', this.queue);
     const timeToWait = this.getTimeToWaitNextSend(queueItem.expectValuePath);
     const { sendValuePath, sendValue, expectValuePath, expectValue } = queueItem;
 
@@ -81,14 +81,14 @@ export class ValuesProcessor {
         this.node.off(nodeValueKey, listenForChange);
         this.unsetIsProcessing(queueItemHash);
         console.error('Timeout sending value');
-        console.log('Timeout item: ', queueItem);
+        // console.log('Timeout item: ', queueItem);
         this.process();
       }, TIMEOUT_SEND_VALUE);
       const listenForChange = ({ payload }: { payload: NodeContextValue }) => {
         this.timeLastReceivedValue[getValuePathHash(expectValuePath)] = Date.now();
         clearTimeout(timeoutSendingValue);
         this.unsetIsProcessing(queueItemHash);
-        console.log('Unset processing item: ', queueItem);
+        // console.log('Unset processing item: ', queueItem);
         if (payload.value !== expectValue) {
           this.sendAndExpect(sendValuePath, sendValue, expectValue, expectValuePath);
         } else {

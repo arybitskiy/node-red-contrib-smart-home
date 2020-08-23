@@ -5,7 +5,8 @@ import type { ConfigNodeLocationBackend } from '@sh/config-node-location';
 import { INFLUX_LOGGING } from '@sh/constants';
 
 import type { NodePresenceDetectionBackend, NodePresenceDetectionBackendProps } from './types';
-import { listenNodeChanges, basicProbabilityAnalyzer } from './utils';
+import { basicProbabilityAnalyzer } from './utils';
+import { startNodesNormalization } from './nodesNormalization';
 import { ZONE_PROBABILITY } from './constants';
 
 export default (RED: NodeRed.Red) => {
@@ -22,7 +23,7 @@ export default (RED: NodeRed.Red) => {
       const eventEmitter = new EventEmitter();
       const probabilitiesEmitter = new EventEmitter();
 
-      const stopListenPromise = listenNodeChanges(RED, graph, eventEmitter);
+      const stopNodesNormalization = startNodesNormalization(RED, graph, eventEmitter);
 
       const stopProbabilitiesListen = basicProbabilityAnalyzer(eventEmitter, probabilitiesEmitter);
 
@@ -49,7 +50,7 @@ export default (RED: NodeRed.Red) => {
 
       this.on('close', () => {
         eventEmitter.off(INFLUX_LOGGING, listenInfluxdbLogs);
-        stopListenPromise.then(cb => cb()).catch(console.error);
+        stopNodesNormalization.then(cb => cb()).catch(console.error);
         stopProbabilitiesListen();
         probabilitiesEmitter.off(ZONE_PROBABILITY, listenProbabilityChanges);
       });

@@ -29,3 +29,7 @@ export interface NodeNormalized {
 export interface NodesNormalized {
   [nodeId: number]: NodeNormalized;
 }
+
+export interface Probabilities {
+  [graphNodeId: string]: number;
+}

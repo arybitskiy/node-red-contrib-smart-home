@@ -42,9 +42,9 @@ export const FibaroWalliDimmer = (node: ConfigNodeZwavePickDeviceBackend, RED: N
     );
   };
 
-  const handleZoneProbabilityChange = async ({ probability, value }) => {
+  const handleZoneProbabilityChange = async ({ probability }) => {
     const manualMode = node.configuration.manual_mode && (await node.getKey(FIRST_INSTANCE_MANUAL_MODE));
-    const turnOn = probability > 0.5 && value;
+    const turnOn = probability > 0.5;
 
     node.emit(INFLUX_LOGGING, {
       topic: INFLUX_LOGGING,

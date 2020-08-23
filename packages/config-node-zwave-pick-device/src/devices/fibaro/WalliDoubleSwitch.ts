@@ -24,13 +24,16 @@ export const FibaroWalliDoubleSwitch = (node: ConfigNodeZwavePickDeviceBackend, 
   const locationNode: ConfigNodeLocationBackend | null = RED.nodes.getNode(node.location) as any;
 
   const turnSwitch = (instanceId: number, value: boolean) => {
-    valueProcessor.sendAndExpect({ commandClassId: DOUBLE_SWITCH_COMMAND_CLASS_ID, instanceId, valueId: DOUBLE_SWITCH_VALUE_ID }, value);
+    valueProcessor.sendAndExpect(
+      { commandClassId: DOUBLE_SWITCH_COMMAND_CLASS_ID, instanceId, valueId: DOUBLE_SWITCH_VALUE_ID },
+      value
+    );
   };
 
-  const handleZoneProbabilityChange = async ({ probability, value }) => {
+  const handleZoneProbabilityChange = async ({ probability }) => {
     const firstInstanceManualMode = node.configuration.manual_mode && (await node.getKey(FIRST_INSTANCE_MANUAL_MODE));
     const secondInstanceManualMode = node.configuration.manual_mode && (await node.getKey(SECOND_INSTANCE_MANUAL_MODE));
-    const turnOn = probability > 0.5 && value;
+    const turnOn = probability > 0.5;
 
     node.emit(INFLUX_LOGGING, {
       topic: INFLUX_LOGGING,

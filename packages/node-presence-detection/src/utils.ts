@@ -292,32 +292,32 @@ export const basicProbabilityAnalyzer = (input: NodeJS.EventEmitter, output: Nod
   const listenNodes = (nodesNormalized: NodesNormalized) => {
     cacheNodesNormalized = nodesNormalized;
     values(nodesNormalized).forEach(node => {
-      if (node.type === NodeTypes.MOTION_SENSOR) {
-        probabilities[node.id] = {
-          value: node.value,
-          probability: 1,
-        };
+      // if (node.type === NodeTypes.MOTION_SENSOR) {
+      probabilities[node.id] = {
+        value: node.value,
+        probability: 1,
+      };
 
-        input.emit(INFLUX_LOGGING, {
-          topic: INFLUX_LOGGING,
-          payload: [
-            {
-              value: String(probabilities[node.id].value),
-            },
-            {
-              probability: probabilities[node.id].probability,
-              timestamp: Date.now(),
-              domain: DOMAIN_PRESENCE_DETECTION,
-              event: 'probability-initiated',
-              type: node.type,
-              title: node.title,
-              nodeId: node.nodeId,
-            },
-          ],
-        });
+      input.emit(INFLUX_LOGGING, {
+        topic: INFLUX_LOGGING,
+        payload: [
+          {
+            value: String(probabilities[node.id].value),
+          },
+          {
+            probability: probabilities[node.id].probability,
+            timestamp: Date.now(),
+            domain: DOMAIN_PRESENCE_DETECTION,
+            event: 'probability-initiated',
+            type: node.type,
+            title: node.title,
+            nodeId: node.nodeId,
+          },
+        ],
+      });
 
-        debugNodeInfo(node, probabilities[node.id], 'initiated');
-      }
+      debugNodeInfo(node, probabilities[node.id], 'initiated');
+      // }
     });
     getAllZones(cacheNodesNormalized).forEach(zone => {
       probabilities[zone.id] = getZoneIsActiveProbability(zone.dependencies, probabilities);

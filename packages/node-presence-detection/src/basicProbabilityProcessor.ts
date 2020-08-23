@@ -100,6 +100,7 @@ export const startBasicProbabilityProcessor = (input: NodeJS.EventEmitter, outpu
       const probability = probabilities[node.id];
       if (
         node.type === NodeTypes.MOTION_SENSOR &&
+        probability > 0 &&
         probability <= 0.5 &&
         node.valueChangedAt + SWITCH_TO_INACTIVE_AFTER <= Date.now()
       ) {

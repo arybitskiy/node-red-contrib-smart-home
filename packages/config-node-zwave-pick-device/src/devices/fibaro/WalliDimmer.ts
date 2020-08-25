@@ -17,6 +17,7 @@ import {
 import { FibaroWalliDimmerDiscovery } from './FibaroWalliDimmerDiscovery';
 import { DOMAIN_LIGHT } from '../../mqttDiscovery';
 import { ValuesProcessor } from '../ValueProcessor';
+import { startLightManager } from './utils';
 
 export const FibaroWalliDimmer = (node: ConfigNodeZwavePickDeviceBackend, RED: NodeRed.Red) => {
   const valueProcessor = new ValuesProcessor({ node });
@@ -24,7 +25,8 @@ export const FibaroWalliDimmer = (node: ConfigNodeZwavePickDeviceBackend, RED: N
 
   const locationNode: ConfigNodeLocationBackend | null = RED.nodes.getNode(node.location) as any;
 
-  const turnSwitch = (value: boolean) => {
+  const [turnSwitch, stopLightManager] = startLightManager((value: boolean) => {
+    console.log('value: ', value);
     const level = value ? DIMMER_ON_VALUE : DIMMER_OFF_VALUE;
     valueProcessor.sendAndExpect(
       {
@@ -40,7 +42,7 @@ export const FibaroWalliDimmer = (node: ConfigNodeZwavePickDeviceBackend, RED: N
         valueId: DIMMER_GET_LEVEL_VALUE_ID,
       }
     );
-  };
+  }, 45);
 
   const handleZoneProbabilityChange = async ({ probability }) => {
     const manualMode = node.configuration.manual_mode && (await node.getKey(FIRST_INSTANCE_MANUAL_MODE));
@@ -94,6 +96,7 @@ export const FibaroWalliDimmer = (node: ConfigNodeZwavePickDeviceBackend, RED: N
   locationNode && locationNode.on(ZONE_PROBABILITY, handleZoneProbabilityChange);
 
   return () => {
+    stopLightManager();
     stopDiscovery();
     locationNode && locationNode.off(ZONE_PROBABILITY, handleZoneProbabilityChange);
     valueProcessor.destroy();

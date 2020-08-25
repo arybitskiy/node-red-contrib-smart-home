@@ -16,6 +16,7 @@ import {
 import { FibaroWalliDoubleSwitchDiscovery } from './FibaroWalliDoubleSwitchDiscovery';
 import { DOMAIN_LIGHT } from '../../mqttDiscovery';
 import { ValuesProcessor } from '../ValueProcessor';
+import { startLightManager } from './utils';
 
 export const FibaroWalliDoubleSwitch = (node: ConfigNodeZwavePickDeviceBackend, RED: NodeRed.Red) => {
   const valueProcessor = new ValuesProcessor({ node });
@@ -23,12 +24,27 @@ export const FibaroWalliDoubleSwitch = (node: ConfigNodeZwavePickDeviceBackend, 
 
   const locationNode: ConfigNodeLocationBackend | null = RED.nodes.getNode(node.location) as any;
 
-  const turnSwitch = (instanceId: number, value: boolean) => {
+  const [turnFirstSwitch, stopFirstLightManager] = startLightManager((value: boolean) => {
     valueProcessor.sendAndExpect(
-      { commandClassId: DOUBLE_SWITCH_COMMAND_CLASS_ID, instanceId, valueId: DOUBLE_SWITCH_VALUE_ID },
+      {
+        commandClassId: DOUBLE_SWITCH_COMMAND_CLASS_ID,
+        instanceId: DOUBLE_SWITCH_FIRST_INSTANCE_ID,
+        valueId: DOUBLE_SWITCH_VALUE_ID,
+      },
       value
     );
-  };
+  }, 45);
+
+  const [turnSecondSwitch, stopSecondLightManager] = startLightManager((value: boolean) => {
+    valueProcessor.sendAndExpect(
+      {
+        commandClassId: DOUBLE_SWITCH_COMMAND_CLASS_ID,
+        instanceId: DOUBLE_SWITCH_SECOND_INSTANCE_ID,
+        valueId: DOUBLE_SWITCH_VALUE_ID,
+      },
+      value
+    );
+  }, 105);
 
   const handleZoneProbabilityChange = async ({ probability }) => {
     const firstInstanceManualMode = node.configuration.manual_mode && (await node.getKey(FIRST_INSTANCE_MANUAL_MODE));
@@ -56,7 +72,7 @@ export const FibaroWalliDoubleSwitch = (node: ConfigNodeZwavePickDeviceBackend, 
     });
 
     if (!firstInstanceManualMode) {
-      turnSwitch(DOUBLE_SWITCH_FIRST_INSTANCE_ID, turnOn);
+      turnFirstSwitch(turnOn);
 
       node.emit(INFLUX_LOGGING, {
         topic: INFLUX_LOGGING,
@@ -80,7 +96,7 @@ export const FibaroWalliDoubleSwitch = (node: ConfigNodeZwavePickDeviceBackend, 
       });
     }
     if (!secondInstanceManualMode) {
-      turnSwitch(DOUBLE_SWITCH_SECOND_INSTANCE_ID, turnOn);
+      turnSecondSwitch(turnOn);
 
       node.emit(INFLUX_LOGGING, {
         topic: INFLUX_LOGGING,
@@ -109,6 +125,8 @@ export const FibaroWalliDoubleSwitch = (node: ConfigNodeZwavePickDeviceBackend, 
 
   return () => {
     stopDiscovery();
+    stopFirstLightManager();
+    stopSecondLightManager();
     locationNode && locationNode.off(ZONE_PROBABILITY, handleZoneProbabilityChange);
     valueProcessor.destroy();
   };

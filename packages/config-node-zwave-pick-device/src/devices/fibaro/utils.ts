@@ -1,15 +1,17 @@
 export const startLightManager = (turnOnOrOff: (nextState: boolean) => void, delayInSeconds: number) => {
-  let timeout;
+  let timeout: number;
 
   return [
     (nextState: boolean) => {
       clearTimeout(timeout);
-      if (!nextState) {
-        setTimeout(() => {
-          timeout = turnOnOrOff(nextState);
-        }, delayInSeconds * 1000);
-      } else {
+      if (nextState) {
+        console.log('turn on');
         turnOnOrOff(nextState);
+      } else {
+        timeout = setTimeout(() => {
+          console.log('turn off');
+          turnOnOrOff(nextState);
+        }, delayInSeconds * 1000);
       }
     },
     () => {

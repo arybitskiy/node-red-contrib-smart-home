@@ -90,6 +90,10 @@ export class ValuesProcessor {
         this.node.off(nodeValueKey, listenForChange);
         this.unsetIsProcessing(queueItemHash);
         console.error('Timeout sending value');
+        if (!(queueItemHash in this.queue)) {
+          console.log('Resending value');
+          this.queue[queueItemHash] = queueItem;
+        }
         this.process();
       }, TIMEOUT_SEND_VALUE);
       const listenForChange = ({ payload }: { payload: NodeContextValue }) => {
